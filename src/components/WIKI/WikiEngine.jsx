@@ -80,8 +80,11 @@ const WikiContent = ({ author, DocTitle, content, notFoundFlag, history, prevCon
     htmlContent = htmlContent.replace(/\{\{(.+?)\}\}/g, (_, commentText) => {
       const commentIndex = commentList.length + 1;
       commentList.push(commentText.trim());
-      return `<sup class="text-blue-500 hover:underline cursor-pointer" id="comment-ref-${commentIndex}"><a href="#comment-${commentIndex}" class="text-blue-500 hover:underline cursor-pointer">[${commentIndex}]</a></sup>`;
+
+      return `<sup class="comment-ref text-blue-500 hover:underline cursor-pointer relative" id="comment-ref-${commentIndex}" data-comment-index="${commentIndex}"><a href="#comment-${commentIndex}" class="text-blue-500 hover:underline cursor-pointer">[${commentIndex}]</a><span class="comment-box absolute left-1/2 transform top-6 bg-gray-800 text-white text-sm p-1 rounded-md shadow-md hidden z-10">${commentText.trim()}</span></sup>`;
     });
+
+
 
     htmlContent = htmlContent.replace(/^\* (.+)$/gm, '<li class="text-lg text-gray-600">$1</li>');
     htmlContent = htmlContent.replace(/(<li>.*<\/li>)(?!.*<\/ul>)/g, '<ul class="list-disc pl-6">$1</ul>');
@@ -96,7 +99,28 @@ const WikiContent = ({ author, DocTitle, content, notFoundFlag, history, prevCon
   };
 
   const { htmlContent, tocList, commentList } = useMemo(() => parseContent(content), [content]);
+  useEffect(() => {
+    const commentRefs = document.querySelectorAll('.comment-ref');
 
+    commentRefs.forEach((ref) => {
+      const commentBox = ref.querySelector('.comment-box');
+
+      ref.addEventListener('mouseover', () => {
+        commentBox.classList.remove('hidden');
+      });
+
+      ref.addEventListener('mouseout', () => {
+        commentBox.classList.add('hidden');
+      });
+    });
+
+    return () => {
+      commentRefs.forEach((ref) => {
+        ref.removeEventListener('mouseover', () => { });
+        ref.removeEventListener('mouseout', () => { });
+      });
+    };
+  }, [htmlContent]);
   useEffect(() => {
     const redirectToHashPage = (text) => {
       const hashPattern = /^#(\S+)/g;
@@ -192,7 +216,7 @@ const WikiContent = ({ author, DocTitle, content, notFoundFlag, history, prevCon
           </button>
           <button
             onClick={() => setIsHistoryVisible(!isHistoryVisible)}
-            className="ml-4 px-4 py-2 text-white bg-gray-600 rounded-md shadow-md hover:bg-gray-700"
+            className="px-4 py-2 ml-4 text-white bg-gray-600 rounded-md shadow-md hover:bg-gray-700"
           >
             {isHistoryVisible ? "변경사항 숨기기" : "변경사항 보기"}
           </button>

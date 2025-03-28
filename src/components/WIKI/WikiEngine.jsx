@@ -2,6 +2,7 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ReactDiffViewer from 'react-diff-viewer-continued';
 import { toRelativeTime } from '../../utils/Time';
+import useWindowDimensions from '../../hooks/useWindowDimensions';
 
 const WikiContent = ({ author, DocTitle, content, notFoundFlag, history, prevContent }) => {
   const [toc, setToc] = useState([]);
@@ -11,6 +12,7 @@ const WikiContent = ({ author, DocTitle, content, notFoundFlag, history, prevCon
   const [isHistoryVisible, setIsHistoryVisible] = useState(history === undefined ? true : false);
   const navigate = useNavigate();
   let accessToken = localStorage.getItem("accessToken");
+  const { height, width } = useWindowDimensions();
 
   const applyFormatting = (text) => {
     text = text.replace(/\|\|(.+?)\|\|/g, '<b>$1</b>');
@@ -202,7 +204,7 @@ const WikiContent = ({ author, DocTitle, content, notFoundFlag, history, prevCon
       )}
 
       {isHistoryVisible && prevContent && (
-        <ReactDiffViewer oldValue={prevContent} newValue={content} splitView={true} />
+        <ReactDiffViewer oldValue={prevContent} newValue={content} splitView={width > 768} hideLineNumbers={width <= 768} />
       )}
 
       {comments.length > 0 && isContentVisible && (

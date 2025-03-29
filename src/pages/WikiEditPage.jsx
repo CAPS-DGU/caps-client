@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { apiPostWithToken } from '../utils/Api';
+import { useNavigate } from 'react-router-dom';
 
 const wikiData = {
   "title": "CAPS",
@@ -40,6 +41,7 @@ const WikiEditPage = () => {
   const [content, setContent] = useState({ "title": wiki_title, "content": "" });
   const [Error, setError] = useState(null);
   const [loading, setLoading] = useState(true);    // For loading state
+  const navigate = useNavigate();
   let accessToken = localStorage.getItem("accessToken")
 
   useEffect(() => {
@@ -86,7 +88,7 @@ const WikiEditPage = () => {
     console.log(content);
 
     try {
-      const response = await apiPostWithToken(`/api/wiki`, { "title": content.title, "content": newContent });
+      const response = await apiPostWithToken(`/api/wiki`, { "title": content.title, "content": newContent }, navigate);
 
       console.log(response.status);
       if (response.status === 201) {

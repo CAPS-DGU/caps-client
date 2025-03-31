@@ -2,33 +2,24 @@ import React, { useState, useEffect } from 'react';
 import Template from '../components/WIKI/template';
 import WikiSearch from '../components/WIKI/WikiSearch';
 import { useParams } from 'react-router-dom';
-import axios from "axios";
-import ReactDiffViewer from 'react-diff-viewer-continued';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { apiGetWithToken } from '../utils/Api';
+import { useNavigate } from 'react-router-dom';
 
 
 const WikiHistoryPage = () => {
   const { wiki_title } = useParams();
-
+  const navigate = useNavigate();
   const [wikiData, setWikiData] = useState(null);  // For fetched data
   const [error, setError] = useState(null);        // For error handling
   const [loading, setLoading] = useState(true);    // For loading state
-  let accessToken = localStorage.getItem("accessToken")
 
   // let template =  <Template data={wikiData} />
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`/api/wiki/history?title=${wiki_title}`,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': '*/*',
-              'Authorization': 'Bearer ' + accessToken
-
-            },
-          }
-        );
+        const response = await apiGetWithToken(`/api/wiki/history?title=${wiki_title}`, navigate);
+        console.log(response.status);
         if (response.status === 200) {
           setWikiData(response.data.data); // Set the fetched data
           setError(null);

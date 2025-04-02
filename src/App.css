@@ -18,9 +18,16 @@
 }
 
 .comment-box {
-  min-width: 100px; /* 최소 너비 */
-  max-width: 300px; /* 최대 너비 */
-  white-space: nowrap; /* 텍스트가 한 줄로 표시되도록 */
-  text-align: center; /* 가운데 정렬 */
-  display: block; /* block으로 변경하여 레이아웃에 영향을 주지 않도록 */
+  min-width: 200px;
+  max-width: 500px;
+  white-space: normal;
+  text-align: left;
+  word-wrap: break-word;
+  display: none;
+  position: absolute;
+  z-index: 10;
+}
+
+.comment-ref:hover .comment-box {
+  display: block;
 }

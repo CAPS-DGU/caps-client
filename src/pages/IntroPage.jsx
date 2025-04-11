@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Template from '../components/WIKI/template';
 import { useParams } from 'react-router-dom';
 import axios from "axios";
@@ -43,16 +43,16 @@ const IntroducePage = () => {
             }
         };
         fetchData();
-            // If no title, show intro data
-            setWikiData(wikiIntroData);
-            setLoading(false);  // Stop loading
+        // If no title, show intro data
+        setWikiData(wikiIntroData);
+        setLoading(false);  // Stop loading
     }, [wiki_title]);
     if (loading) return <div>Loading...</div>;  // Show loading state
     // console.log(error);
     return (
 
         <div>
-            <Template data={wikiData} /> 
+            <Template data={wikiData} />
         </div >
     );
 };

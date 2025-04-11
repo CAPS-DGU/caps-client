@@ -1,18 +1,35 @@
 import React from "react";
-import { WikiEngine } from "./WikiEngine.tsx";
+import WikiContent from "./WikiEngine";
+import { User } from "../../types/common";
+import { WikiData } from "../../types/pages";
 
 interface TemplateProps {
-  content: string;
-  className?: string;
+  data: (WikiData & { writer?: User }) | null;
+  notFoundFlag?: boolean;
+  history?: any;
+  prevData?: {
+    content: string;
+  };
 }
 
-export const Template: React.FC<TemplateProps> = ({
-  content,
-  className = "",
+const Template: React.FC<TemplateProps> = ({
+  data,
+  notFoundFlag,
+  history,
+  prevData,
 }) => {
+  if (!data) return null;
+
   return (
-    <div className={`wiki-content ${className}`}>
-      <WikiEngine content={content} />
+    <div className="m-4 wiki-page">
+      <WikiContent
+        author={data.writer}
+        DocTitle={data.title}
+        content={data.content}
+        notFoundFlag={notFoundFlag}
+        history={history}
+        prevContent={prevData?.content}
+      />
     </div>
   );
 };

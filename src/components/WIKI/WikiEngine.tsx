@@ -1,11 +1,7 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useEffect } from "react";
 import { marked } from "marked";
 import DOMPurify from "dompurify";
-
-interface WikiEngineProps {
-  content: string;
-  className?: string;
-}
+import { User } from "../../types/common";
 
 // 허용된 HTML 태그 목록
 const ALLOWED_TAGS = [
@@ -40,8 +36,23 @@ interface WikiLink {
   href: string;
 }
 
-export const WikiEngine: React.FC<WikiEngineProps> = ({
+interface WikiContentProps {
+  author?: User;
+  DocTitle: string;
+  content: string;
+  notFoundFlag?: boolean;
+  history?: any;
+  prevContent?: string;
+  className?: string;
+}
+
+const WikiEngine: React.FC<WikiContentProps> = ({
+  author,
+  DocTitle,
   content,
+  notFoundFlag,
+  history,
+  prevContent,
   className = "",
 }) => {
   const processedContent = useMemo(() => {
@@ -67,7 +78,9 @@ export const WikiEngine: React.FC<WikiEngineProps> = ({
 
         return `<sup class="comment-ref text-blue-500 hover:underline cursor-pointer relative" id="comment-ref-${commentIndex}" data-comment-index="${commentIndex}">
         <a href="#comment-${commentIndex}" class="text-blue-500 hover:underline cursor-pointer">[${commentIndex}]</a>
-        <span class="comment-box absolute left-1/2 transform -translate-x-1/2 top-6 bg-gray-800 text-white text-sm p-2 rounded-md shadow-md hidden z-10">${commentText.trim()}</span>
+        <div class="comment-box-container" data-display="none">
+          <div class="comment-box bg-gray-800 text-white text-sm p-2 rounded-md shadow-md"><span>${commentText.trim()}</span></div>
+        </div>
       </sup>`;
       }
     );
@@ -100,6 +113,52 @@ export const WikiEngine: React.FC<WikiEngineProps> = ({
 
     return finalHtml;
   }, [content]);
+
+  useEffect(() => {
+    // 주석 박스 표시/숨김 처리
+    const handleCommentHover = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      const commentRef = target.closest(".comment-ref");
+      const commentBoxContainer = target.closest(".comment-box-container");
+
+      if (commentRef) {
+        const container = commentRef.querySelector(".comment-box-container");
+        if (container) {
+          container.setAttribute("data-display", "block");
+        }
+      } else if (commentBoxContainer) {
+        commentBoxContainer.setAttribute("data-display", "block");
+      }
+    };
+
+    const handleCommentLeave = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      const commentRef = target.closest(".comment-ref");
+      const commentBoxContainer = target.closest(".comment-box-container");
+
+      if (commentRef && !commentRef.contains(event.relatedTarget as Node)) {
+        const container = commentRef.querySelector(".comment-box-container");
+        if (container) {
+          container.setAttribute("data-display", "none");
+        }
+      } else if (
+        commentBoxContainer &&
+        !commentBoxContainer.contains(event.relatedTarget as Node)
+      ) {
+        commentBoxContainer.setAttribute("data-display", "none");
+      }
+    };
+
+    // 이벤트 리스너 등록
+    document.addEventListener("mouseover", handleCommentHover);
+    document.addEventListener("mouseout", handleCommentLeave);
+
+    // 컴포넌트 언마운트 시 이벤트 리스너 제거
+    return () => {
+      document.removeEventListener("mouseover", handleCommentHover);
+      document.removeEventListener("mouseout", handleCommentLeave);
+    };
+  }, []);
 
   return (
     <div

@@ -2,11 +2,13 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import { Spin } from "antd";
 import { useWiki } from "../../hooks/useWiki";
-import { Template } from "./template.tsx";
-import { WikiData } from "../../types/wiki";
+import Template from "./template.tsx";
+import { WikiData as PagesWikiData } from "../../types/pages";
+import { WikiData as WikiWikiData } from "../../types/wiki";
+import { User } from "../../types/common";
 
 interface WikiContentProps {
-  data?: WikiData;
+  data?: PagesWikiData;
 }
 
 export const WikiContent: React.FC<WikiContentProps> = ({ data }) => {
@@ -26,7 +28,15 @@ export const WikiContent: React.FC<WikiContentProps> = ({ data }) => {
     return <div>문서를 찾을 수 없습니다.</div>;
   }
 
-  return <Template content={content.content} />;
+  const templateData: PagesWikiData = {
+    title: content.title,
+    content: content.content,
+    writer: content.writer
+      ? ({ id: content.writer, name: content.writer } as User)
+      : undefined,
+  };
+
+  return <Template data={templateData} />;
 };
 
 export default WikiContent;

@@ -2,6 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 주석 박스 스타일 */
+.comment-box-wrapper {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 1.5rem;
+  z-index: 50;
+  transition: visibility 0s, opacity 0.2s;
+}
+
+.comment-ref:hover .comment-box-wrapper {
+  visibility: visible;
+  opacity: 1;
+}
+
+.comment-box {
+  min-width: 200px;
+  max-width: 500px;
+  white-space: normal;
+  text-align: left;
+  word-wrap: break-word;
+}
+
 @layer utilities {
   @keyframes slow-spin {
     from {
@@ -15,19 +38,4 @@
   .animate-slow-spin {
     animation: slow-spin 2s linear infinite;
   }
-}
-
-.comment-box {
-  min-width: 200px;
-  max-width: 500px;
-  white-space: normal;
-  text-align: left;
-  word-wrap: break-word;
-  display: none;
-  position: absolute;
-  z-index: 10;
-}
-
-.comment-ref:hover .comment-box {
-  display: block;
 }

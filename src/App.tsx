@@ -8,9 +8,16 @@ import koKR from "antd/locale/ko_KR";
 import LoginPage from "./pages/LoginPage";
 import MainPage from "./pages/MainPage";
 import WikiPage from "./pages/WikiPage";
+import IntroPage from "./pages/IntroPage";
+import HistoryPage from "./pages/HistoryPage";
+import RulePage from "./pages/RulePage";
+import ExecutivePage from "./pages/ExecutivePage";
+import HomepagePage from "./pages/HomepagePage";
+import BoardPage from "./pages/BoardPage";
+import VotePage from "./pages/VotePage";
 
 // Components
-import NavBar from "./components/NavBar";
+import NavBar from "./components/NavBar.tsx";
 
 // Wiki Components
 import { WikiContent } from "./components/WIKI/WikiContent";
@@ -41,6 +48,34 @@ const App: React.FC = () => {
       path: "/",
       element: <MainPage />,
     },
+    {
+      path: "/intro",
+      element: <IntroPage />,
+    },
+    {
+      path: "/history",
+      element: <HistoryPage />,
+    },
+    {
+      path: "/rule",
+      element: <RulePage />,
+    },
+    {
+      path: "/executive",
+      element: <ExecutivePage />,
+    },
+    {
+      path: "/homepage",
+      element: <HomepagePage />,
+    },
+    {
+      path: "/board",
+      element: <BoardPage />,
+    },
+    // {
+    //   path: "/vote",
+    //   element: <VotePage />,
+    // },
     {
       path: "/login",
       element: <LoginPage />,

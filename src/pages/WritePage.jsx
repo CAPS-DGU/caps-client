@@ -34,8 +34,8 @@ const WritePage = () => {
   }
 
   return (
-    <div className="flex items-center flex-col justify-center min-h-screen bg-gray-200 p-2">
-      <h1 className="text-4xl m-4 text-gray-700">글 쓰기</h1>
+    <div className="flex flex-col items-center justify-center min-h-screen p-2 bg-gray-200">
+      <h1 className="m-4 text-4xl text-gray-700">글 쓰기</h1>
       {isLoading ? <LoadingSpinner /> :
         <TextEditor onSubmit={onSubmit} />}
     </div>

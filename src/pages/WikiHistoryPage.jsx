@@ -4,11 +4,12 @@ import WikiSearch from '../components/WIKI/WikiSearch';
 import { useParams } from 'react-router-dom';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { apiGetWithToken } from '../utils/Api';
+import { useNavigate } from 'react-router-dom';
 
 
 const WikiHistoryPage = () => {
   const { wiki_title } = useParams();
-
+  const navigate = useNavigate();
   const [wikiData, setWikiData] = useState(null);  // For fetched data
   const [error, setError] = useState(null);        // For error handling
   const [loading, setLoading] = useState(true);    // For loading state
@@ -17,7 +18,7 @@ const WikiHistoryPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await apiGetWithToken(`/api/wiki/history?title=${wiki_title}`);
+        const response = await apiGetWithToken(`/api/wiki/history?title=${wiki_title}`, navigate);
         console.log(response.status);
         if (response.status === 200) {
           setWikiData(response.data.data); // Set the fetched data

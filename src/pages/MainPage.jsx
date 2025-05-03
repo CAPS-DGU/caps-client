@@ -4,14 +4,14 @@ import Grid from '../components/MainPage/Grid';
 import ContactUs from '../components/MainPage/ContactUs';
 import About from '../components/MainPage/About';
 const MainPage = () => {
-    return (
-        <>
-            <Slider />
-            <Grid />
-            <ContactUs />
-            <About />
-        </>
-    );
+  return (
+    <>
+      <Slider />
+      <Grid />
+      <ContactUs />
+      <About />
+    </>
+  );
 };
 
 export default MainPage;

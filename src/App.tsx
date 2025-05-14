@@ -15,6 +15,7 @@ import ExecutivePage from "./pages/ExecutivePage";
 import HomepagePage from "./pages/HomepagePage";
 import BoardPage from "./pages/BoardPage";
 import VotePage from "./pages/VotePage";
+import KakaoLogin from "./pages/KakaoLogin";
 
 // Components
 import NavBar from "./components/NavBar.tsx";
@@ -78,7 +79,7 @@ const App: React.FC = () => {
     // },
     {
       path: "/login",
-      element: <LoginPage />,
+      element: <KakaoLogin />,
     },
     {
       path: "/wiki",

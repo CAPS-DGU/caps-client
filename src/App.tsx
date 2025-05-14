@@ -26,6 +26,8 @@ import { WikiEditor } from "./components/WIKI/WikiEditor.tsx";
 import WikiSearch from "./components/WIKI/WikiSearch";
 import { WikiHistory } from "./components/WIKI/WikiHistory";
 import { WikiCompare } from "./components/WIKI/WikiCompare";
+import TestMyPage from "./pages/TestMyPage.tsx";
+import OnBoarding from "./pages/OnBoarding.tsx";
 
 // Types
 interface RouteConfig {
@@ -80,6 +82,14 @@ const App: React.FC = () => {
     {
       path: "/login",
       element: <KakaoLogin />,
+    },
+    {
+      path: "/onboarding",
+      element: <OnBoarding />,
+    },
+    {
+      path: "/mypage",
+      element: <TestMyPage />,
     },
     {
       path: "/wiki",

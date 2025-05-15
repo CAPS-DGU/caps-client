@@ -24,6 +24,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Create env file
+        run: |
+          touch .env.local
+          echo "${{ secrets.DOT_ENV }}" >> .env.local
+
       - name: Build project
         run: pnpm run build
 

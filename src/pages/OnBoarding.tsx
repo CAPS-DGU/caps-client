@@ -43,7 +43,7 @@ export default function OnBoarding() {
       return;
     }
     setError(false);
-    axios.patch("/api/api/v1/auth/complete-registration", {
+    axios.patch(import.meta.env.VITE_API_HOST + "/api/v1/auth/complete-registration", {
       studentNumber: studentId,
       grade: generation,
     }, {

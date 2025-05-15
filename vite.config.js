@@ -10,17 +10,4 @@ export default defineConfig({
     react(),
     basicSsl(),
   ],
-
-  server: {
-    // https: true,
-    proxy: {
-      '/api': {
-        target: 'https://api.dgucaps.shop/',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
-        secure: true,
-        ws: true
-      }
-    }
-  }
 })

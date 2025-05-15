@@ -10,7 +10,7 @@ const WikiRecent: React.FC = () => {
   const { data: recentWikis, isLoading } = useQuery<WikiRecentData[]>({
     queryKey: ["recent-wikis"],
     queryFn: async () => {
-      const response = await axios.get("/api/api/v1/wikis/recent");
+      const response = await axios.get(import.meta.env.VITE_API_HOST + "/api/v1/wikis/recent");
       return response.data.data || [];
     },
   });

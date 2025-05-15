@@ -33,7 +33,7 @@ const IntroducePage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`/api/api/v1/wikis/${wiki_title}`);
+        const response = await axios.get(`${import.meta.env.VITE_API_HOST}/api/v1/wikis/${wiki_title}`);
         if (response.status === 200) {
           setWikiData(response.data.data); // Set the fetched data
           setError(null);

@@ -18,7 +18,7 @@ export default defineConfig({
         target: 'https://api.dgucaps.shop/',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
-        secure: false,
+        secure: true,
         ws: true
       }
     }

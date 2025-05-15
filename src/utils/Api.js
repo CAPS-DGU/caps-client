@@ -13,17 +13,15 @@ export async function apiPostWithToken(path, data, navigate) {
 
 
 export async function apiWithToken(method, path, data, navigate) {
-  let oldAccessToken = localStorage.getItem("accessToken");
-
   try {
     const response = await axios({
       method: method,
       url: path,
       data: data,
+      withCredentials: true,
       headers: {
         'Content-Type': 'application/json',
         'Accept': '*/*',
-        'Authorization': 'Bearer ' + oldAccessToken
       }
     });
 
@@ -33,9 +31,7 @@ export async function apiWithToken(method, path, data, navigate) {
     if (error.response && error.response.status === 403) {
       const renewalResponse = await axios.post('/api/token/renewal',
         {
-          refreshToken: localStorage.getItem('refreshToken')
-        },
-        {
+          withCredentials: true,
           headers: {
             'Content-Type': 'application/json',
             'Accept': '*/*',
@@ -52,19 +48,14 @@ export async function apiWithToken(method, path, data, navigate) {
         return;
       }
 
-      let { accessToken, refreshToken } = renewalResponse.data.data;
-
-      localStorage.setItem('accessToken', accessToken);
-      localStorage.setItem('refreshToken', refreshToken);
-
       return await axios({
         method: method,
         url: path,
         data: data,
+        withCredentials: true,
         headers: {
           'Content-Type': 'application/json',
           'Accept': '*/*',
-          'Authorization': 'Bearer ' + accessToken
         }
       });
     }

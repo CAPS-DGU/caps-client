@@ -5,6 +5,10 @@ export interface WikiData {
   time?: string;
 }
 
+export interface WikiRecentData {
+  title: string;
+}
+
 export interface WikiHistoryData extends WikiData {
   version: string;
   description: string;

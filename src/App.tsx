@@ -15,6 +15,7 @@ import ExecutivePage from "./pages/ExecutivePage";
 import HomepagePage from "./pages/HomepagePage";
 import BoardPage from "./pages/BoardPage";
 import VotePage from "./pages/VotePage";
+import KakaoLogin from "./pages/KakaoLogin";
 
 // Components
 import NavBar from "./components/NavBar.tsx";
@@ -25,6 +26,8 @@ import { WikiEditor } from "./components/WIKI/WikiEditor.tsx";
 import WikiSearch from "./components/WIKI/WikiSearch";
 import { WikiHistory } from "./components/WIKI/WikiHistory";
 import { WikiCompare } from "./components/WIKI/WikiCompare";
+import TestMyPage from "./pages/TestMyPage.tsx";
+import OnBoarding from "./pages/OnBoarding.tsx";
 
 // Types
 interface RouteConfig {
@@ -78,7 +81,15 @@ const App: React.FC = () => {
     // },
     {
       path: "/login",
-      element: <LoginPage />,
+      element: <KakaoLogin />,
+    },
+    {
+      path: "/onboarding",
+      element: <OnBoarding />,
+    },
+    {
+      path: "/mypage",
+      element: <TestMyPage />,
     },
     {
       path: "/wiki",

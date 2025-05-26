@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Template from '../components/WIKI/template';
 import WikiSearch from '../components/WIKI/WikiSearch';
-import { useParams } from 'react-router-dom';
+import { useParams, Outlet } from 'react-router-dom';
 import axios from "axios";
 import LoadingSpinner from '../components/LoadingSpinner';
 import WikiRecent from '../components/WIKI/WikiRecent';

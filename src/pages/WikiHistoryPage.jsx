@@ -18,7 +18,7 @@ const WikiHistoryPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await apiGetWithToken(`/api/wiki/history?title=${wiki_title}`, navigate);
+        const response = await apiGetWithToken(`/api/v1/wikis/${wiki_title}/history`, navigate);
         console.log(response.status);
         if (response.status === 200) {
           setWikiData(response.data.data); // Set the fetched data
@@ -56,7 +56,7 @@ const WikiHistoryPage = () => {
         return (
           <div key={index}>
             {index < wikiData.length - 1 &&
-              <Template key={index} data={wiki} notFoundFlag={true} history={wiki.time} prevData={wikiData[index + 1]} />
+              <Template key={index} data={wiki} notFoundFlag={true} history={wiki.createdAt} prevData={wikiData[index + 1]} />
             }
           </div>)
       })) : (handleRedirect())}

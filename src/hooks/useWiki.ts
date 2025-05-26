@@ -8,6 +8,7 @@ import {
   WikiSearchParams,
   WikiFormData,
 } from "../types/wiki";
+import { apiGetWithToken, apiWithToken } from "../utils/Api";
 
 export const useWiki = (title?: string) => {
   const [searchParams, setSearchParams] = useState<WikiSearchParams>({
@@ -40,8 +41,8 @@ export const useWiki = (title?: string) => {
     queryKey: ["wiki-history", title],
     queryFn: async () => {
       if (!title) return [];
-      const response = await axios.get(`/api/wiki/${title}/history`);
-      return response.data;
+      const response = await apiGetWithToken(`/api/v1/wikis/${title}/history`);
+      return response.data.data;
     },
     enabled: !!title,
   });

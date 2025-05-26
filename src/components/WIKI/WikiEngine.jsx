@@ -147,14 +147,16 @@ const WikiContent = ({ author, DocTitle, content, notFoundFlag, history, prevCon
   const editButton = (
 
     <div className="flex space-x-4">
-      {accessToken && <>
-        <a href={`/wiki/edit/${DocTitle}`} className='px-4 py-2 text-white bg-gray-600 rounded-md shadow-md hover:bg-gray-700'>
-          수정
-        </a>
+      <>
+        {accessToken &&
+          <a href={`/wiki/edit/${DocTitle}`} className='px-4 py-2 text-white bg-gray-600 rounded-md shadow-md hover:bg-gray-700'>
+            수정
+          </a>
+        }
         <a href={`/wiki/history/${DocTitle}`} className='px-4 py-2 text-white bg-gray-600 rounded-md shadow-md hover:bg-gray-700'>
           수정 내역
         </a>
-      </>}
+      </>
     </div>
   );
 

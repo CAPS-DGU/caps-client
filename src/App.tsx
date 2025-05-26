@@ -28,6 +28,7 @@ import { WikiHistory } from "./components/WIKI/WikiHistory";
 import { WikiCompare } from "./components/WIKI/WikiCompare";
 import TestMyPage from "./pages/TestMyPage.tsx";
 import OnBoarding from "./pages/OnBoarding.tsx";
+import WikiHistoryPage from "./pages/WikiHistoryPage.jsx";
 
 // Types
 interface RouteConfig {
@@ -75,10 +76,6 @@ const App: React.FC = () => {
       path: "/board",
       element: <BoardPage />,
     },
-    // {
-    //   path: "/vote",
-    //   element: <VotePage />,
-    // },
     {
       path: "/login",
       element: <KakaoLogin />,
@@ -108,14 +105,14 @@ const App: React.FC = () => {
           element: <WikiEditor />,
         },
         {
-          path: "history/:wiki_title",
-          element: <WikiHistory />,
-        },
-        {
           path: "compare/:wiki_title/:version",
           element: <WikiCompare />,
         },
       ],
+    },
+    {
+      path: "/wiki/history/:wiki_title",
+      element: <WikiHistoryPage />,
     },
     {
       path: "*",

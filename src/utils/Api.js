@@ -16,7 +16,7 @@ export async function apiWithToken(method, path, data, navigate) {
   try {
     const response = await axios({
       method: method,
-      url: `${import.meta.env.VITE_API_URL}${path}`,
+      url: `${import.meta.env.VITE_API_HOST}${path}`,
       data: data,
       withCredentials: true,
       headers: {

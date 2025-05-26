@@ -134,7 +134,7 @@ const App: React.FC = () => {
         <BrowserRouter>
           <div className="min-h-screen bg-gray-50">
             <NavBar />
-            <main className="pt-16">
+            <main className="">
               <Routes>{renderRoutes(routes)}</Routes>
             </main>
           </div>

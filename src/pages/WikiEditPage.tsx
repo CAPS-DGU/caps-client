@@ -2,13 +2,13 @@ import React, { useEffect } from 'react';
 import WikiEditor from '../components/WIKI/WikiEditor';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { apiGetWithToken, apiPatchWithToken, apiPostWithToken } from '../utils/Api';
+import { apiGetWithToken, apiPatchWithToken } from '../utils/Api';
 import { useNavigate } from 'react-router-dom';
 
 const WikiEditPage = () => {
   const { wiki_title } = useParams();
   const [content, setContent] = useState({ "title": wiki_title, "content": "" });
-  const [Error, setError] = useState(null);
+  const [Error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);    // For loading state
   const navigate = useNavigate();
 
@@ -16,10 +16,8 @@ const WikiEditPage = () => {
     const fetchData = async () => {
       try {
         const response = await apiGetWithToken(`/api/v1/wikis/${wiki_title}`, navigate);
-        console.log(response);
 
-
-        if (response.status === 200) {
+        if (response?.status === 200) {
           setContent({ "title": wiki_title, "content": response.data.data.content });
           setError(null);
           console.log(content);
@@ -36,7 +34,7 @@ const WikiEditPage = () => {
     if (wiki_title) {
       fetchData();
     } else {
-      setContent({ "title": wiki_title, "content": response.data.data })
+      setContent({ "title": wiki_title, "content": "" })
       setLoading(false);
     }
   }, [wiki_title]);
@@ -50,10 +48,9 @@ const WikiEditPage = () => {
     console.log(content);
 
     try {
-      const response = await apiPatchWithToken(`/api/v1/wikis/${wiki_title}`, { "title": content.title, "content": newContent }, navigate);
+      const response = await apiPatchWithToken("/api/v1/wikis", { "title": content.title, "content": newContent }, navigate);
 
-      console.log(response.status);
-      if (response.status === 200) {
+      if (response?.status === 200) {
 
         alert("내용이 저장되었습니다.");
         navigate(`/wiki/${wiki_title}`);

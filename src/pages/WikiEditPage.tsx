@@ -17,7 +17,7 @@ const WikiEditPage = () => {
       try {
         const response = await apiGetWithToken(`/api/v1/wikis/${wiki_title}`, navigate);
 
-        if (response?.status === 200) {
+        if (response.status === 200) {
           setContent({ "title": wiki_title, "content": response.data.data.content });
           setError(null);
           console.log(content);
@@ -50,10 +50,11 @@ const WikiEditPage = () => {
     try {
       const response = await apiPatchWithToken("/api/v1/wikis", { "title": content.title, "content": newContent }, navigate);
 
-      if (response?.status === 200) {
-
+      if (response.status === 200) {
         alert("내용이 저장되었습니다.");
         navigate(`/wiki/${wiki_title}`);
+      } else {
+        alert("내용 저장에 실패했습니다.");
       }
     }
     catch (e) {

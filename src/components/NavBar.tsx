@@ -75,9 +75,9 @@ function Navbar() {
           <div className="relative">
             {isLoggedIn ? (
               <Link
-                to="/mypage"
+                to="#"
                 className="text-white hover:text-gray-400"
-                onMouseEnter={() => toggleDropdown(4)}
+                onClick={() => { dropdownOpen == null ? toggleDropdown(4) : closeDropdown() }}
               >
                 {user &&
                   <>{user.member.grade}기 {user.member.name}님 환영합니다!</>
@@ -100,6 +100,13 @@ function Navbar() {
                 >
                   LOGOUT
                 </Link>
+                <Link
+                  to="/mypage"
+                  className="block px-4 py-2 text-xs text-gray-800 hover:bg-gray-200"
+                >
+                  마이페이지
+                </Link>
+
               </div>
             )}
           </div>

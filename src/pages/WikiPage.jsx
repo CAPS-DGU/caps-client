@@ -6,17 +6,6 @@ import axios from "axios";
 import LoadingSpinner from '../components/LoadingSpinner';
 import WikiRecent from '../components/WIKI/WikiRecent';
 
-const wikiIntroData = {
-  "title": "대문",
-  "content": `[[CAPS 위키]]에 오신 것을 환영합니다!
-[[CAPS]] 회원이라면 원하는 문서를 생성 및 편집할 수 있습니다.
-더 자세한 내용은 [[CAPS 위키]], [[도움말]]을 참고하시기 바랍니다.
-
-<div class="bg-gray-200 p-4 border-2 border-gray-300 rounded-xl">||[[도움말]] || CAPS 위키를 어떻게 써야할 지 모르겠다면 도움말을 클릭하세요!</div>
-<div class="bg-gray-200 p-4 border-2 border-gray-300 rounded-xl ">||[[CAPS 위키 프로젝트]] 진행 중!! || 프로젝트에 참여해서 관련 문서에 기여의 손길을 보내주세요!</div>
-<div class="bg-gray-200 p-4 border-2 border-gray-300 rounded-xl">||[[C언어 프로젝트]] 진행 중!! || 2024-여름학기 동안 C언어 및 여러가지 위키 페이지를 작성하고 수정하고 싶습니다! 같이 하실분 구해요~</div>
-`
-};
 
 const IntroducePage = () => {
   const { wiki_title } = useParams();
@@ -31,9 +20,9 @@ const IntroducePage = () => {
   const [loading, setLoading] = useState(true);    // For loading state
   // let template =  <Template data={wikiData} />
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = async (title) => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_HOST}/api/v1/wikis/${wiki_title}`);
+        const response = await axios.get(`${import.meta.env.VITE_API_HOST}/api/v1/wikis/${title}`);
         if (response.status === 200) {
           setWikiData(response.data.data); // Set the fetched data
           setError(null);
@@ -47,11 +36,9 @@ const IntroducePage = () => {
       }
     };
     if (wiki_title) {
-      fetchData();  // Fetch only if wiki_title is present
+      fetchData(wiki_title);  // Fetch only if wiki_title is present
     } else {
-      // If no title, show intro data
-      setWikiData(wikiIntroData);
-      setLoading(false);  // Stop loading
+      fetchData("대문");
     }
   }, [wiki_title]);
   if (loading) return <LoadingSpinner />;  // Show loading state

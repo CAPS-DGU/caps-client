@@ -21,14 +21,13 @@ import NavBar from "./components/NavBar.tsx";
 
 // Wiki Components
 import { WikiContent } from "./components/WIKI/WikiContent";
-import { WikiEditor } from "./components/WIKI/WikiEditor.tsx";
-import WikiSearch from "./components/WIKI/WikiSearch";
 import { WikiHistory } from "./components/WIKI/WikiHistory";
 import { WikiCompare } from "./components/WIKI/WikiCompare";
 import OnBoarding from "./pages/OnBoarding.tsx";
 import WikiHistoryPage from "./pages/WikiHistoryPage.jsx";
 import { UserProvider } from "./contexts/UserContext.tsx";
 import MyPage from "./pages/MyPage.tsx";
+import WikiEditPage from "./pages/WikiEditPage.jsx";
 
 // Types
 interface RouteConfig {
@@ -93,26 +92,18 @@ const App: React.FC = () => {
       element: <WikiPage />,
       children: [
         {
-          path: "",
-          element: <WikiSearch />,
-        },
-        {
           path: ":wiki_title",
           element: <WikiContent />,
-        },
-        {
-          path: "edit/:wiki_title",
-          element: <WikiEditor />,
-        },
-        {
-          path: "compare/:wiki_title/:version",
-          element: <WikiCompare />,
         },
       ],
     },
     {
       path: "/wiki/history/:wiki_title",
       element: <WikiHistoryPage />,
+    },
+    {
+      path: "/wiki/edit/:wiki_title",
+      element: <WikiEditPage />,
     },
     {
       path: "*",

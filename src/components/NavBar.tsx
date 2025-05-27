@@ -1,31 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태 관리
   const [profileName, setProfileName] = useState(""); // 프로필 이름 관리
   const location = useLocation();
   const navigate = useNavigate();
-  useEffect(() => {
-    // localStorage에서 로그인 상태 확인
-    const token = localStorage.getItem("accessToken");
-    const name = localStorage.getItem("profilename");
 
-    if (token && name) {
-      setIsLoggedIn(true);
-      setProfileName(name);
-    } else {
-      setIsLoggedIn(false); // 토큰이 없으면 로그인 상태를 false로 설정
-    }
-  }, [location]); // location을 의존성 배열에 추가
+  const { user, isLoggedIn, isLoading, error, checkLoginStatus, manualLogout } = useAuth();
+
   const toggleDropdown = (index) => {
     setDropdownOpen(dropdownOpen === index ? null : index);
   };
   const Logout = () => {
-    localStorage.clear();
-    setIsLoggedIn(false); // 로그인 상태를 false로 업데이트
+    manualLogout(); // useAuth 훅에서 제공하는 로그아웃 함수 호출
     window.location.reload(); // 페이지를 새로고침
   };
   const closeDropdown = () => {
@@ -68,7 +58,7 @@ function Navbar() {
         </div>
 
         {/* Menu Items for Desktop */}
-        <div className="justify-center hidden mt-4 space-x-6 md:flex">
+        <div className="justify-center mt-4 space-x-6 flex">
           <div className="relative">
             <a href="/wiki" className="text-white hover:text-gray-400">
               캡스위키
@@ -83,7 +73,9 @@ function Navbar() {
                 className="text-white hover:text-gray-400"
                 onMouseEnter={() => toggleDropdown(4)}
               >
-                {profileName}님 환영합니다!
+                {user &&
+                  <>{user.member.grade}기 {user.member.name}님 환영합니다!</>
+                }
               </a>
             ) : (
               <a
@@ -104,42 +96,6 @@ function Navbar() {
                   LOGOUT
                 </a>
               </div>
-            )}
-          </div>
-        </div>
-
-        <div className="flex flex-col items-center mt-4 space-y-2 md:hidden">
-          <div className="relative">
-            <a href="/wiki" className="text-white hover:text-gray-400">
-              캡스위키
-            </a>
-          </div>
-          <div className="relative">
-            {isLoggedIn ? (
-              <a href="/mypage" className="text-white hover:text-gray-400">
-                {profileName}님 환영합니다!
-              </a>
-            ) : (
-              <a
-                href="/login"
-                onClick={loginSession}
-                className="text-white hover:text-gray-400"
-              >
-                LOGIN
-              </a>
-            )}
-          </div>
-          <div className="relative">
-            {isLoggedIn ? (
-              <a
-                href="#"
-                className="text-white hover:text-gray-400"
-                onClick={Logout}
-              >
-                LOGOUT
-              </a>
-            ) : (
-              ""
             )}
           </div>
         </div>

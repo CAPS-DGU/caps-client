@@ -1,10 +1,13 @@
+@import url("//fonts.googleapis.com/earlyaccess/notosanskr.css");
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   body {
-    font-family: 'pretendard', sans-serif;
+    font-family: "pretendard", sans-serif;
     font-size: 16px;
     line-height: 1.5;
     color: #333;
@@ -52,8 +55,6 @@
   display: block; /* 마우스를 올렸을 때 표시 */
 }
 
-
-
 .marquee {
   overflow: hidden;
   position: relative;
@@ -92,10 +93,3 @@
     transform: translateX(0%);
   }
 }
-
-
-
-@import url('//fonts.googleapis.com/earlyaccess/notosanskr.css');
-
-
-@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");

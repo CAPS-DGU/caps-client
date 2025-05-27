@@ -11,6 +11,12 @@ export async function apiPostWithToken(path, data, navigate) {
   return await apiWithToken('post', path, data, navigate);
 }
 
+export async function apiPatchWithToken(path, data, navigate) {
+  return await apiWithToken('patch', path, data, navigate);
+}
+
+
+
 
 export async function apiWithToken(method, path, data, navigate) {
   try {

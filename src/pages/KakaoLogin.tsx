@@ -10,31 +10,6 @@ interface LoginErrors {
 }
 
 const LoginPage: React.FC = () => {
-  const [id, setId] = useState("");
-  const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState<LoginErrors>({});
-
-  const loginFunction = async () => {
-    try {
-      const response = await axios.post("/api/auth/login", {
-        userId: id,
-        password: password,
-      });
-      if (response.status === 200) {
-        localStorage.setItem("accessToken", response.data.accessToken);
-        localStorage.setItem("refreshToken", response.data.refreshToken);
-        window.location.href = "/";
-      }
-    } catch (err) {
-      if (axios.isAxiosError(err) && err.response) {
-        alert(err.response.data.details);
-      }
-      throw err;
-    }
-  };
-
-
-
 
   return (
     <div className="flex items-center justify-center h-screen-temp">
@@ -45,7 +20,7 @@ const LoginPage: React.FC = () => {
         <img
           src={kakaologinbutton}
           alt="Kakao Login"
-          className="h-16"
+          className="h-16 mt-20"
         />
       </button>
     </div>

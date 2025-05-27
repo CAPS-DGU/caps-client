@@ -42,7 +42,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     const fetchUserData = async () => {
       setIsLoading(true);
       try {
-        const response = await apiGetWithToken('/api/v1/member/me');
+        const response = await apiGetWithToken('/api/v1/members/me');
         if (response && response.data) {
           setUser(response.data.data);
         } else {

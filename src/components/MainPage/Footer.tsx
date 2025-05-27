@@ -11,12 +11,12 @@ function Footer() {
 
         {/* 인스타/링크트리/문의하기 */}
         <div className="flex items-center justify-center gap-12 text-gray-200 text-lg mb-8">
-          <a href="#" className="flex items-center gap-2 hover:text-blue-300 transition">
+          <a href="https://www.instagram.com/caps_dongguk" className="flex items-center gap-2 hover:text-blue-300 transition">
             {/* instagram icon */}
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="2 2 20 20" className="w-6 h-6" stroke="currentColor"><rect width="16" height="16" x="4" y="4" rx="4" stroke="#ccc" strokeWidth="2" /><circle cx="12" cy="12" r="4" stroke="#ccc" strokeWidth="2" /><circle cx="16.5" cy="7.5" r="1.5" fill="#ccc" /></svg>
             공식 인스타그램
           </a>
-          <a href="#" className="flex items-center gap-2 hover:text-blue-300 transition">
+          <a href="https://linktr.ee/dgu_caps" className="flex items-center gap-2 hover:text-blue-300 transition">
             {/* linktree icon */}
             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" className="w-6 h-6" viewBox="0 0 22 22"><path d="M11 19V3m0 0L6 8m5-5 5 5" stroke="#ccc" /><path d="M7 13l4 6 4-6" stroke="#ccc" /></svg>
             링크트리

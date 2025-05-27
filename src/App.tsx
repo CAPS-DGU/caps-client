@@ -14,7 +14,6 @@ import RulePage from "./pages/RulePage";
 import ExecutivePage from "./pages/ExecutivePage";
 import HomepagePage from "./pages/HomepagePage";
 import BoardPage from "./pages/BoardPage";
-import VotePage from "./pages/VotePage";
 import KakaoLogin from "./pages/KakaoLogin";
 
 // Components
@@ -26,9 +25,10 @@ import { WikiEditor } from "./components/WIKI/WikiEditor.tsx";
 import WikiSearch from "./components/WIKI/WikiSearch";
 import { WikiHistory } from "./components/WIKI/WikiHistory";
 import { WikiCompare } from "./components/WIKI/WikiCompare";
-import TestMyPage from "./pages/TestMyPage.tsx";
 import OnBoarding from "./pages/OnBoarding.tsx";
 import WikiHistoryPage from "./pages/WikiHistoryPage.jsx";
+import { UserProvider } from "./contexts/UserContext.tsx";
+import MyPage from "./pages/MyPage.tsx";
 
 // Types
 interface RouteConfig {
@@ -86,7 +86,7 @@ const App: React.FC = () => {
     },
     {
       path: "/mypage",
-      element: <TestMyPage />,
+      element: <MyPage />,
     },
     {
       path: "/wiki",
@@ -132,12 +132,14 @@ const App: React.FC = () => {
     <QueryClientProvider client={queryClient}>
       <ConfigProvider locale={koKR}>
         <BrowserRouter>
-          <div className="min-h-screen bg-gray-50">
-            <NavBar />
-            <main className="">
-              <Routes>{renderRoutes(routes)}</Routes>
-            </main>
-          </div>
+          <UserProvider>
+            <div className="min-h-screen bg-gray-50">
+              <NavBar />
+              <main className="">
+                <Routes>{renderRoutes(routes)}</Routes>
+              </main>
+            </div>
+          </UserProvider>
         </BrowserRouter>
       </ConfigProvider>
     </QueryClientProvider>

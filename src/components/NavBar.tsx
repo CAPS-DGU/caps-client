@@ -1,15 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import logo from '../assets/logo-bright.png';
+import { Link } from "react-router-dom";
+
 function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState(null);
-  const [profileName, setProfileName] = useState(""); // 프로필 이름 관리
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { user, isLoggedIn, isLoading, error, checkLoginStatus, manualLogout } = useAuth();
+  const { user, completeRegistration, isLoggedIn, isLoading, error, checkLoginStatus, manualLogout } = useAuth();
+
+  useEffect(() => {
+    if (!completeRegistration && isLoggedIn) {
+      navigate("/onboarding")
+    }
+  }, [user]);
 
   const toggleDropdown = (index) => {
     setDropdownOpen(dropdownOpen === index ? null : index);
@@ -40,61 +48,58 @@ function Navbar() {
   const toggleMobileDropdown = (index) => {
     setMobileDropdownOpen(mobileDropdownOpen === index ? null : index);
   };
-  const login = () => {
-    navigate("/login", { state: { from: location } });
-  };
+
   return (
     <nav className="p-4 bg-black">
       <div className="container mx-auto">
         {/* Logo */}
         <div className="flex justify-center">
-          <a href="/wiki" className="block">
+          <Link to="/" className="block">
             <img
-              src="/new-club-logo-white-small.png"
+              src={logo}
               alt="Logo"
               className="h-12 mx-auto"
             />
-          </a>
+          </Link>
         </div>
 
         {/* Menu Items for Desktop */}
         <div className="justify-center mt-4 space-x-6 flex">
           <div className="relative">
-            <a href="/wiki" className="text-white hover:text-gray-400">
+            <Link to="/wiki" className="text-white hover:text-gray-400">
               캡스위키
-            </a>
+            </Link>
           </div>
 
           {/*로그인*/}
           <div className="relative">
             {isLoggedIn ? (
-              <a
-                href="/mypage"
+              <Link
+                to="/mypage"
                 className="text-white hover:text-gray-400"
                 onMouseEnter={() => toggleDropdown(4)}
               >
                 {user &&
                   <>{user.member.grade}기 {user.member.name}님 환영합니다!</>
                 }
-              </a>
+              </Link>
             ) : (
-              <a
-                href="#"
-                onClick={login}
+              <Link
+                to="/login"
                 className="text-white hover:text-gray-400"
               >
                 LOGIN
-              </a>
+              </Link>
             )}
             {dropdownOpen === 4 && (
               <div className="absolute z-50 w-40 py-2 mt-2 bg-white rounded-lg shadow-xl">
-                <a
-                  href="#"
+                <Link
+                  to="#"
                   className="block px-4 py-2 text-xs text-gray-800 hover:bg-gray-200"
                   onClick={Logout}
                 >
                   LOGOUT
-                </a>
+                </Link>
               </div>
             )}
           </div>

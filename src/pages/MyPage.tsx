@@ -1,48 +1,14 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { User } from "../types/common";
+import { useAuth } from "../hooks/useAuth";
+import { useUser } from "../contexts/UserContext";
 
-interface MyPageProps {}
+interface MyPageProps { }
 
 const MyPage: React.FC<MyPageProps> = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { user, isAuthenticated, isLoading, logout, login } = useUser();
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const token = localStorage.getItem("accessToken");
-        if (!token) {
-          throw new Error("로그인이 필요합니다.");
-        }
 
-        const response = await axios.get<User>("/api/user", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        setUser(response.data);
-        setError(null);
-      } catch (err) {
-        if (axios.isAxiosError(err) && err.response) {
-          setError(
-            err.response.data.message ||
-              "사용자 정보를 불러오는데 실패했습니다."
-          );
-        } else {
-          setError("알 수 없는 오류가 발생했습니다.");
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUserData();
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
         Loading...
@@ -50,13 +16,6 @@ const MyPage: React.FC<MyPageProps> = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="p-4 text-red-500 bg-red-100 rounded-lg">{error}</div>
-      </div>
-    );
-  }
 
   if (!user) {
     return (
@@ -82,9 +41,9 @@ const MyPage: React.FC<MyPageProps> = () => {
 
         <div className="mb-4">
           <label className="block mb-2 text-sm font-bold text-gray-700">
-            아이디
+            기수
           </label>
-          <p className="p-2 bg-gray-100 rounded">{user.id}</p>
+          <p className="p-2 bg-gray-100 rounded">{user.grade}</p>
         </div>
 
         <div className="mb-4">
@@ -96,16 +55,16 @@ const MyPage: React.FC<MyPageProps> = () => {
 
         <div className="mb-4">
           <label className="block mb-2 text-sm font-bold text-gray-700">
-            기수
+            전화번호
           </label>
-          <p className="p-2 bg-gray-100 rounded">{user.grade}</p>
+          <p className="p-2 bg-gray-100 rounded">{user.phoneNumber}</p>
         </div>
 
         <div className="mb-4">
           <label className="block mb-2 text-sm font-bold text-gray-700">
-            역할
+            학번
           </label>
-          <p className="p-2 bg-gray-100 rounded">{user.role}</p>
+          <p className="p-2 bg-gray-100 rounded">{user.studentNumber}</p>
         </div>
       </div>
     </div>

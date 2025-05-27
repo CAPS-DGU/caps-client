@@ -20,7 +20,7 @@ const WikiSearch = () => {
   };
 
   return (
-    <form onSubmit={handleSearch} className="max-w-md mx-auto mt-6 mb-6">
+    <form onSubmit={handleSearch} className="max-w-lg mx-auto mt-6 mb-6">
       <div className="flex">
         <input
           type="text"

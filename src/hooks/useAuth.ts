@@ -16,6 +16,7 @@ interface UserAuthMe {
 export function useAuth() {
   const [user, setUser] = useState<UserAuthMe | null>(null);        // 로그인한 사용자 정보
   const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태
+  const [completeRegistration, setCompleteRegistration] = useState(false);
   const [isLoading, setIsLoading] = useState(true);   // 로딩 상태 (초기에는 true로 설정)
   const [error, setError] = useState(null);         // 에러 상태
 
@@ -26,6 +27,7 @@ export function useAuth() {
       const response = await apiGetWithToken('/api/v1/auth/me');
       if (response && response.data) { // response.data.data 대신 response.data 로 수정 (API 응답 구조에 따라 다름)
         setUser(response.data.data);
+        setCompleteRegistration(response.data.data.registrationComplete);
         setIsLoggedIn(true);
       } else {
         // API는 성공했으나, 데이터가 없는 경우        
@@ -67,6 +69,7 @@ export function useAuth() {
 
   return {
     user,
+    completeRegistration,
     isLoggedIn,
     isLoading,
     error,

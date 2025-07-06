@@ -80,7 +80,7 @@ const WikiSearch = () => {
               onClick={() => {
                 setQuery(result.title);
                 setAutocompleteResults([]);
-                navigate(`/wiki/${result.title.replace(/ /g, '+')}`);
+                navigate(`/wiki/${result.title}`);
               }}
             >
               {result.title}

@@ -313,7 +313,7 @@ const MainPage = () => {
           </div>
             <div className="w-full overflow-hidden py-16">
             <div className="flex animate-scroll space-x-8">
-              {Array(6).fill(null).map((_, index) => (
+              {Array(12).fill(null).map((_, index) => (
                 <img 
                   key={index}
                   src={index % 3 === 0 ? poster1 : index % 3 === 1 ? poster2 : poster3} 

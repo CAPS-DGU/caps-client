@@ -1,13 +1,12 @@
 import React from 'react';
+import logoBright from '../../assets/logo-bright.png';
 
 function Footer() {
   return (
     <>
       <footer className="bg-[#333] py-16 w-full flex flex-col items-center">
         {/* CAPs 로고 */}
-        <div className="text-[2.5rem] font-bold text-[#8FC3DF] font-mono tracking-widest mb-6" style={{ fontFamily: 'Orbitron, Pretendard, sans-serif' }}>
-          CAPS
-        </div>
+        <img src={logoBright} alt="CAPS Logo" className="w-24 mb-6" />
 
         {/* 인스타/링크트리/문의하기 */}
         <div className="flex items-center justify-center gap-12 text-gray-200 text-lg mb-8">
@@ -25,6 +24,14 @@ function Footer() {
             {/* mail icon */}
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="2 2 20 20" stroke="currentColor" className="w-6 h-6"><rect width="16" height="12" x="4" y="6" rx="2" stroke="#ccc" strokeWidth="2" /><path d="m6 8 6 6 6-6" stroke="#ccc" strokeWidth="2" /></svg>
             문의하기
+          </a>
+
+          <a href="#" className="flex items-center gap-2 hover:text-blue-300 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 28 28" className="w-7 h-7" stroke="currentColor">
+              <circle cx="14" cy="14" r="12" stroke="#ccc" strokeWidth="2" fill="none"/>
+              <text x="14" y="19" textAnchor="middle" fontSize="16" fill="#ccc" fontFamily="Arial" fontWeight="bold">?</text>
+            </svg>
+            자주 묻는 질문
           </a>
         </div>
 

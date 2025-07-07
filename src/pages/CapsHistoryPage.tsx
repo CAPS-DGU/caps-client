@@ -65,7 +65,7 @@ const Timeline = () => (
 
 const CapsHistoryPage: React.FC = () => {
   return (
-    <div className="bg-[#F8FAFF] min-h-screen">
+    <div className="bg-[#FAFAFA] min-h-screen">
       <Navbar />
       <div className="max-w-3xl mx-auto pb-20">
         <div className="pt-20 pb-8 text-center">

@@ -133,17 +133,17 @@ const MainPage = () => {
           />
 
           {/* 오버레이(그라디언트) */}
-          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-black/80 z-10" />
+          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-black/90 z-10" />
 
           {/* 텍스트 레이어 */}
-          <div className="relative z-20 flex flex-col items-start px-10">
+          <div className="relative z-20 flex flex-col items-start">
             {/* <span className="text-6xl font-bold text-blue-200" style={{ fontFamily: 'Russo One, sans-serif' }}>CAPS</span> */}
             <img
               src={logoBright}
               alt="CAPS Logo"
               className="w-48 mb-4" />
             <span className="mt-4 text-2xl font-medium text-white">Computer Aided Progressive Study</span>
-            <span className="mt-2 text-base text-white">
+            <span className="mt-2 text-medium text-white">
               1988년 창설된 CAPS는 프로그래밍에 관심이 있는 누구나 재밌게 배울 수 있는 동아리입니다
             </span>
           </div>
@@ -161,7 +161,7 @@ const MainPage = () => {
           viewport={{ once: true, amount: 0.3 }}
           className="w-full snap-start min-h-screen flex flex-col justify-center items-center"
         >
-          <div className="flex flex-col items-center w-full pt-8 pb-20 bg-white">
+          <div className="flex flex-col items-center w-full pt-8">
             {/* CAPS 텍스트 로고 */}
             <div className="flex items-baseline mb-3">
               {/* <span */}
@@ -186,14 +186,22 @@ const MainPage = () => {
               <span className="text-7xl font-[NotoSansKR] text-gray-300 leading-none mb-4">”</span>
             </div>
           </div>
+          </motion.div>
 
-          <div className="bg-gray-100 w-full py-16 px-2">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+            viewport={{ once: true, amount: 0.3 }}
+            className="w-full snap-start min-h-screen flex flex-col justify-center items-center bg-gray-100"
+          >
+          <div className="w-full py-16 px-2">
             <div className="max-w-6xl mx-auto flex flex-col items-center">
 
               <div className="text-xl font-[Pretendard] font-semibold text-gray-500 mb-4">
                 1988년부터 시작 되어 39년의 역사를 가진 캡스는 현재
               </div>
-              <div className="text-3xl font-[Pretendard] font-bold md:text-4xl font-bold text-gray-800 mb-10 text-center">
+              <div className="text-3xl font-[Pretendard] font-bold md:text-3xl font-bold text-gray-800 mb-10 text-center">
                 2025년 1학기 기준 <span className="text-blue-500">{departments.length}</span> 개의 학과, 총 <span className="text-blue-600">243</span> 명의 학우와 함께하고 있습니다.
               </div>
 
@@ -325,7 +333,7 @@ const MainPage = () => {
           className="w-full snap-start min-h-screen py-24 flex flex-col justify-center items-center"
         >
           {/* 메인 메시지 */}
-          <div className="text-[2rem] md:text-[2.5rem] font-extrabold text-gray-800 text-center mb-4">
+          <div className="text-2xl md:text-3xl font-extrabold text-gray-800 text-center mb-4">
             캡스의 프로그래밍 꿈나무가 되어 1987년의 역사를 이어가주세요.
           </div>
           {/* 서브 메시지 */}

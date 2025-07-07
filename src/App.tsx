@@ -28,6 +28,8 @@ import WikiHistoryPage from "./pages/WikiHistoryPage.jsx";
 import { UserProvider } from "./contexts/UserContext.tsx";
 import MyPage from "./pages/MyPage.tsx";
 import WikiEditPage from "./pages/WikiEditPage.jsx";
+import AboutUs from "./pages/AboutUsPage.tsx";
+import CapsHistoryPage from "./pages/CapsHistoryPage.tsx";
 
 // Types
 interface RouteConfig {
@@ -56,8 +58,16 @@ const App: React.FC = () => {
       element: <IntroPage />,
     },
     {
+      path: "/aboutus",
+      element: <AboutUs />,
+    },
+    {
       path: "/history",
       element: <HistoryPage />,
+    },
+    {
+      path: "/caps-history",
+      element: <CapsHistoryPage />,
     },
     {
       path: "/rule",
@@ -125,7 +135,7 @@ const App: React.FC = () => {
         <BrowserRouter>
           <UserProvider>
             <div className="min-h-screen bg-gray-50">
-              <NavBar />
+              {/* <NavBar /> */}
               <main className="">
                 <Routes>{renderRoutes(routes)}</Routes>
               </main>

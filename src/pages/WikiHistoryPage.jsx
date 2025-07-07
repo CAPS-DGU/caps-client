@@ -5,6 +5,8 @@ import { useParams } from 'react-router-dom';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { apiGetWithToken } from '../utils/Api';
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../components/NavBar';
+import Footer from '../components/MainPage/Footer';
 
 
 const WikiHistoryPage = () => {
@@ -50,6 +52,8 @@ const WikiHistoryPage = () => {
   return (
 
     <div>
+      <Navbar />
+      <div className="pb-20"></div>
       <WikiSearch></WikiSearch>
 
       {wikiData && !error ? (wikiData.map((wiki, index) => {
@@ -60,6 +64,7 @@ const WikiHistoryPage = () => {
             }
           </div>)
       })) : (handleRedirect())}
+      <Footer />
     </div >
   );
 };

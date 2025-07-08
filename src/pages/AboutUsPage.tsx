@@ -6,7 +6,7 @@ import Footer from "../components/MainPage/Footer";
 const executives = [
   {
     role: "회장",
-    name: "37기 신효관",
+    name: "37기 신효환",
     position: "컴퓨터AI학부",
     img: profileImg,
   },

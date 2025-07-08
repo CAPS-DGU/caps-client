@@ -30,6 +30,7 @@ import MyPage from "./pages/MyPage.tsx";
 import WikiEditPage from "./pages/WikiEditPage.jsx";
 import AboutUs from "./pages/AboutUsPage.tsx";
 import CapsHistoryPage from "./pages/CapsHistoryPage.tsx";
+import FAQPage from "./pages/FAQPage.tsx";
 
 // Types
 interface RouteConfig {
@@ -52,6 +53,10 @@ const App: React.FC = () => {
     {
       path: "/",
       element: <MainPage />,
+    },
+    {
+      path: "/faq",
+      element: <FAQPage />,
     },
     {
       path: "/intro",

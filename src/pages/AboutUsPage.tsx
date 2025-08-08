@@ -23,17 +23,6 @@ const departments = [
     tab: "학술부",
     members: [
       {
-        name: "38기 손한솔",
-        position: "컴퓨터AI학부",
-        img: profileImg,
-        isLeader: true,
-      },
-      {
-        name: "38.5기 안재준",
-        position: "컴퓨터AI학부",
-        img: profileImg,
-      },
-      {
         name: "38.5기 이강민",
         position: "데이터사이언스전공",
         img: profileImg,
@@ -48,28 +37,117 @@ const departments = [
         position: "융합보안학과",
         img: profileImg,
       },
+    ],
+  },
+  {
+    tab: "기획부",
+    members: [
       {
-        name: "38.5기 이은서",
+        name: "38.5기 유태규",
+        position: "컴퓨터AI학부",
+        img: profileImg,
+      },
+      {
+        name: "38.5기 정율",
+        position: "컴퓨터AI학부",
+        img: profileImg,
+      },
+      {
+        name: "38.5기 정민재",
+        position: "컴퓨터AI학부",
+        img: profileImg,
+      },
+      {
+        name: "38.5기 강지원",
+        position: "컴퓨터AI학부",
+        img: profileImg,
+      },
+      {
+        name: "38.5기 노혜륜",
+        position: "컴퓨터AI학부",
+        img: profileImg,
+      },
+      {
+        name: "38.5기 김동원",
         position: "컴퓨터AI학부",
         img: profileImg,
       },
     ],
   },
   {
-    tab: "기획부",
-    members: [],
-  },
-  {
     tab: "총무부",
-    members: [],
+    members: [
+      {
+        name: "38.5기 박재관",
+        position: "컴퓨터AI학부",
+        img: profileImg,
+      },
+      {
+        name: "38.5기 한병헌",
+        position: "컴퓨터AI학부",
+        img: profileImg,
+      },
+    ],
   },
   {
     tab: "편집부",
-    members: [],
+    members: [
+      {
+        name: "38.5기 김승우",
+        position: "컴퓨터AI학부",
+        img: profileImg,
+      },
+      {
+        name: "38.5기 강성찬",
+        position: "컴퓨터AI학부",
+        img: profileImg,
+      },
+      {
+        name: "38.5기 윤민재",
+        position: "컴퓨터AI학부",
+        img: profileImg,
+      },
+    ],
+  },
+  {
+    tab: "대외협력부",
+    members: [
+      {
+        name: "38.5기 방지원",
+        position: "컴퓨터AI학부",
+        img: profileImg,
+      },
+      {
+        name: "38.5기 이은서",
+        position: "컴퓨터AI학부",
+        img: profileImg,
+      },
+      {
+        name: "38.5기 박주영",
+        position: "컴퓨터AI학부",
+        img: profileImg,
+      },
+    ],
   },
   {
     tab: "홈페이지 관리부",
-    members: [],
+    members: [
+      {
+        name: "38.5기 김다인",
+        position: "컴퓨터AI학부",
+        img: profileImg,
+      },
+      {
+        name: "38.5기 원종인",
+        position: "컴퓨터AI학부",
+        img: profileImg,
+      },
+      {
+        name: "38.5기 장준혁",
+        position: "컴퓨터AI학부",
+        img: profileImg,
+      },
+    ],
   },
 ];
 
@@ -81,9 +159,9 @@ const AboutUs: React.FC = () => {
       <Navbar />
       <div className="pt-20 max-w-4xl mx-auto pb-20">
         <div className="text-center mt-8">
-          <div className="text-xs text-gray-400 mb-1">제 ??대 집행부</div>
+          <div className="text-xs text-gray-400 mb-1">제 38.5대 집행부</div>
           <div className="text-lg font-bold mb-2">
-            ???????? 를 추구하는 머시기 집행부를 소개합니다!
+            모두가 참여할 수 있는 활동을 추구하는 집행부를 소개합니다!
           </div>
         </div>
         {/* 회장/부회장 */}

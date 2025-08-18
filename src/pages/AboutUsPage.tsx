@@ -43,23 +43,23 @@ const departments = [
     tab: "기획부",
     members: [
       {
-        name: "38.5기 유태규",
-        position: "컴퓨터AI학부",
+        name: "38기 유태규",
+        position: "컴퓨터공학전공",
         img: profileImg,
       },
       {
         name: "38.5기 정율",
+        position: "경영정보학과",
+        img: profileImg,
+      },
+      {
+        name: "39기 정민재",
         position: "컴퓨터AI학부",
         img: profileImg,
       },
       {
-        name: "38.5기 정민재",
-        position: "컴퓨터AI학부",
-        img: profileImg,
-      },
-      {
-        name: "38.5기 강지원",
-        position: "컴퓨터AI학부",
+        name: "39기 강지원",
+        position: "에너지신소재공학과",
         img: profileImg,
       },
       {
@@ -68,8 +68,8 @@ const departments = [
         img: profileImg,
       },
       {
-        name: "38.5기 김동원",
-        position: "컴퓨터AI학부",
+        name: "37기 김동원",
+        position: "멀티미디어소프트웨어공학전공",
         img: profileImg,
       },
     ],
@@ -78,13 +78,13 @@ const departments = [
     tab: "총무부",
     members: [
       {
-        name: "38.5기 박재관",
+        name: "39기 박재관",
         position: "컴퓨터AI학부",
         img: profileImg,
       },
       {
-        name: "38.5기 한병헌",
-        position: "컴퓨터AI학부",
+        name: "34기 한병헌",
+        position: "정보통신공학과",
         img: profileImg,
       },
     ],
@@ -93,17 +93,17 @@ const departments = [
     tab: "편집부",
     members: [
       {
-        name: "38.5기 김승우",
+        name: "39기 김승우",
+        position: "열린전공학부",
+        img: profileImg,
+      },
+      {
+        name: "39기 강성찬",
         position: "컴퓨터AI학부",
         img: profileImg,
       },
       {
-        name: "38.5기 강성찬",
-        position: "컴퓨터AI학부",
-        img: profileImg,
-      },
-      {
-        name: "38.5기 윤민재",
+        name: "39기 윤민재",
         position: "컴퓨터AI학부",
         img: profileImg,
       },
@@ -113,38 +113,38 @@ const departments = [
     tab: "대외협력부",
     members: [
       {
-        name: "38.5기 방지원",
-        position: "컴퓨터AI학부",
+        name: "37기 방지원",
+        position: "컴퓨터공학전공",
         img: profileImg,
       },
       {
-        name: "38.5기 이은서",
-        position: "컴퓨터AI학부",
+        name: "39기 이은서",
+        position: "전자전기공학부",
         img: profileImg,
       },
       {
         name: "38.5기 박주영",
-        position: "컴퓨터AI학부",
+        position: "컴퓨터공학전공",
         img: profileImg,
       },
     ],
   },
   {
-    tab: "홈페이지 관리부",
+    tab: "홈페이지관리부",
     members: [
       {
-        name: "38.5기 김다인",
-        position: "컴퓨터AI학부",
+        name: "38기 김다인",
+        position: "정보통신공학과",
         img: profileImg,
       },
       {
-        name: "38.5기 원종인",
-        position: "컴퓨터AI학부",
+        name: "37기 원종인",
+        position: "약학과",
         img: profileImg,
       },
       {
-        name: "38.5기 장준혁",
-        position: "컴퓨터AI학부",
+        name: "37기 장준혁",
+        position: "컴퓨터공학전공",
         img: profileImg,
       },
     ],

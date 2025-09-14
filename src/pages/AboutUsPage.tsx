@@ -23,13 +23,13 @@ const departments = [
     tab: "학술부",
     members: [
       {
-        name: "38.5기 이강민",
-        position: "데이터사이언스전공",
+        name: "39기 김영모",
+        position: "컴퓨터AI학부",
         img: profileImg,
       },
       {
-        name: "39기 김영모",
-        position: "컴퓨터AI학부",
+        name: "38.5기 이강민",
+        position: "데이터사이언스전공",
         img: profileImg,
       },
       {

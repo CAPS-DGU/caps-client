@@ -30,11 +30,13 @@ export default function OnBoarding() {
   const navigate = useNavigate();
   const [studentId, setStudentId] = useState("");
   const [generation, setGeneration] = useState("");
+  const [phone, setPhone] = useState("");
   const [error, setError] = useState(false);
 
   const generations = generateReverseYearArray();
 
   const validate = () => /^(19|20)\d{8}$/.test(studentId);
+  const validatePhone = () => /^\d{10,11}$/.test(phone);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -46,6 +48,7 @@ export default function OnBoarding() {
     axios.patch(import.meta.env.VITE_API_HOST + "/api/v1/auth/complete-registration", {
       studentNumber: studentId,
       grade: generation,
+      phoneNumber: phone,
     }, {
       withCredentials: true,
     })
@@ -85,6 +88,19 @@ export default function OnBoarding() {
           학번을 정확히 입력해주세요.
         </div>
       )}
+      <label className="block mb-2 text-gray-700">전화번호</label>
+      <input
+        type="text"
+        value={phone}
+        onChange={(e) => setPhone(e.target.value)}
+        placeholder="ex. 01012345678"
+        className="w-full p-2 border border-gray-300 rounded mb-4"
+      />
+      {!validatePhone() && (
+        <div className="text-red-500 text-sm mb-2">
+          전화번호를 정확히 입력해주세요.
+        </div>
+      )}
       <label className="block mb-2 text-gray-700">기수</label>
       <select
         value={generation}
@@ -101,11 +117,11 @@ export default function OnBoarding() {
       </select>
       <button
         type="submit"
-        className={`w-full p-2 rounded text-white font-bold ${validate() && generation
+        className={`w-full p-2 rounded text-white font-bold ${validate() && validatePhone() && generation
           ? "bg-blue-600 hover:bg-blue-700"
           : "bg-gray-400 cursor-not-allowed"
           }`}
-        disabled={!(validate() && generation)}
+        disabled={!(validate() && validatePhone() && generation)}
       >
         가입 완료하기
       </button>

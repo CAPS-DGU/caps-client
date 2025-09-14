@@ -24,7 +24,7 @@ export function useAuth() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await apiGetWithToken('/api/v1/auth/me');
+      const response = await apiGetWithToken('/api/v1/members/me');
       if (response && response.data) { // response.data.data 대신 response.data 로 수정 (API 응답 구조에 따라 다름)
         setUser(response.data.data);
         setCompleteRegistration(response.data.data.registrationComplete);

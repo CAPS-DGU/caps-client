@@ -36,7 +36,7 @@ export default function OnBoarding() {
   const generations = generateReverseYearArray();
 
   const validate = () => /^(19|20)\d{8}$/.test(studentId);
-  const validatePhone = () => /^\d{10,11}$/.test(phone);
+  const validatePhone = () => /^\d{2,3}-\d{3,4}-\d{4}$/.test(phone);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -93,7 +93,7 @@ export default function OnBoarding() {
         type="text"
         value={phone}
         onChange={(e) => setPhone(e.target.value)}
-        placeholder="ex. 01012345678"
+        placeholder="ex. 010-1234-5678"
         className="w-full p-2 border border-gray-300 rounded mb-4"
       />
       {!validatePhone() && (

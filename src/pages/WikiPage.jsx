@@ -5,6 +5,7 @@ import { useParams, Outlet } from 'react-router-dom';
 import axios from "axios";
 import LoadingSpinner from '../components/LoadingSpinner';
 import WikiRecent from '../components/WIKI/WikiRecent';
+import Navbar from '../components/NavBar';
 
 
 const IntroducePage = () => {
@@ -46,7 +47,9 @@ const IntroducePage = () => {
   return (
 
     <div>
-      <WikiSearch></WikiSearch>
+      <Navbar />
+      <div className="pt-20"></div>
+      <WikiSearch />
       <WikiRecent />
       {wikiData && !error ? <Template data={wikiData} /> : <Template data={NotFoundData} notFoundFlag={true} />}
     </div >

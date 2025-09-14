@@ -87,7 +87,7 @@ function Navbar({ isTransparent = false }: NavbarProps) {
                 className={`text-base ${isTransparent ? 'text-gray-200 hover:text-blue-300' : 'text-gray-800 hover:text-blue-600'} transition font-semibold`}
                 onClick={() => { dropdownOpen == null ? toggleDropdown(4) : closeDropdown() }}
               >
-                {user && <>{user.member.grade}기 {user.member.name}님 환영합니다!</>}
+                {user && <>{user.grade}기 {user.name}님 환영합니다!</>}
               </Link>
               {dropdownOpen === 4 && (
                 <div className="absolute z-50 w-40 py-2 mt-2 bg-white rounded-lg shadow-xl right-0">

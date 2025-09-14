@@ -3,12 +3,10 @@ import { useState, useEffect, useCallback } from 'react';
 import { apiGetWithToken, apiPostWithToken } from '../utils/Api'; // apiGetWithToken 함수 경로
 
 interface UserAuthMe {
-  member: {
-    id: number;
-    name: string;
-    profileImageUrl: string;
-    grade: string;
-  },
+  id: number;
+  name: string;
+  profileImageUrl: string;
+  grade: string;
   registrationComplete: boolean;
 }
 
@@ -24,7 +22,7 @@ export function useAuth() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await apiGetWithToken('/api/v1/members/me');
+      const response = await apiGetWithToken('/api/v1/members/me', null);
       if (response && response.data) { // response.data.data 대신 response.data 로 수정 (API 응답 구조에 따라 다름)
         setUser(response.data.data);
         setCompleteRegistration(response.data.data.registrationComplete);
@@ -63,7 +61,7 @@ export function useAuth() {
     setUser(null);
     setIsLoggedIn(false);
     setError(null);
-    await apiPostWithToken('/api/v1/auth/logout');
+    await apiPostWithToken('/api/v1/auth/logout', null, null);
   };
 
 

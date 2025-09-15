@@ -34,6 +34,6 @@ export async function apiWithToken(method, path, data, navigate): Promise<AxiosR
 
   } catch (error) {
     console.error('API 요청 실패:', error);
-    // alert('API 요청에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+    throw error;
   }
 }

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { apiGetWithToken, apiPatchWithToken, apiPostWithToken } from '../utils/Api';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const WikiEditPage = () => {
   const { wiki_title } = useParams();
@@ -25,7 +26,7 @@ const WikiEditPage = () => {
           setError("Failed to fetch data");
         }
       } catch (err) {
-        setError(err.message);
+        setError((err as any).message);
       } finally {
         setLoading(false);
       }
@@ -58,8 +59,7 @@ const WikiEditPage = () => {
       }
     }
     catch (e) {
-      // console.log(e);
-      if(e.response.status === 404) {
+      if (axios.isAxiosError(e) && e.response?.status === 404) {
         try{
           const response = await apiPostWithToken("/api/v1/wikis", { "title": content.title, "content": newContent }, navigate);
           if (response.status === 201) {
@@ -70,10 +70,11 @@ const WikiEditPage = () => {
             navigate('/wiki');
           }
         } catch (e) {
-          // alert('잘못된 접근입니다.');
           alert("내용 생성에 실패했습니다.");
           navigate('/wiki');
         }
+      } else {
+        alert("오류가 발생했습니다.");
       }
     }
   };

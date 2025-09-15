@@ -231,8 +231,8 @@ const WikiContent = ({ author, DocTitle, content, notFoundFlag, history, prevCon
         <div className="wiki-content" dangerouslySetInnerHTML={{ __html: escapeScriptTags(htmlContent) }}></div>
       )}
 
-      {isHistoryVisible && prevContent && (
-        <ReactDiffViewer oldValue={prevContent} newValue={content} splitView={width > 768} hideLineNumbers={width <= 768} />
+      {isHistoryVisible && (
+        <ReactDiffViewer oldValue={prevContent ? prevContent : ""} newValue={content} splitView={width > 768} hideLineNumbers={width <= 768} />
       )}
 
       {comments.length > 0 && isContentVisible && (

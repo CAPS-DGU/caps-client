@@ -62,6 +62,9 @@ const WikiHistoryPage = () => {
             {index < wikiData.length - 1 &&
               <Template key={index} data={wiki} notFoundFlag={true} history={wiki.createdAt} prevData={wikiData[index + 1]} />
             }
+            {wikiData.length === 1 &&
+              <Template key={index} data={wiki} notFoundFlag={true} history={wiki.createdAt} prevData={{content: ""}} />
+            }
           </div>)
       })) : (handleRedirect())}
       <Footer />

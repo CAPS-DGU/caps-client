@@ -74,7 +74,6 @@ const WikiEditPage = () => {
           alert("내용 생성에 실패했습니다.");
           navigate('/wiki');
         }
-        }
       }
     }
   };

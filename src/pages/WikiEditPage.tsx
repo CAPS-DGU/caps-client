@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import WikiEditor from '../components/WIKI/WikiEditor';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { apiGetWithToken, apiPatchWithToken } from '../utils/Api';
+import { apiGetWithToken, apiPatchWithToken, apiPostWithToken } from '../utils/Api';
 import { useNavigate } from 'react-router-dom';
 
 const WikiEditPage = () => {
@@ -59,8 +59,23 @@ const WikiEditPage = () => {
     }
     catch (e) {
       // console.log(e);
-      alert('잘못된 접근입니다.');
-      navigate('/wiki/' + content.title);
+      if(e.response.status === 404) {
+        try{
+          const response = await apiPostWithToken("/api/v1/wikis", { "title": content.title, "content": newContent }, navigate);
+          if (response.status === 201) {
+            alert("내용이 생성되었습니다.");
+            navigate(`/wiki/${wiki_title}`);
+          } else {
+            alert("내용 저장에 실패했습니다.");
+            navigate('/wiki');
+          }
+        } catch (e) {
+          // alert('잘못된 접근입니다.');
+          alert("내용 생성에 실패했습니다.");
+          navigate('/wiki');
+        }
+        }
+      }
     }
   };
 

@@ -11,7 +11,7 @@ const WikiContent = ({ author, DocTitle, content, notFoundFlag, history, prevCon
   const [comments, setComments] = useState([]);
   const [activeSection, setActiveSection] = useState(null);  // 활성화된 섹션 추적
   const [isContentVisible, setIsContentVisible] = useState(history === undefined ? true : false);
-  const [isHistoryVisible, setIsHistoryVisible] = useState(history === undefined ? true : false);
+  const [isHistoryVisible, setIsHistoryVisible] = useState(false);
   const navigate = useNavigate();
   const { isLoggedIn } = useAuth();
   const { height, width } = useWindowDimensions();

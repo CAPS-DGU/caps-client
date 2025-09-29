@@ -247,28 +247,30 @@ const historyData = [
     year: "2024",
     events: [
       "1월 37기 집행부 결성(37대 회장 20학번 허상준)",
-      "5월 26일 제 1회 C.A.P.S 알고리즘 대회 개최",
-      "7월 29일 제 1회 CAPSthon 대회 개최",
-      "11월 23일 제 2회 C.A.P.S 알고리즘 대회 개최",
+      "5월 제 1회 C.A.P.S 알고리즘 대회 개최",
+      "7월 제 1회 CAPSthon 대회 개최",
+      "11월 제 2회 C.A.P.S 알고리즘 대회 개최",
     ],
   },
   {
     year: "2025",
     events: [
-      "?월 UCPC (전국 대학생 프로그래밍 대회 동아리 연합회) 가입",
+      "3월 UCPC (전국 대학생 프로그래밍 대회 동아리 연합회) 가입",
+      "6월 CAPS SEMI 알고리즘 대회 개최",
+      "7월 제 2회 CAPSthon 대회 개최",
     ],
   },
 ];
 
 const Timeline = () => (
-  <div className="relative max-w-2xl mx-auto pt-24 pb-20">
+  <div className="relative max-w-2xl mx-auto pt-24 pb-20 ml-2">
     {/* 세로 파란 줄 */}
     <div className="absolute left-1 top-0 h-full w-3 bg-gradient-to-b from-blue-400 to-blue-600 rounded-full z-0" />
     <ul className="space-y-16 relative z-10">
       {historyData.map((item, idx) => (
         <li key={item.year} className="flex items-start relative">
           {/* 연도와 점 */}
-          <div className="flex flex-col items-center mr-8">
+          <div className="flex flex-col items-center md:mr-8 mr-3">
             <div
               className="w-5 h-5 rounded-full border-4 border-black bg-white z-10"
               style={{ boxShadow: "0 0 0 4px #fff" }}

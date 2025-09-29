@@ -1,7 +1,19 @@
 import React from "react";
 import Navbar from "../components/NavBar";
-import profileImg from "../assets/profile.png";
 import Footer from "../components/MainPage/Footer";
+const profileImg = new URL("../assets/profile.png", import.meta.url).href;
+
+type Member = {
+  name: string;
+  position: string;
+  img: string;
+  isLeader?: boolean;
+};
+
+type Department = {
+  tab: string;
+  members: Member[];
+};
 
 const executives = [
   {
@@ -18,7 +30,7 @@ const executives = [
   },
 ];
 
-const departments = [
+const departments: Department[] = [
   {
     tab: "학술부",
     members: [
@@ -37,6 +49,9 @@ const departments = [
         position: "융합보안학과",
         img: profileImg,
       },
+      { name: "39기 정이현", position: "통계학과", img: profileImg },
+      { name: "39기 정상원", position: "컴퓨터공학전공", img: profileImg },
+      { name: "39.5기 지휘서", position: "수학과", img: profileImg },
     ],
   },
   {
@@ -72,6 +87,8 @@ const departments = [
         position: "멀티미디어소프트웨어공학전공",
         img: profileImg,
       },
+      { name: "39기 박승우", position: "컴퓨터AI학부", img: profileImg },
+      { name: "39.5기 장희원", position: "정보통신공학과", img: profileImg },
     ],
   },
   {
@@ -87,6 +104,9 @@ const departments = [
         position: "정보통신공학과",
         img: profileImg,
       },
+      { name: "39기 김영민", position: "컴퓨터공학전공", img: profileImg },
+      { name: "39.5기 강유민", position: "열린전공학부", img: profileImg },
+      { name: "39.5기 이승은", position: "수학과", img: profileImg },
     ],
   },
   {
@@ -107,6 +127,8 @@ const departments = [
         position: "컴퓨터AI학부",
         img: profileImg,
       },
+      { name: "39.5기 김예은", position: "컴퓨터AI학부", img: profileImg },
+      { name: "39.5기 허윤", position: "컴퓨터AI학부", img: profileImg },
     ],
   },
   {
@@ -127,6 +149,9 @@ const departments = [
         position: "컴퓨터공학전공",
         img: profileImg,
       },
+      { name: "39.5기 김승현", position: "건축공학부", img: profileImg },
+      { name: "39.5기 이태경", position: "경영정보학과", img: profileImg },
+      { name: "39.5기 이민혁", position: "컴퓨터AI학부", img: profileImg },
     ],
   },
   {
@@ -147,6 +172,8 @@ const departments = [
         position: "컴퓨터공학전공",
         img: profileImg,
       },
+      { name: "39.5기 윤유겸", position: "컴퓨터AI학부", img: profileImg },
+      { name: "39.5기 이수빈", position: "정보통신공학과", img: profileImg },
     ],
   },
 ];
@@ -188,12 +215,12 @@ const AboutUs: React.FC = () => {
 
         {/* 부서 탭 및 멤버 */}
         <div className="mt-12 bg-[#007AEB] bg-opacity-5 rounded-3xl p-10 overflow-hidden">
-          <div className="flex justify-center mb-8">
-            <div className="flex w-full max-w-3xl bg-white rounded-full border-2 border-blue-400">
+          <div className="md:flex md:justify-center mb-8">
+            <div className="md:flex w-full max-w-3xl bg-white md:rounded-full rounded-lg border-2 border-blue-400">
               {departments.map((dep, idx) => (
                 <button
                   key={dep.tab}
-                  className={`flex-1 py-3 font-bold text-base transition rounded-full mx-4
+                  className={`flex-1 py-3 font-bold text-base transition md:rounded-full rounded-lg md:mx-4 px-2 md:px-0
                     ${selectedTab === idx
                       ? "bg-blue-500 text-white"
                       : "bg-white text-blue-500"}

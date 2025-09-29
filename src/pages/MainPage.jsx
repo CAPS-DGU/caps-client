@@ -9,6 +9,8 @@ import intro4 from '../assets/intro4.png';
 import poster1 from '../assets/poster1.jpg';
 import poster2 from '../assets/poster2.png';
 import poster3 from '../assets/poster3.png';
+import poster4 from '../assets/poster4.jpeg';
+import poster5 from '../assets/poster5.png';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../components/MainPage/Footer';
 import { motion } from "framer-motion";
@@ -202,7 +204,7 @@ const MainPage = () => {
                 1988년부터 시작 되어 39년의 역사를 가진 캡스는 현재
               </div>
               <div className="text-3xl font-[Pretendard] font-bold md:text-3xl font-bold text-gray-800 mb-10 text-center">
-                2025년 1학기 기준 <span className="text-blue-500">{departments.length}</span> 개의 학과, 총 <span className="text-blue-600">243</span> 명의 학우와 함께하고 있습니다.
+                2025년 1학기 기준 <span className="text-blue-500">{departments.length}</span> 개의 학과, 총 <span className="text-blue-600">224</span> 명의 학우와 함께하고 있습니다.
               </div>
 
 
@@ -313,10 +315,10 @@ const MainPage = () => {
           </div>
             <div className="w-full overflow-hidden py-16">
             <div className="flex animate-scroll space-x-8">
-              {Array(12).fill(null).map((_, index) => (
+              {Array(15).fill(null).map((_, index) => (
                 <img 
                   key={index}
-                  src={index % 3 === 0 ? poster1 : index % 3 === 1 ? poster2 : poster3} 
+                  src={index % 5 === 0 ? poster1 : index % 5 === 1 ? poster2 : index % 5 === 2 ? poster3 : index % 5 === 3 ? poster4 : poster5} 
                   alt={`활동 이미지 ${index + 1}`} 
                   className="w-64 object-contain rounded-lg" 
                 />

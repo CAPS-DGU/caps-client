@@ -215,24 +215,25 @@ const AboutUs: React.FC = () => {
 
         {/* 부서 탭 및 멤버 */}
         <div className="mt-12 bg-[#007AEB] bg-opacity-5 rounded-3xl p-10 overflow-hidden">
-          <div className="md:flex md:justify-center mb-8">
-            <div className="md:flex w-full max-w-3xl bg-white md:rounded-full rounded-lg border-2 border-blue-400">
-              {departments.map((dep, idx) => (
-                <button
-                  key={dep.tab}
-                  className={`flex-1 py-3 font-bold text-base transition md:rounded-full rounded-lg md:mx-4 px-2 md:px-0
-                    ${selectedTab === idx
-                      ? "bg-blue-500 text-white"
-                      : "bg-white text-blue-500"}
-                    ${idx === 0 ? "ml-0" : ""}
-                    ${idx === departments.length - 1 ? "mr-0" : ""}
-                  `}
-                  onClick={() => setSelectedTab(idx)}
-                  style={{outline: 'none', border: 'none', boxShadow: 'none'}}
-                >
-                  {dep.tab}
-                </button>
-              ))}
+          <div className="mb-8">
+            <div
+              className="flex flex-wrap gap-2 md:gap-3 py-1 px-1 justify-center"
+            >
+              {departments.map((dep, idx) => {
+                const active = selectedTab === idx;
+                return (
+                  <button
+                    key={dep.tab}
+                    onClick={() => setSelectedTab(idx)}
+                    className={`whitespace-nowrap px-4 md:px-5 py-2 rounded-full text-sm md:text-base font-semibold transition-colors duration-200 border
+                      ${active ? 'bg-blue-500 text-white border-blue-500 shadow-sm' : 'bg-white text-blue-600 border-blue-300 hover:bg-blue-50'}
+                    `}
+                    style={{ outline: 'none', boxShadow: 'none' }}
+                  >
+                    {dep.tab}
+                  </button>
+                );
+              })}
             </div>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-y-10 gap-x-4 justify-items-center">

@@ -10,4 +10,8 @@ export default defineConfig({
     react(),
     basicSsl(),
   ],
+  server: {
+    port: 3000,
+    host: true,
+  },
 })

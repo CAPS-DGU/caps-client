@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 import homeImage from '../assets/home.png';
 import logo from '../assets/logo.png';
 import logoBright from '../assets/logo-bright.png';
@@ -13,9 +13,9 @@ import intro8 from '../assets/intro8.png';
 import poster1 from '../assets/poster1.jpg';
 import poster2 from '../assets/poster2.png';
 import poster3 from '../assets/poster3.png';
-import poster4 from '../assets/poster4.jpeg';
-import poster5 from '../assets/poster5.png';
-import { useNavigate } from 'react-router-dom';
+// import poster4 from '../assets/poster4.jpeg';
+// import poster5 from '../assets/poster5.png';
+// import { useNavigate } from 'react-router-dom';
 import Footer from '../components/MainPage/Footer';
 import { motion } from "framer-motion";
 import arrow from '../assets/u_angle-double-down.png';
@@ -57,7 +57,7 @@ const MainPage = () => {
     "열린전공학부"
   ];
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   // useEffect(() => {
   //   navigate('/wiki');
   // }, []);
@@ -105,9 +105,9 @@ const MainPage = () => {
     image: intro8,
   },]; // 예시 데이터
 
-  const borderStyle = {
-    boxShadow: "0 0 0 2px #444, 0 0 0 5px #222, 0 0 1px 5px #000",
-  };
+  // const borderStyle = {
+  //   boxShadow: "0 0 0 2px #444, 0 0 0 5px #222, 0 0 1px 5px #000",
+  // };
 
 
 
@@ -142,21 +142,21 @@ const MainPage = () => {
           <div className="absolute top-0 left-0 z-10 w-full h-full bg-gradient-to-b from-transparent to-black/90" />
 
           {/* 텍스트 레이어 */}
-          <div className="flex relative z-20 flex-col items-start">
+          <div className="flex relative z-20 flex-col items-start px-4">
             {/* <span className="text-6xl font-bold text-blue-200" style={{ fontFamily: 'Russo One, sans-serif' }}>CAPS</span> */}
             <img
               src={logoBright}
               alt="CAPS Logo"
-              className="mb-4 w-48" />
-            <span className="mt-4 text-2xl font-medium text-white">Computer Aided Progressive Study</span>
-            <span className="mt-2 text-white text-medium">
+              className="mb-4 w-36 md:w-48" />
+            <span className="mt-4 text-lg font-medium text-white md:text-2xl break-keep md:break-normal">Computer Aided Progressive Study</span>
+            <span className="mt-2 text-sm text-white md:text-base break-keep md:break-normal">
               1988년 창설된 CAPS는 프로그래밍에 관심이 있는 누구나 재밌게 배울 수 있는 동아리입니다
             </span>
           </div>
           {/* 아래쪽 화살표 */}
           <div className="absolute bottom-6 left-1/2 z-20 -translate-x-1/2">
             {/* <span className="text-3xl text-white animate-bounce">⌄</span> */}
-            <img src={arrow} alt="arrow" className="w-10" />
+            <img src={arrow} alt="arrow" className="w-8 md:w-10" />
           </div>
         </div>
         <br />
@@ -165,7 +165,7 @@ const MainPage = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
           viewport={{ once: true, amount: 0.3 }}
-          className="flex flex-col justify-center items-center w-full min-h-screen snap-start"
+          className="flex flex-col justify-center items-center px-4 w-full min-h-screen snap-start"
         >
           <div className="flex flex-col items-center pt-8 w-full">
             {/* CAPS 텍스트 로고 */}
@@ -179,17 +179,17 @@ const MainPage = () => {
               <img
                 src={logo}
                 alt="CAPS Logo"
-                className="mr-2 w-16" /> 는
+                className="mr-2 w-12 md:w-16" /> 는
             </div>
 
             <div className="flex flex-col items-center mt-2 max-w-2xl text-center">
-              <span className="text-7xl font-[NotoSansKR] text-gray-300 leading-none">“</span>
-              <p className="text-2xl font-[Pretendard] font-regular text-black mb-6">
+              <span className="text-5xl md:text-7xl font-[NotoSansKR] text-gray-300 leading-none">“</span>
+              <p className="text-base md:text-2xl font-[Pretendard] font-regular text-black mb-6 leading-relaxed break-keep md:break-normal">
                 다양한 전공의 학생들이 함께 활동하며 전공간의 경계를 허물고,<br />
                 창의적 시각으로 복잡한 문제에 접근할 수 있는<br />
                 프로그래밍 학술 활동을 추구합니다.
               </p>
-              <span className="text-7xl font-[NotoSansKR] text-gray-300 leading-none mb-4">”</span>
+              <span className="text-5xl md:text-7xl font-[NotoSansKR] text-gray-300 leading-none mb-4">”</span>
             </div>
           </div>
         </motion.div>
@@ -199,26 +199,27 @@ const MainPage = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
           viewport={{ once: true, amount: 0.3 }}
-          className="flex flex-col justify-center items-center w-full min-h-screen bg-gray-100 snap-start"
+          className="flex flex-col justify-center items-center px-4 w-full min-h-screen bg-gray-100 snap-start"
         >
           <div className="px-2 py-16 w-full">
             <div className="flex flex-col items-center mx-auto max-w-6xl">
 
-              <div className="text-xl font-[Pretendard] font-semibold text-gray-500 mb-4">
+              <div className=" text-sm md:text-xl font-[Pretendard] font-semibold text-gray-500 mb-4 text-center">
                 1988년부터 시작 되어 39년의 역사를 가진 캡스는 현재
               </div>
-              <div className="text-3xl font-[Pretendard] font-bold md:text-3xl font-bold text-gray-800 mb-10 text-center">
-                2025년 1학기 기준 <span className="text-blue-500">{departments.length}</span> 개의 학과, 총 <span className="text-blue-600">224</span> 명의 학우와 함께하고 있습니다.
+              <div className="text-2xl md:text-3xl font-[Pretendard] font-bold text-gray-800 mb-10 text-center">
+                <span className="text-blue-500">{departments.length}</span> 개의 학과, 총 <span className="text-blue-600">224</span> 명의 학우와 <br />함께하고 있습니다.
+                <div className="text-xs font-medium text-gray-400">2025년 1학기 기준</div>
               </div>
 
 
               {/* 윗줄 왼→오 (오른쪽으로 이동) */}
-              <div className="mb-3 h-12 marquee">
+              <div className="mb-3 h-10 md:h-12 marquee">
                 <div className="marquee-track animate-marquee-right">
                   {doubleDepartments1.map((dept, idx) => (
                     <span
                       key={`d1-${idx}`}
-                      className="inline-block px-5 py-2 mx-2 text-lg text-gray-700 bg-white rounded-lg shadow-sm"
+                      className="inline-block px-4 py-2 mx-2 text-sm text-gray-700 bg-white rounded-lg shadow-sm md:px-5 md:text-lg"
                     >
                       {dept}
                     </span>
@@ -227,12 +228,12 @@ const MainPage = () => {
               </div>
 
               {/* 아랫줄 오→왼 (왼쪽으로 이동) */}
-              <div className="h-12 marquee">
+              <div className="h-10 md:h-12 marquee">
                 <div className="marquee-track animate-marquee-left">
                   {doubleDepartments2.map((dept, idx) => (
                     <span
                       key={`d2-${idx}`}
-                      className="inline-block px-5 py-2 mx-2 text-lg text-gray-700 bg-white rounded-lg shadow-sm"
+                      className="inline-block px-4 py-2 mx-2 text-sm text-gray-700 bg-white rounded-lg shadow-sm md:px-5 md:text-lg"
                     >
                       {dept}
                     </span>
@@ -248,23 +249,23 @@ const MainPage = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
           viewport={{ once: true, amount: 0.3 }}
-          className="flex flex-col justify-center items-center pt-10 w-full min-h-screen snap-start"
+          className="flex flex-col justify-center items-center px-4 pt-10 w-full min-h-screen snap-start"
         >
           {/* 설명 */}
           <div className="flex flex-col items-center mb-8 w-full">
-            <div className="mb-2 text-sm text-center text-gray-400">
+            <div className="mb-2 text-xs font-bold text-center text-gray-500 md:text-sm">
               캡스는 어떤 활동을 하나요?
             </div>
-            <div className="text-xl font-bold leading-tight text-center text-gray-700">
+            <div className="text-base font-bold leading-tight text-center text-gray-700 md:text-xl break-keep md:break-normal">
               프로그래밍 스터디 · 세미나 · 알고리즘 대회 · MT · 게임대회까지<br />
               다양한 활동을 즐길 수 있습니다.
             </div>
           </div>
           {/* 탭 */}
-          <div className="flex justify-center items-center mb-8 w-full border-b border-gray-700">
+          <div className="flex justify-center items-center mb-6 w-full border-b border-gray-700 md:mb-8">
             <button
               className={
-                "px-6 py-2 font-semibold text-base focus:outline-none transition " +
+                "px-4 md:px-6 py-2 font-semibold text-sm md:text-base focus:outline-none transition " +
                 (tab === "learn"
                   ? "text-blue-500 border-b-2 border-blue-500"
                   : "text-gray-400")
@@ -275,7 +276,7 @@ const MainPage = () => {
             </button>
             <button
               className={
-                "px-6 py-2 font-semibold text-base focus:outline-none transition " +
+                "px-4 md:px-6 py-2 font-semibold text-sm md:text-base focus:outline-none transition " +
                 (tab === "social"
                   ? "text-blue-500 border-b-2 border-blue-500"
                   : "text-gray-400")
@@ -285,20 +286,20 @@ const MainPage = () => {
               친목 활동
             </button>
           </div>
-          <div className="grid grid-cols-2 gap-x-10 gap-y-10">
+          <div className="grid grid-cols-1 gap-x-6 gap-y-6 place-items-center w-full md:grid-cols-2 md:gap-x-10 md:gap-y-10">
             {(tab === "learn" ? LEARN_CARDS : SOCIAL_CARDS).map((card, i) => (
               <div
                 key={i}
-                className="relative bg-white rounded-xl w-[360px] h-[240px] overflow-hidden group cursor-pointer"
+                className="relative bg-white rounded-xl w-[88vw] h-[180px] md:w-[360px] md:h-[240px] overflow-hidden group cursor-pointer max-w-[420px]"
               >
                 <img src={card.image} alt={card.title} className="object-cover w-full h-full" />
                 {/* 호버 오버레이 */}
                 <div className="flex absolute inset-0 flex-col justify-between p-8 bg-black bg-opacity-0 transition-all duration-300 group-hover:bg-opacity-70">
                   <div className="text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                    <h3 className="mb-2 text-3xl font-bold">{card.title}</h3>
+                    <h3 className="mb-2 text-2xl font-bold md:text-3xl">{card.title}</h3>
                   </div>
                   <div className="text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                    <p className="text-sm leading-relaxed">{card.description}</p>
+                    <p className="text-xs leading-relaxed md:text-sm break-keep md:break-normal">{card.description}</p>
                   </div>
                 </div>
               </div>
@@ -311,10 +312,10 @@ const MainPage = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
           viewport={{ once: true, amount: 0.3 }}
-          className="flex flex-col justify-center items-center pt-10 w-full min-h-screen snap-start"
+          className="flex flex-col justify-center items-center px-4 pt-10 w-full min-h-screen snap-start"
         >
-          <div className="text-xl font-bold leading-tight text-center text-gray-700">
-            교내 활동뿐만 아니라, 전교생을 대상으로 한 알고리즘대회 등<br />
+          <div className="text-base font-bold leading-tight text-center text-gray-700 md:text-xl break-keep md:break-normal">
+            교내 활동뿐만 아니라,<br /> 전교생을 대상으로 한 알고리즘대회 등<br />
             다양한 행사에 기여하며 활동 범위를 넓혀가고 있습니다.
           </div>
           <div className="overflow-hidden py-16 w-full">
@@ -324,7 +325,7 @@ const MainPage = () => {
                   key={index}
                   src={index % 3 === 0 ? poster1 : index % 3 === 1 ? poster2 : poster3}
                   alt={`활동 이미지 ${index + 1}`}
-                  className="object-contain w-64 rounded-lg"
+                  className="object-contain w-40 rounded-lg md:w-64"
                 />
               ))}
             </div>
@@ -336,18 +337,18 @@ const MainPage = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
           viewport={{ once: true, amount: 0.3 }}
-          className="flex flex-col justify-center items-center py-24 w-full min-h-screen snap-start"
+          className="flex flex-col justify-center items-center px-4 py-16 w-full min-h-screen text-center md:py-24 snap-start"
         >
           {/* 메인 메시지 */}
-          <div className="mb-4 text-2xl font-extrabold text-center text-gray-800 md:text-3xl">
+          <div className="mb-4 text-xl font-extrabold text-center text-gray-800 md:text-3xl">
             캡스의 프로그래밍 꿈나무가 되어 1987년의 역사를 이어가주세요.
           </div>
           {/* 서브 메시지 */}
-          <div className="mb-10 text-xl font-semibold text-center text-gray-500">
+          <div className="mb-10 text-base font-semibold text-center text-gray-500 md:text-xl">
             아직은 지원기간이 아니에요!
           </div>
           {/* 버튼 */}
-          <button className="flex gap-2 items-center px-12 py-5 text-xl font-extrabold text-white bg-blue-600 rounded-full shadow-lg transition hover:bg-blue-500 active:bg-blue-700">
+          <button className="flex gap-2 items-center px-8 py-4 text-lg font-extrabold text-white bg-blue-600 rounded-full shadow-lg transition md:px-12 md:py-5 md:text-xl hover:bg-blue-500 active:bg-blue-700">
             모집 알림 신청하기
             <svg className="ml-2 w-7 h-7" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
               <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />

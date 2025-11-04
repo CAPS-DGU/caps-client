@@ -269,7 +269,7 @@ const MainPage = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
           viewport={{ once: true, amount: 0.3 }}
-          className="flex flex-col justify-center items-center px-4 pt-10 pb-24 w-full min-h-[115vh] md:min-h-screen snap-start"
+          className="flex flex-col justify-center items-center px-4 pt-10 pb-32 w-full min-h-[130vh] sm:min-h-[120vh] md:min-h-screen snap-start"
         >
           {/* 설명 */}
           <div className="flex flex-col items-center mb-8 w-full">
@@ -325,6 +325,8 @@ const MainPage = () => {
               </div>
             ))}
           </div>
+          {/* extra spacer to ensure last row fully scrolls into view on very small phones */}
+          <div className="h-10 md:h-0" />
         </motion.div>
 
         <motion.div

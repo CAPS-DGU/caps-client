@@ -7,7 +7,7 @@ module.exports = {
   theme: {
     extend: {
       animation: {
-        'scroll': 'scroll 20s linear infinite',
+        'scroll': 'scroll 24s linear infinite',
         'marquee-right': 'marquee-right 30s linear infinite',
         'marquee-left': 'marquee-left 30s linear infinite',
       },

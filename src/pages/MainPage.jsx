@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import homeImage from '../assets/home.png';
 import logo from '../assets/logo.png';
 import logoBright from '../assets/logo-bright.png';
@@ -10,9 +10,7 @@ import intro5 from '../assets/intro5.png';
 import intro6 from '../assets/intro6.png';
 import intro7 from '../assets/intro7.png';
 import intro8 from '../assets/intro8.png';
-import poster1 from '../assets/poster1.jpg';
-import poster2 from '../assets/poster2.png';
-import poster3 from '../assets/poster3.png';
+// Posters are loaded dynamically via import.meta.glob below
 // import poster4 from '../assets/poster4.jpeg';
 // import poster5 from '../assets/poster5.png';
 // import { useNavigate } from 'react-router-dom';
@@ -30,6 +28,28 @@ function shuffleArray(array) {
 
 
 const MainPage = () => {
+
+  // Dynamically import all poster images matching poster*.{png,jpg,jpeg}
+  const posterModules = import.meta.glob('../assets/poster*.{png,PNG,jpg,JPG,jpeg,JPEG}', { eager: true });
+  const posters = Object
+    .entries(posterModules)
+    .sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true }))
+    .map(([, mod]) => (mod && mod.default) ? mod.default : mod);
+  // Fallback: if none matched, keep previous three if any existed
+  // (No-op in current setup because at least poster1~ are present)
+  // Preload poster images early to avoid blank gap at sequence boundary
+  useEffect(() => {
+    posters.forEach((src) => {
+      const img = new Image();
+      img.src = typeof src === 'string' ? src : String(src);
+    });
+  }, [posters]);
+
+  // Delay animation start until key images are loaded to avoid visible gaps
+  const [loadedCount, setLoadedCount] = useState(0);
+  const eagerCount = posters.length + 5; // first loop + next 5 images
+  const preloadThreshold = Math.min(eagerCount, posters.length * 2);
+  const isCarouselReady = loadedCount >= Math.min(preloadThreshold, 8);
   const departments = [
     "정보통신공학과",
     "경영정보학과",
@@ -249,7 +269,7 @@ const MainPage = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
           viewport={{ once: true, amount: 0.3 }}
-          className="flex flex-col justify-center items-center px-4 pt-10 w-full min-h-screen snap-start"
+          className="flex flex-col justify-center items-center px-4 pt-10 pb-24 w-full min-h-[115vh] md:min-h-screen snap-start"
         >
           {/* 설명 */}
           <div className="flex flex-col items-center mb-8 w-full">
@@ -319,13 +339,20 @@ const MainPage = () => {
             다양한 행사에 기여하며 활동 범위를 넓혀가고 있습니다.
           </div>
           <div className="overflow-hidden py-16 w-full">
-            <div className="flex space-x-8 animate-scroll">
-              {Array(12).fill(null).map((_, index) => (
+            <div className={`flex gap-8 items-center w-max ${isCarouselReady ? 'animate-scroll' : ''}`}>
+              {[...posters, ...posters].map((src, i) => (
                 <img
-                  key={index}
-                  src={index % 3 === 0 ? poster1 : index % 3 === 1 ? poster2 : poster3}
-                  alt={`활동 이미지 ${index + 1}`}
-                  className="object-contain w-40 rounded-lg md:w-64"
+                  key={`loop-${i}-${src}`}
+                  src={src}
+                  alt={`활동 이미지 ${(i % posters.length) + 1}`}
+                  loading={i < eagerCount ? "eager" : "lazy"}
+                  fetchPriority={i < eagerCount ? "high" : undefined}
+                  decoding={i < eagerCount ? "sync" : "async"}
+                  sizes="(min-width: 768px) 16rem, 10rem"
+                  className="object-contain w-40 bg-gray-100 rounded-lg md:w-64 shrink-0"
+                  onLoad={() => {
+                    if (i < eagerCount) setLoadedCount((c) => c + 1);
+                  }}
                 />
               ))}
             </div>

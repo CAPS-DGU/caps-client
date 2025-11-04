@@ -306,11 +306,11 @@ const MainPage = () => {
               친목 활동
             </button>
           </div>
-          <div className="grid grid-cols-1 gap-x-4 gap-y-4 justify-items-stretch items-start w-full md:grid-cols-2 md:gap-x-6 md:gap-y-8">
+          <div className="grid grid-cols-1 gap-x-1 gap-y-2 justify-items-center items-start w-full md:[grid-template-columns:repeat(2,360px)] md:justify-center md:gap-x-4 md:gap-y-6">
             {(tab === "learn" ? LEARN_CARDS : SOCIAL_CARDS).map((card, i) => (
               <div
                 key={i}
-                className="relative bg-white rounded-xl w-full h-[200px] md:h-[240px] overflow-hidden group cursor-pointer max-w-[420px] md:max-w-none"
+                className="relative bg-white rounded-xl w-[360px] h-[240px] md:h-[240px] overflow-hidden group cursor-pointer md:max-w-none"
               >
                 <img src={card.image} alt={card.title} className="object-cover w-full h-full" />
                 {/* 호버 오버레이 */}

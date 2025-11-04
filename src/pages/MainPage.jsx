@@ -185,7 +185,7 @@ const MainPage = () => {
             <div className="flex flex-col items-center mt-2 max-w-2xl text-center">
               <span className="text-5xl md:text-7xl font-[NotoSansKR] text-gray-300 leading-none">“</span>
               <p className="text-base md:text-2xl font-[Pretendard] font-regular text-black mb-6 leading-relaxed break-keep md:break-normal">
-                다양한 전공의 학생들이 함께 활동하며 전공간의 경계를 허물고,<br />
+                다양한 전공의 학생들이 함께 활동하며 <br />전공간의 경계를 허물고,<br />
                 창의적 시각으로 복잡한 문제에 접근할 수 있는<br />
                 프로그래밍 학술 활동을 추구합니다.
               </p>

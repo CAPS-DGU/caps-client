@@ -3,9 +3,13 @@ import homeImage from '../assets/home.png';
 import logo from '../assets/logo.png';
 import logoBright from '../assets/logo-bright.png';
 import intro1 from '../assets/intro1.png';
-import intro2 from '../assets/intro2.jpg';
+import intro2 from '../assets/intro2.jpeg';
 import intro3 from '../assets/intro3.png';
-import intro4 from '../assets/intro4.png';
+import intro4 from '../assets/intro4.jpeg';
+import social1 from '../assets/social1.jpeg';
+import social2 from '../assets/social2.png';
+import social3 from '../assets/social3.png';
+import social4 from '../assets/social4.png';
 import poster1 from '../assets/poster1.jpg';
 import poster2 from '../assets/poster2.png';
 import poster3 from '../assets/poster3.png';
@@ -60,46 +64,46 @@ const MainPage = () => {
   const [tab, setTab] = useState("learn");
   const LEARN_CARDS = [
     {
-      title: "자유 발표",
-      description: "자유 발표는 캡스의 활동 중 하나로, 학생들이 자유롭게 발표를 할 수 있는 활동입니다.",
+      title: "스터디",
+      description: "강의형/관리형/프로젝트형 세 가지 유형이 있고, 원하는 분야를 선택하여 참여할 수 있습니다.",
       image: intro1,
     },
     {
-      title: "알고리즘 대회",
-      description: "알고리즘 대회는 캡스의 활동 중 하나로, 학생들이 자유롭게 알고리즘 대회를 할 수 있는 활동입니다.",
+      title: "CAPSThone",
+      description: "팀을 이루어 직접 기획부터 구현까지 프로젝트를 완성해보는 실전형 프로그램입니다.",
       image: intro2,
     },
     {
-      title: "졸업자 초청 강연",
-      description: "졸업자 초청 강연은 캡스의 활동 중 하나로, 학생들이 자유롭게 졸업자 초청 강연을 할 수 있는 활동입니다.",
+      title: "알고리즘 대회",
+      description: "CAPS에서 출제한 알고리즘 문제를 해결하고, 풀이를 나누며 문제 해결력을 기를 수 있습니다.",
       image: intro3,
     },
     {
-      title: "알고리즘 대회",
-      description: "알고리즘 대회는 캡스의 활동 중 하나로, 학생들이 자유롭게 알고리즘 대회를 할 수 있는 활동입니다.",
+      title: "졸업생 초청 강연",
+      description: "CAPS를 졸업하신 선배님들의 학업과 취직에 대한 경험담과 조언을 들을 수 있는 시간입니다.",
       image: intro4,
     },
   ];  // 예시 데이터
   const SOCIAL_CARDS = [ {
-    title: "자유 발표",
-    description: "자유 발표는 캡스의 활동 중 하나로, 학생들이 자유롭게 발표를 할 수 있는 활동입니다.",
-    image: intro1,
-  },
-  {
-    title: "알고리즘 대회",
-    description: "알고리즘 대회는 캡스의 활동 중 하나로, 학생들이 자유롭게 알고리즘 대회를 할 수 있는 활동입니다.",
-    image: intro2,
+    title: "개강총회/종강총회",
+    description: "한 학기 활동 계획과 집행부를 소개해 드리고, 뒷풀이를 통해 신입 부원들을 환영합니다.",
+    image: social1,
   },
   {
     title: "세미나",
-    description: "세미나는 캡스의 활동 중 하나로, 학생들이 자유롭게 세미나를 할 수 있는 활동입니다.",
-    image: intro3,
+    description: "자유로운 주제로 발표를 준비해 이야기를 들려주며 서로를 알아가는 자리입니다.",
+    image: social2,
   },
   {
-    title: "알고리즘 대회",
-    description: "알고리즘 대회는 캡스의 활동 중 하나로, 학생들이 자유롭게 알고리즘 대회를 할 수 있는 활동입니다.",
-    image: intro4,
-  },]; // 예시 데이터
+    title: "캡쳐",
+    description: "신입 부원과 기존 부원들의 친목 도모를 위해 조별로 대면 모임을 가집니다.",
+    image: social3,
+  },
+  {
+    title: "MT",
+    description: "펜션에서 레크레이션 게임을 즐기고, 맛있는 음식을 먹으며 빠르게 친해질 수 있습니다.",
+    image: social4,
+  },]; 
 
   const borderStyle = {
     boxShadow: "0 0 0 2px #444, 0 0 0 5px #222, 0 0 1px 5px #000",
@@ -281,20 +285,20 @@ const MainPage = () => {
               친목 활동
             </button>
           </div>
-            <div className="grid grid-cols-2 gap-x-10 gap-y-10">
+            <div className="w-full px-3 max-w-6xl mx-auto grid grid-cols-2 gap-4 sm:gap-6 md:gap-10">
               {(tab === "learn" ? LEARN_CARDS : SOCIAL_CARDS).map((card, i) => (
                 <div
                   key={i}
-                  className="relative bg-white rounded-xl w-[360px] h-[240px] overflow-hidden group cursor-pointer"
+                  className="relative bg-white rounded-xl w-full h-40 sm:h-56 md:h-60 overflow-hidden group cursor-pointer"
                 >
                   <img src={card.image} alt={card.title} className="w-full h-full object-cover" />
                   {/* 호버 오버레이 */}
-                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-70 transition-all duration-300 flex flex-col justify-between p-8">
+                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-70 transition-all duration-300 flex flex-col justify-between p-4 sm:p-6 md:p-8">
                     <div className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <h3 className="text-3xl font-bold mb-2">{card.title}</h3>
+                      <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2">{card.title}</h3>
                     </div>
                     <div className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <p className="text-sm leading-relaxed">{card.description}</p>
+                      <p className="text-xs sm:text-sm leading-relaxed">{card.description}</p>
                     </div>
                   </div>
                 </div>
@@ -313,17 +317,26 @@ const MainPage = () => {
             교내 활동뿐만 아니라, 전교생을 대상으로 한 알고리즘대회 등<br />
             다양한 행사에 기여하며 활동 범위를 넓혀가고 있습니다.
           </div>
-            <div className="w-full overflow-hidden py-16">
-            <div className="flex animate-scroll space-x-8">
-              {Array(15).fill(null).map((_, index) => (
-                <img 
-                  key={index}
-                  src={index % 5 === 0 ? poster1 : index % 5 === 1 ? poster2 : index % 5 === 2 ? poster3 : index % 5 === 3 ? poster4 : poster5} 
-                  alt={`활동 이미지 ${index + 1}`} 
-                  className="w-64 object-contain rounded-lg" 
-                />
-              ))}
-            </div>
+            <div className="poster-marquee py-12 sm:py-16">
+            {(() => {
+              const posters = [poster1, poster2, poster3, poster4, poster5];
+              const base = posters; // 고유 5장
+              const loop = [...base, ...base]; // 2배 트랙: -50%와 정합
+              return (
+                <div className="poster-track animate-poster-left gap-4 sm:gap-8">
+                  {loop.map((src, idx) => (
+                    <img
+                      key={idx}
+                      src={src}
+                      alt={`활동 이미지 ${idx % base.length + 1}`}
+                      className="w-48 sm:w-56 md:w-64 object-contain rounded-lg flex-shrink-0"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ))}
+                </div>
+              );
+            })()}
           </div>
         </motion.div>
 

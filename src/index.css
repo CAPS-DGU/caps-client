@@ -93,3 +93,64 @@
     transform: translateX(0%);
   }
 }
+
+/* Posters: smoother, seamless infinite scroll */
+.poster-marquee {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.poster-track {
+  display: flex;
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+.animate-poster-left {
+  animation: poster-left 45s linear infinite;
+}
+
+@keyframes poster-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+/* Mobile: slightly faster to reduce perceived stutter, smaller spacing */
+@media (max-width: 640px) {
+  .animate-poster-left {
+    animation-duration: 10s;
+  }
+}
+
+/* Accessibility: respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-poster-left {
+    animation: none;
+    transform: none;
+  }
+}
+
+/* Edge fade to hide loop seam visually */
+/* .poster-marquee::before,
+.poster-marquee::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40px;
+  pointer-events: none;
+  z-index: 1;
+}
+.poster-marquee::before {
+  left: 0;
+  background: linear-gradient(to right, rgba(250,250,250,1), rgba(250,250,250,0));
+}
+.poster-marquee::after {
+  right: 0;
+  background: linear-gradient(to left, rgba(250,250,250,1), rgba(250,250,250,0));
+} */

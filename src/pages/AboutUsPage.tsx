@@ -38,6 +38,7 @@ const departments: Department[] = [
         name: "39기 김영모",
         position: "컴퓨터AI학부",
         img: profileImg,
+        isLeader: true,
       },
       {
         name: "38.5기 이강민",
@@ -61,6 +62,7 @@ const departments: Department[] = [
         name: "38기 유태규",
         position: "컴퓨터공학전공",
         img: profileImg,
+        isLeader: true,
       },
       {
         name: "38.5기 정율",
@@ -116,6 +118,7 @@ const departments: Department[] = [
         name: "39기 김승우",
         position: "열린전공학부",
         img: profileImg,
+        isLeader: true,
       },
       {
         name: "39기 강성찬",
@@ -138,6 +141,7 @@ const departments: Department[] = [
         name: "37기 방지원",
         position: "컴퓨터공학전공",
         img: profileImg,
+        isLeader: true,
       },
       {
         name: "39기 이은서",
@@ -161,6 +165,7 @@ const departments: Department[] = [
         name: "38기 김다인",
         position: "정보통신공학과",
         img: profileImg,
+        isLeader: true,
       },
       {
         name: "37기 원종인",

@@ -1,6 +1,20 @@
 import React from "react";
 import Navbar from "../components/NavBar";
 import Footer from "../components/MainPage/Footer";
+import profileImg_신효환 from "../assets/profiles/신효환.jpeg";
+import profileImg_유태규 from "../assets/profiles/유태규.jpeg";
+import profileImg_김동원 from "../assets/profiles/김동원.jpeg";
+import profileImg_강유민 from "../assets/profiles/강유민.jpeg";
+import profileImg_김다인 from "../assets/profiles/김다인.jpeg";
+import profileImg_김승우 from "../assets/profiles/김승우.jpeg";
+import profileImg_김영민 from "../assets/profiles/김영민.jpeg";
+import profileImg_박재관 from "../assets/profiles/박재관.jpeg";
+import profileImg_방지원 from "../assets/profiles/방지원.jpeg";
+import profileImg_윤유겸 from "../assets/profiles/윤유겸.jpeg";
+import profileImg_이수빈 from "../assets/profiles/이수빈.jpeg";
+import profileImg_장희원 from "../assets/profiles/장희원.jpeg";
+import profileImg_정상원 from "../assets/profiles/정상원.jpeg";
+import profileImg_원종인 from "../assets/profiles/원종인.jpeg";
 const profileImg = new URL("../assets/profile.png", import.meta.url).href;
 
 type Member = {
@@ -20,7 +34,7 @@ const executives = [
     role: "회장",
     name: "37기 신효환",
     position: "컴퓨터AI학부",
-    img: profileImg,
+    img: profileImg_신효환,
   },
   {
     role: "부회장",
@@ -50,7 +64,7 @@ const departments: Department[] = [
         img: profileImg,
       },
       { name: "39기 정이현", position: "통계학과", img: profileImg },
-      { name: "39기 정상원", position: "컴퓨터공학전공", img: profileImg },
+      { name: "39기 정상원", position: "컴퓨터공학전공", img: profileImg_정상원 },
       { name: "39.5기 지휘서", position: "수학과", img: profileImg },
     ],
   },
@@ -60,7 +74,7 @@ const departments: Department[] = [
       {
         name: "38기 유태규",
         position: "컴퓨터공학전공",
-        img: profileImg,
+        img: profileImg_유태규,
       },
       {
         name: "38.5기 정율",
@@ -85,10 +99,10 @@ const departments: Department[] = [
       {
         name: "37기 김동원",
         position: "멀티미디어소프트웨어공학전공",
-        img: profileImg,
+        img: profileImg_김동원,
       },
       { name: "39기 박승우", position: "컴퓨터AI학부", img: profileImg },
-      { name: "39.5기 장희원", position: "정보통신공학과", img: profileImg },
+      { name: "39.5기 장희원", position: "정보통신공학과", img: profileImg_장희원 },
     ],
   },
   {
@@ -97,15 +111,15 @@ const departments: Department[] = [
       {
         name: "39기 박재관",
         position: "컴퓨터AI학부",
-        img: profileImg,
+        img: profileImg_박재관,
       },
       {
         name: "34기 한병헌",
         position: "정보통신공학과",
         img: profileImg,
       },
-      { name: "39기 김영민", position: "컴퓨터공학전공", img: profileImg },
-      { name: "39.5기 강유민", position: "열린전공학부", img: profileImg },
+      { name: "39기 김영민", position: "컴퓨터공학전공", img: profileImg_김영민 },
+      { name: "39.5기 강유민", position: "열린전공학부", img: profileImg_강유민 },
       { name: "39.5기 이승은", position: "수학과", img: profileImg },
     ],
   },
@@ -115,7 +129,7 @@ const departments: Department[] = [
       {
         name: "39기 김승우",
         position: "열린전공학부",
-        img: profileImg,
+        img: profileImg_김승우,
       },
       {
         name: "39기 강성찬",
@@ -137,7 +151,7 @@ const departments: Department[] = [
       {
         name: "37기 방지원",
         position: "컴퓨터공학전공",
-        img: profileImg,
+        img: profileImg_방지원,
       },
       {
         name: "39기 이은서",
@@ -160,20 +174,20 @@ const departments: Department[] = [
       {
         name: "38기 김다인",
         position: "정보통신공학과",
-        img: profileImg,
+        img: profileImg_김다인,
       },
       {
         name: "37기 원종인",
         position: "약학과",
-        img: profileImg,
+        img: profileImg_원종인,
       },
       {
         name: "37기 장준혁",
         position: "컴퓨터공학전공",
         img: profileImg,
       },
-      { name: "39.5기 윤유겸", position: "컴퓨터AI학부", img: profileImg },
-      { name: "39.5기 이수빈", position: "정보통신공학과", img: profileImg },
+      { name: "39.5기 윤유겸", position: "컴퓨터AI학부", img: profileImg_윤유겸 },
+      { name: "39.5기 이수빈", position: "정보통신공학과", img: profileImg_이수빈 },
     ],
   },
 ];

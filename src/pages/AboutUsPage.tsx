@@ -37,6 +37,7 @@ import profileImg_정이현 from "../assets/profiles/정이현.jpeg";
 import profileImg_한병헌 from "../assets/profiles/한병헌.jpeg";
 import profileImg_장준혁 from "../assets/profiles/장준혁.jpeg";
 import profileImg_김영모 from "../assets/profiles/김영모.jpeg";
+import profileImg_김승현 from "../assets/profiles/김승현.jpeg";
 const profileImg = new URL("../assets/profile.png", import.meta.url).href;
 
 type Member = {
@@ -208,7 +209,7 @@ const departments: Department[] = [
       { 
         name: "39.5기 김승현", 
         position: "건축공학부", 
-        img: profileImg },
+        img: profileImg_김승현 },
       {
         name: "39.5기 이태경",
         position: "경영정보학과",

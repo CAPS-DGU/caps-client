@@ -35,6 +35,8 @@ import profileImg_이승은 from "../assets/profiles/이승은.jpeg";
 import profileImg_정율 from "../assets/profiles/정율.jpeg";
 import profileImg_정이현 from "../assets/profiles/정이현.jpeg";
 import profileImg_한병헌 from "../assets/profiles/한병헌.jpeg";
+import profileImg_장준혁 from "../assets/profiles/장준혁.jpeg";
+import profileImg_김영모 from "../assets/profiles/김영모.jpeg";
 const profileImg = new URL("../assets/profile.png", import.meta.url).href;
 
 type Member = {
@@ -71,7 +73,7 @@ const departments: Department[] = [
       {
         name: "39기 김영모",
         position: "컴퓨터AI학부",
-        img: profileImg,
+        img: profileImg_김영모,
       },
       {
         name: "38.5기 이강민",
@@ -235,7 +237,7 @@ const departments: Department[] = [
       {
         name: "37기 장준혁",
         position: "컴퓨터공학전공",
-        img: profileImg,
+        img: profileImg_장준혁,
       },
       {
         name: "39.5기 윤유겸",

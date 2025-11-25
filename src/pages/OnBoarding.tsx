@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function generateReverseYearArray() {
   const currentDate = new Date();
@@ -26,6 +26,17 @@ function generateReverseYearArray() {
 }
 
 
+const formatPhone = (raw: string) => {
+  const digits = raw.replace(/\D/g, "").slice(0, 11);
+  if (digits.length < 4) {
+    return digits;
+  }
+  if (digits.length < 8) {
+    return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+  }
+  return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
+};
+
 export default function OnBoarding() {
   const navigate = useNavigate();
   const [studentId, setStudentId] = useState("");
@@ -38,6 +49,10 @@ export default function OnBoarding() {
   const validate = () => /^(19|20)\d{8}$/.test(studentId);
   const validatePhone = () => /^\d{2,3}-\d{3,4}-\d{4}$/.test(phone);
 
+  const apiHost = (
+    import.meta as unknown as { env: { VITE_API_HOST: string } }
+  ).env.VITE_API_HOST;
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validate()) {
@@ -45,7 +60,7 @@ export default function OnBoarding() {
       return;
     }
     setError(false);
-    axios.patch(import.meta.env.VITE_API_HOST + "/api/v1/auth/complete-registration", {
+    axios.patch(apiHost + "/api/v1/auth/complete-registration", {
       studentNumber: studentId,
       grade: generation,
       phoneNumber: phone,
@@ -64,11 +79,16 @@ export default function OnBoarding() {
     // 가입 완료 처리
   };
 
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPhone(formatPhone(e.target.value));
+  };
+
   return (
-    <form
-      className="bg-white p-8 rounded-xl shadow max-w-sm mx-auto"
-      onSubmit={handleSubmit}
-    >
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
+      <form
+        className="bg-white p-8 rounded-xl shadow max-w-sm w-full"
+        onSubmit={handleSubmit}
+      >
       <div className="font-bold text-2xl mb-4 text-blue-900">CAPS</div>
       <div className="mb-4 text-gray-800 font-semibold">
         정확한 정보 기록을 위해<br />
@@ -91,8 +111,9 @@ export default function OnBoarding() {
       <label className="block mb-2 text-gray-700">전화번호</label>
       <input
         type="text"
+        inputMode="numeric"
         value={phone}
-        onChange={(e) => setPhone(e.target.value)}
+        onChange={handlePhoneChange}
         placeholder="ex. 010-1234-5678"
         className="w-full p-2 border border-gray-300 rounded mb-4"
       />
@@ -117,14 +138,16 @@ export default function OnBoarding() {
       </select>
       <button
         type="submit"
-        className={`w-full p-2 rounded text-white font-bold ${validate() && validatePhone() && generation
-          ? "bg-blue-600 hover:bg-blue-700"
-          : "bg-gray-400 cursor-not-allowed"
-          }`}
+        className={`w-full p-2 rounded text-white font-bold ${
+          validate() && validatePhone() && generation
+            ? "bg-blue-600 hover:bg-blue-700"
+            : "bg-gray-400 cursor-not-allowed"
+        }`}
         disabled={!(validate() && validatePhone() && generation)}
       >
         가입 완료하기
       </button>
-    </form>
+      </form>
+    </div>
   );
 }

@@ -21,9 +21,9 @@ const LedgerDetailPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-white">
+    <div className="flex flex-col min-h-screen">
       <Navbar />
-      <main className="flex-1 mt-20">
+      <main className="flex-1 mt-20 bg-transparent">
         <div className="px-4 py-10 mx-auto max-w-4xl">
           <LedgerDetailHeader
             ledgerId={ledgerId}

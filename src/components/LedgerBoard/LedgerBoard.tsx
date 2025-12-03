@@ -62,7 +62,7 @@ const LedgerBoard: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col px-4 py-10 mx-auto max-w-5xl">
       {/* 헤더 섹션 */}
       <div className="w-full">
         <div className="mx-auto max-w-[1440px] px-[15px] py-[15px]">

@@ -266,19 +266,27 @@ export const LedgerFileSection: React.FC<FileSectionProps> = ({
     {files.length > 0 && (
       <ul className="space-y-1 text-sm text-gray-800">
         {files.map(({ id, file }) => (
-          <li key={id} className="flex justify-between items-center px-2 py-1">
-            <div className="flex gap-2 items-center min-w-0">
+          <li
+            key={id}
+            className="flex justify-between items-center px-2 py-1 h-8"
+          >
+            <div className="flex flex-1 gap-2 items-center min-w-0">
               <img
                 src={attachFileIcon}
                 alt="첨부"
                 className="flex-shrink-0 w-4 h-4"
               />
-              <span className="truncate">{file.name}</span>
+              <span
+                className="truncate max-w-[10rem] md:max-w-[14rem]"
+                title={file.name}
+              >
+                {file.name}
+              </span>
             </div>
             <button
               type="button"
               onClick={() => onRemoveFile(id)}
-              className="ml-3 text-xs font-semibold text-[#007AEB] hover:underline"
+              className="ml-2 flex-shrink-0 w-12 md:w-16 text-xs font-semibold text-[#007AEB] text-right hover:underline"
             >
               삭제
             </button>

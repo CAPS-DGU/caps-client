@@ -5,8 +5,24 @@ export const pushPinIcon = new URL(
   "../../assets/push_pin_rotate.svg",
   import.meta.url
 ).href;
+
 export const attachFileIcon = new URL(
   "../../assets/attach_file.svg",
+  import.meta.url
+).href;
+
+export const attachFileUploadIcon = new URL(
+  "../../assets/attach_file_upload.svg",
+  import.meta.url
+).href;
+
+export const imageFileIcon = new URL(
+  "../../assets/image_file.svg",
+  import.meta.url
+).href;
+
+export const defaultFileIcon = new URL(
+  "../../assets/default_file.svg",
   import.meta.url
 ).href;
 
@@ -30,7 +46,7 @@ export const LedgerDetailHeader: React.FC<LedgerDetailHeaderProps> = ({
   <header className="pb-6 mb-8 border-b border-gray-200">
     <div className="flex gap-4 justify-between items-end">
       <div>
-        <h1 className="mb-2 text-3xl font-extrabold text-black md:text-4xl">
+        <h1 className="mb-2 text-2xl font-extrabold text-black tracking-[1.9px]">
           {title}
         </h1>
         <p className="text-sm text-gray-500">
@@ -177,7 +193,8 @@ export const PinToggle: React.FC<PinToggleProps> = ({ isPinned, onToggle }) => (
     >
       <div
         className={`w-3 h-3 bg-white rounded-full transform transition-transform ${
-          isPinned ? "translate-x-3" : ""}`}
+          isPinned ? "translate-x-3" : ""
+        }`}
       />
     </div>
   </button>
@@ -245,7 +262,7 @@ export const LedgerFileSection: React.FC<FileSectionProps> = ({
     {/* 상단 파일 업로드 헤더 (아이콘 + 텍스트) */}
     <label className="flex justify-between items-center px-2 py-1 cursor-pointer select-none">
       <div className="flex items-center gap-2 text-sm font-semibold text-[#007AEB]">
-        <img src={attachFileIcon} alt="파일 업로드" className="w-4 h-4" />
+        <img src={attachFileUploadIcon} alt="파일 업로드" className="w-4 h-4" />
         <span>파일 업로드</span>
       </div>
       <input
@@ -272,7 +289,12 @@ export const LedgerFileSection: React.FC<FileSectionProps> = ({
           >
             <div className="flex flex-1 gap-2 items-center min-w-0">
               <img
-                src={attachFileIcon}
+                src={
+                  file.type.startsWith("image/") ||
+                  /\.(png|jpe?g|gif|bmp|webp|svg)$/i.test(file.name)
+                    ? imageFileIcon
+                    : defaultFileIcon
+                }
                 alt="첨부"
                 className="flex-shrink-0 w-4 h-4"
               />

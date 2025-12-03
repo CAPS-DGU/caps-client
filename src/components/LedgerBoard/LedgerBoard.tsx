@@ -68,10 +68,10 @@ const LedgerBoard: React.FC = () => {
         <div className="mx-auto max-w-[1440px] px-[15px] py-[15px]">
           <div className="flex gap-4 justify-between items-center">
             <div className="flex flex-col gap-[10px]">
-              <h1 className="text-[38px] font-extrabold text-black tracking-[1.9px]">
+              <h1 className="text-2xl font-extrabold text-black tracking-[1.9px]">
                 장부게시판
               </h1>
-              <p className="md:text-[24px] text-[12px] font-bold text-gray-700 tracking-[1.2px]">
+              <p className="md:text-base text-sm text-gray-700 tracking-[1.2px]">
                 장부 기록를 작성하고 확인할 수 있는 공간입니다
               </p>
             </div>

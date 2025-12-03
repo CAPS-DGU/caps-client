@@ -56,7 +56,7 @@ const LedgerEditPage: React.FC = () => {
         >
           {/* 상단 타이틀 + 상단고정/등록 버튼 (한 줄) */}
           <div className="flex justify-between items-end pb-4 mb-2 border-b border-gray-200">
-            <h1 className="text-[38px] font-extrabold text-black tracking-[1.9px]">
+            <h1 className="text-2xl font-extrabold text-black tracking-[1.9px]">
               장부게시판
             </h1>
             <LedgerTopActions

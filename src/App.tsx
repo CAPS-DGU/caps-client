@@ -98,6 +98,10 @@ const App: React.FC = () => {
       element: <LedgerBoardPage />,
     },
     {
+      path: "/ledger/edit",
+      element: <LedgerEditPage />,
+    },
+    {
       path: "/ledger/:ledgerId",
       element: <LedgerDetailPage />,
     },

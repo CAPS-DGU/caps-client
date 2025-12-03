@@ -77,6 +77,7 @@ const LedgerBoard: React.FC = () => {
             </div>
             <button
               type="button"
+              onClick={() => navigate("/ledger/edit")}
               className="px-6 py-4 text-sm font-semibold text-white bg-[#007AEB] rounded-full hover:bg-[#0079ebcc] transition-colors flex items-center gap-2"
             >
               <img src={editIcon} alt="작성하기" className="w-6 h-6" />

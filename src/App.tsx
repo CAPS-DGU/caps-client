@@ -31,6 +31,9 @@ import WikiEditPage from "./pages/WikiEditPage.jsx";
 import AboutUs from "./pages/AboutUsPage.tsx";
 import CapsHistoryPage from "./pages/CapsHistoryPage.tsx";
 import FAQPage from "./pages/FAQPage.tsx";
+import LedgerBoardPage from "./pages/LedgerBoardPage.tsx";
+import LedgerDetailPage from "./pages/LedgerDetailPage.tsx";
+import LedgerEditPage from "./pages/LedgerEditPage.tsx";
 
 // Types
 interface RouteConfig {
@@ -89,6 +92,22 @@ const App: React.FC = () => {
     {
       path: "/board",
       element: <BoardPage />,
+    },
+    {
+      path: "/ledger",
+      element: <LedgerBoardPage />,
+    },
+    {
+      path: "/ledger/:ledgerId",
+      element: <LedgerDetailPage />,
+    },
+    {
+      path: "/ledger/:ledgerId/edit",
+      element: <LedgerEditPage />,
+    },
+    {
+      path: "/ledger/:ledgerId",
+      element: <LedgerDetailPage />,
     },
     {
       path: "/login",

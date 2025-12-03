@@ -193,8 +193,7 @@ export const PinToggle: React.FC<PinToggleProps> = ({ isPinned, onToggle }) => (
     >
       <div
         className={`w-3 h-3 bg-white rounded-full transform transition-transform ${
-          isPinned ? "translate-x-3" : ""
-        }`}
+          isPinned ? "translate-x-3" : ""}`}
       />
     </div>
   </button>
@@ -215,7 +214,7 @@ export const LedgerTitleInput: React.FC<TitleInputProps> = ({
       value={title}
       onChange={(e) => onChange(e.target.value)}
       placeholder="제목을 입력하세요."
-      className="w-full text-2xl font-extrabold placeholder-gray-400 text-black bg-transparent md:text-3xl focus:outline-none"
+      className="w-full text-xl font-extrabold placeholder-gray-400 text-black bg-transparent md:text-2xl focus:outline-none"
     />
   </div>
 );
@@ -258,7 +257,11 @@ export const LedgerFileSection: React.FC<FileSectionProps> = ({
   onFilesChange,
   onRemoveFile,
 }) => (
-  <section className="space-y-2 w-[15rem] bg-white p-2 rounded-lg border border-gray-200">
+  <section
+    className={`space-y-2 bg-white p-2 rounded-lg border border-gray-200 ${
+      files.length > 0 ? "w-[15rem]" : "w-[11rem]"
+    }`}
+  >
     {/* 상단 파일 업로드 헤더 (아이콘 + 텍스트) */}
     <label className="flex justify-between items-center px-2 py-1 cursor-pointer select-none">
       <div className="flex items-center gap-2 text-sm font-semibold text-[#007AEB]">
@@ -276,8 +279,8 @@ export const LedgerFileSection: React.FC<FileSectionProps> = ({
       />
     </label>
 
-    {/* 구분선 */}
-    <div className="border-b border-gray-200" />
+    {/* 구분선 (파일이 있을 때만 표시) */}
+    {files.length > 0 && <div className="border-b border-gray-200" />}
 
     {/* 첨부파일 목록 */}
     {files.length > 0 && (

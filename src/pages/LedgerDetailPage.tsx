@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/NavBar";
 import Footer from "../components/MainPage/Footer";
@@ -8,16 +8,78 @@ import {
   LedgerDetailContent,
   LedgerDeleteModal,
 } from "../components/Ledger/LedgerComponents";
+import { apiDeleteWithToken, apiGetWithToken } from "../utils/Api";
+
+interface LedgerMember {
+  id: number;
+  name: string;
+  profileImageUrl: string;
+  grade: number;
+}
+
+interface LedgerDetailData {
+  id: number;
+  title: string;
+  content: string;
+  fileUrl: string | null;
+  member: LedgerMember;
+  createdAt: string;
+  isPinned: boolean;
+}
+
+interface LedgerDetailResponse {
+  status: number;
+  message: string;
+  data: LedgerDetailData;
+}
 
 const LedgerDetailPage: React.FC = () => {
   const { ledgerId } = useParams<{ ledgerId: string }>();
   const navigate = useNavigate();
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [ledger, setLedger] = useState<LedgerDetailData | null>(null);
 
-  const handleDeleteConfirm = () => {
-    // TODO: 실제 삭제 API 연동 후 성공 시 목록으로 이동
-    setIsDeleteOpen(false);
-    navigate(-1);
+  const formatDateTime = (isoString: string) => {
+    const date = new Date(isoString);
+    if (Number.isNaN(date.getTime())) return isoString;
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    return `${year}. ${month}. ${day} ${hours}:${minutes}`;
+  };
+
+  useEffect(() => {
+    const fetchLedgerDetail = async () => {
+      if (!ledgerId) return;
+      try {
+        const res = await apiGetWithToken(
+          `/api/v1/ledgers/${ledgerId}`,
+          navigate
+        );
+        const body = res.data as LedgerDetailResponse;
+        setLedger(body.data);
+      } catch (error) {
+        console.error("장부 상세 조회 실패:", error);
+      }
+    };
+
+    fetchLedgerDetail();
+  }, [ledgerId, navigate]);
+
+  const handleDeleteConfirm = async () => {
+    if (!ledgerId) return;
+
+    try {
+      await apiDeleteWithToken(`/api/v1/ledgers/${ledgerId}`, navigate);
+      alert("장부가 삭제되었습니다.");
+      setIsDeleteOpen(false);
+      navigate("/ledger");
+    } catch (error) {
+      console.error("장부 삭제 실패:", error);
+      alert("장부 삭제 중 오류가 발생했습니다.");
+    }
   };
 
   return (
@@ -27,7 +89,7 @@ const LedgerDetailPage: React.FC = () => {
         <div className="px-4 py-10 mx-auto max-w-4xl">
           <LedgerDetailHeader
             ledgerId={ledgerId}
-            title="장부 제목"
+            title={ledger?.title ?? "장부 제목"}
             onEdit={() => {
               navigate(`/ledger/${ledgerId}/edit`);
             }}
@@ -37,12 +99,12 @@ const LedgerDetailPage: React.FC = () => {
           {/* 본문 영역 */}
           <section className="space-y-4">
             <LedgerDetailMeta
-              author="김캡스"
-              term="39.5기"
-              date="2025. 01. 01 18:00"
-              fileName="CAPS.pdf"
+              author={ledger?.member.name ?? ""}
+              term={ledger?.member.grade ? `${ledger.member.grade}기` : ""}
+              date={ledger ? formatDateTime(ledger.createdAt) : ""}
+              fileName={ledger?.fileUrl ?? undefined}
             />
-            <LedgerDetailContent />
+            <LedgerDetailContent content={ledger?.content ?? ""} />
           </section>
 
           {/* 하단 목록 버튼 */}

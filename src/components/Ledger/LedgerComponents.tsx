@@ -113,13 +113,16 @@ export const LedgerDetailMeta: React.FC<LedgerDetailMetaProps> = ({
   </div>
 );
 
-export const LedgerDetailContent: React.FC = () => (
+export interface LedgerDetailContentProps {
+  content: string;
+}
+
+export const LedgerDetailContent: React.FC<LedgerDetailContentProps> = ({
+  content,
+}) => (
   <div className="p-6 mt-4 bg-white border border-gray-200 rounded-[15px] shadow-md">
-    <p className="text-sm leading-relaxed text-gray-700">
-      이 영역에 선택한 장부 기록의 상세 내용이 들어갈 예정입니다.
-      <br />
-      백엔드 API 연동 후 실제 데이터(제목, 금액, 내역 등)를 표시하도록 변경할 수
-      있습니다.
+    <p className="text-sm leading-relaxed text-gray-700 whitespace-pre-wrap">
+      {content}
     </p>
   </div>
 );
@@ -193,7 +196,8 @@ export const PinToggle: React.FC<PinToggleProps> = ({ isPinned, onToggle }) => (
     >
       <div
         className={`w-3 h-3 bg-white rounded-full transform transition-transform ${
-          isPinned ? "translate-x-3" : ""}`}
+          isPinned ? "translate-x-3" : ""
+        }`}
       />
     </div>
   </button>

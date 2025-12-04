@@ -12,6 +12,10 @@ export async function apiPatchWithToken(path, data, navigate) {
   return await apiWithToken("patch", path, data, navigate);
 }
 
+export async function apiDeleteWithToken(path, navigate) {
+  return await apiWithToken("delete", path, null, navigate);
+}
+
 export async function apiWithToken(
   method,
   path,
@@ -21,7 +25,7 @@ export async function apiWithToken(
   try {
     const response = await axios({
       method: method,
-      url: `${import.meta.env.VITE_API_HOST}${path}`,
+      url: `${(import.meta as any).env.VITE_API_HOST}${path}`,
       data: data,
       withCredentials: true,
       headers: {

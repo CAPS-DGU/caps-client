@@ -94,50 +94,50 @@ function Navbar({ isTransparent = false }: NavbarProps) {
         }`}
       >
         {/* 왼쪽: 로고 및 메뉴 */}
-        <div className="flex items-center gap-4 md:gap-10">
+        <div className="flex gap-4 items-center md:gap-10">
           <Link to="/">
             <img
               src={isTransparent ? logoBright : logo}
               alt="CAPS Logo"
-              className="w-12 md:w-16 mr-2"
+              className="mr-2 w-12 md:w-16"
             />
           </Link>
           <Link
             to="/wiki"
-            className={`text-base ${menuColor} transition font-semibold flex items-center`}
+            className={`flex items-center text-base font-semibold transition ${menuColor}`}
           >
             <span className="hidden md:inline">캡스위키</span>
-            <BookOpen className="md:hidden inline-block" size={20} />
+            <BookOpen className="inline-block md:hidden" size={20} />
           </Link>
           <Link
             to="/aboutus"
-            className={`text-base ${menuColor} transition font-semibold flex items-center`}
+            className={`flex items-center text-base font-semibold transition ${menuColor}`}
           >
             <span className="hidden md:inline">집행부 소개</span>
-            <Users className="md:hidden inline-block" size={20} />
+            <Users className="inline-block md:hidden" size={20} />
           </Link>
           <Link
             to="/faq"
-            className={`text-base ${menuColor} transition font-semibold flex items-center`}
+            className={`flex items-center text-base font-semibold transition ${menuColor}`}
           >
             <span className="hidden md:inline">FAQ</span>
-            <HelpCircle className="md:hidden inline-block" size={20} />
+            <HelpCircle className="inline-block md:hidden" size={20} />
           </Link>
           <Link
             to="/caps-history"
-            className={`text-base ${menuColor} transition font-semibold flex items-center`}
+            className={`flex items-center text-base font-semibold transition ${menuColor}`}
           >
             <span className="hidden md:inline">연혁</span>
-            <HistoryIcon className="md:hidden inline-block" size={20} />
+            <HistoryIcon className="inline-block md:hidden" size={20} />
           </Link>
         </div>
         {/* 오른쪽: 로그인/회원가입 */}
-        <div className="flex items-center gap-4 md:gap-8">
+        <div className="flex gap-4 items-center md:gap-8">
           {isLoggedIn ? (
             <div className="relative">
               <Link
                 to="#"
-                className={`text-base ${menuColor} transition font-semibold flex items-center`}
+                className={`flex items-center text-base font-semibold transition ${menuColor}`}
                 onClick={() => {
                   dropdownOpen == null ? toggleDropdown(4) : closeDropdown();
                 }}
@@ -149,10 +149,10 @@ function Navbar({ isTransparent = false }: NavbarProps) {
                     </>
                   )}
                 </span>
-                <UserIcon className="md:hidden inline-block" size={22} />
+                <UserIcon className="inline-block md:hidden" size={22} />
               </Link>
               {dropdownOpen === 4 && (
-                <div className="absolute z-50 w-40 py-2 mt-2 bg-white rounded-lg shadow-xl right-0">
+                <div className="absolute right-0 z-50 py-2 mt-2 w-40 bg-white rounded-lg shadow-xl">
                   <Link
                     to="#"
                     className="block px-4 py-2 text-xs text-gray-800 hover:bg-gray-200"
@@ -172,11 +172,11 @@ function Navbar({ isTransparent = false }: NavbarProps) {
           ) : (
             <>
               <button
-                className={`text-base ${menuColor} transition font-semibold flex items-center`}
+                className={`flex items-center text-base font-semibold transition ${menuColor}`}
                 onClick={handleLoginClick}
               >
                 <span className="hidden md:inline">로그인</span>
-                <LogIn className="md:hidden inline-block" size={22} />
+                <LogIn className="inline-block md:hidden" size={22} />
               </button>
               <LoginModal
                 open={loginModalOpen}

@@ -38,6 +38,7 @@ const LedgerDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [ledger, setLedger] = useState<LedgerDetailData | null>(null);
+  const [isDeleteSuccessOpen, setIsDeleteSuccessOpen] = useState(false);
 
   const formatDateTime = (isoString: string) => {
     const date = new Date(isoString);
@@ -73,9 +74,8 @@ const LedgerDetailPage: React.FC = () => {
 
     try {
       await apiDeleteWithToken(`/api/v1/ledgers/${ledgerId}`, navigate);
-      alert("장부가 삭제되었습니다.");
       setIsDeleteOpen(false);
-      navigate("/ledger");
+      setIsDeleteSuccessOpen(true);
     } catch (error) {
       console.error("장부 삭제 실패:", error);
       alert("장부 삭제 중 오류가 발생했습니다.");
@@ -126,6 +126,28 @@ const LedgerDetailPage: React.FC = () => {
         onClose={() => setIsDeleteOpen(false)}
         onConfirm={handleDeleteConfirm}
       />
+      {isDeleteSuccessOpen && (
+        <div className="flex fixed inset-0 z-50 justify-center items-center bg-black/50">
+          <div className="px-6 py-6 space-y-6 w-full max-w-md text-center bg-white rounded-2xl shadow-lg md:px-8 md:py-7">
+            <h2 className="text-xl font-extrabold text-gray-900">
+              장부가 삭제되었습니다.
+            </h2>
+            <p className="text-sm text-gray-600">
+              확인을 누르면 장부 목록으로 이동합니다.
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setIsDeleteSuccessOpen(false);
+                navigate("/ledger");
+              }}
+              className="px-7 py-3 text-sm font-semibold text-white bg-[#007AEB] rounded-full hover:bg-[#0066c7] transition-colors"
+            >
+              확인
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -78,6 +78,11 @@ const LedgerEditPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!title.trim()) {
+      alert("제목을 입력하세요.");
+      return;
+    }
+
     try {
       const payload = {
         title,

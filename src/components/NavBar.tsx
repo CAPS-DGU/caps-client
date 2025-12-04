@@ -64,6 +64,36 @@ function Navbar({ isTransparent = false }: NavbarProps) {
 
   const API_HOST = (import.meta as any).env.VITE_API_HOST as string;
   const handleKakaoLogin = () => {
+    const isDev = (import.meta as any).env?.DEV;
+
+    // 개발 환경: 쿠키 강제 입력 창
+    if (isDev) {
+      const access = window.prompt("accessToken 값을 입력하세요", "");
+      if (!access) {
+        alert("accessToken이 입력되지 않았습니다.");
+        return;
+      }
+
+      const refresh = window.prompt("refreshToken 값을 입력하세요 (선택)", "");
+
+      // SameSite / Secure 옵션은 실제 쿠키 전략에 맞게 조정
+      document.cookie = `accessToken=${encodeURIComponent(
+        access
+      )}; path=/; SameSite=None; Secure`;
+
+      if (refresh) {
+        document.cookie = `refreshToken=${encodeURIComponent(
+          refresh
+        )}; path=/; SameSite=None; Secure`;
+      }
+
+      alert("쿠키에 토큰이 설정되었습니다.");
+      setLoginModalOpen(false);
+      navigate("/");
+      return;
+    }
+
+    // 운영 환경: 실제 카카오 로그인 경로로 리다이렉트
     window.location.href = `${API_HOST}/oauth2/authorization/kakao`;
   };
 

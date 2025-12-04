@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -11,20 +10,20 @@ interface LoginErrors {
 }
 
 const LoginPage: React.FC = () => {
-
   return (
     <div>
       <Navbar />
-      <div className="flex items-center justify-center h-screen-temp">
-        
-        <button onClick={() => {
-          window.location.href = "https://api.dgucaps.shop/oauth2/authorization/kakao";
-        }
-        }>
+      <div className="flex justify-center items-center h-screen-temp">
+        <button
+          onClick={() => {
+            window.location.href =
+              "https://api.dgucaps.shop/oauth2/authorization/kakao";
+          }}
+        >
           <img
             src={kakaologinbutton}
             alt="Kakao Login"
-            className="h-16 mt-20"
+            className="mt-20 h-16"
           />
         </button>
       </div>

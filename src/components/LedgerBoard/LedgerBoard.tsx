@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { apiGetWithToken } from "../../utils/Api";
 
 const pushPinIcon = new URL("../../assets/PushPin.svg", import.meta.url).href;
 const attachFileIcon = new URL("../../assets/attach_file.svg", import.meta.url)
@@ -16,24 +17,74 @@ export interface LedgerEntry {
   isBookmarked?: boolean;
 }
 
+interface LedgerMember {
+  id: number;
+  name: string;
+  profileImageUrl: string;
+  grade: number;
+}
+
+interface LedgerItem {
+  id: number;
+  title: string;
+  member: LedgerMember;
+  createdAt: string;
+}
+
+interface LedgerListData {
+  content: LedgerItem[];
+  totalPages: number;
+}
+
+interface LedgerListResponse {
+  status: number;
+  message: string;
+  data: LedgerListData;
+}
+
 const LedgerBoard: React.FC = () => {
   const navigate = useNavigate();
-  // 샘플 데이터 생성
-  const generateSampleData = (): LedgerEntry[] => {
-    return Array.from({ length: 12 }, (_, i) => ({
-      id: i + 1,
-      author: "김캡스",
-      term: "39.5기",
-      date: "2025. 01. 01",
-      title: i === 0 ? "1월 정기회의록" : `장부 기록 ${i + 1}`,
-      hasAttachment: i % 3 === 0, // 일부 항목만 첨부파일 있음
-      isBookmarked: i === 0, // 첫 번째 항목만 북마크
-    }));
+  const [entries, setEntries] = useState<LedgerEntry[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const formatDate = (isoString: string) => {
+    const date = new Date(isoString);
+    if (Number.isNaN(date.getTime())) return isoString;
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}. ${month}. ${day}`;
   };
 
-  const [entries, setEntries] = useState<LedgerEntry[]>(generateSampleData());
-  const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = 10;
+  useEffect(() => {
+    const fetchLedgers = async () => {
+      try {
+        const res = await apiGetWithToken(
+          `/api/v1/ledgers?page=${currentPage}`,
+          navigate
+        );
+        const body = res.data as LedgerListResponse;
+
+        const mappedEntries: LedgerEntry[] = body.data.content.map((item) => ({
+          id: item.id,
+          author: item.member.name,
+          term: item.member.grade ? `${item.member.grade}기` : "",
+          date: formatDate(item.createdAt),
+          title: item.title,
+          hasAttachment: false,
+          isBookmarked: false,
+        }));
+
+        setEntries(mappedEntries);
+        setTotalPages(body.data.totalPages || 1);
+      } catch (error) {
+        console.error("장부 목록 조회 실패:", error);
+      }
+    };
+
+    fetchLedgers();
+  }, [currentPage, navigate]);
 
   // 페이지네이션: 고정된 개수의 페이지 번호만 노출
   const pageWindowSize = 5;

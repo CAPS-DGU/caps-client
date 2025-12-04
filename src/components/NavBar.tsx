@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-const logoBright = new URL('../assets/logo-bright.png', import.meta.url).href;
-const logo = new URL('../assets/logo.png', import.meta.url).href;
+const logoBright = new URL("../assets/logo-bright.png", import.meta.url).href;
+const logo = new URL("../assets/logo.png", import.meta.url).href;
 import { Link } from "react-router-dom";
-import LoginModal from './Login/LoginModal';
-import { BookOpen, Users, HelpCircle, History as HistoryIcon, LogIn, User as UserIcon } from 'lucide-react';
+import LoginModal from "./Login/LoginModal";
+import {
+  BookOpen,
+  Users,
+  HelpCircle,
+  History as HistoryIcon,
+  LogIn,
+  User as UserIcon,
+} from "lucide-react";
 
 interface NavbarProps {
   isTransparent?: boolean;
@@ -19,11 +26,19 @@ function Navbar({ isTransparent = false }: NavbarProps) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { user, completeRegistration, isLoggedIn, isLoading, error, checkLoginStatus, manualLogout } = useAuth();
+  const {
+    user,
+    completeRegistration,
+    isLoggedIn,
+    isLoading,
+    error,
+    checkLoginStatus,
+    manualLogout,
+  } = useAuth();
 
   useEffect(() => {
     if (!completeRegistration && isLoggedIn) {
-      navigate("/onboarding")
+      navigate("/onboarding");
     }
   }, [user]);
 
@@ -64,62 +79,54 @@ function Navbar({ isTransparent = false }: NavbarProps) {
 
   const API_HOST = (import.meta as any).env.VITE_API_HOST as string;
   const handleKakaoLogin = () => {
-    const isDev = (import.meta as any).env?.DEV;
-
-    // 개발 환경: 쿠키 강제 입력 창
-    if (isDev) {
-      const access = window.prompt("accessToken 값을 입력하세요", "");
-      if (!access) {
-        alert("accessToken이 입력되지 않았습니다.");
-        return;
-      }
-
-      const refresh = window.prompt("refreshToken 값을 입력하세요 (선택)", "");
-
-      // SameSite / Secure 옵션은 실제 쿠키 전략에 맞게 조정
-      document.cookie = `accessToken=${encodeURIComponent(
-        access
-      )}; path=/; SameSite=None; Secure`;
-
-      if (refresh) {
-        document.cookie = `refreshToken=${encodeURIComponent(
-          refresh
-        )}; path=/; SameSite=None; Secure`;
-      }
-
-      alert("쿠키에 토큰이 설정되었습니다.");
-      setLoginModalOpen(false);
-      navigate("/");
-      return;
-    }
-
-    // 운영 환경: 실제 카카오 로그인 경로로 리다이렉트
     window.location.href = `${API_HOST}/oauth2/authorization/kakao`;
   };
 
-  const menuColor = isTransparent ? 'text-gray-200 hover:text-blue-300' : 'text-gray-800 hover:text-blue-600';
+  const menuColor = isTransparent
+    ? "text-gray-200 hover:text-blue-300"
+    : "text-gray-800 hover:text-blue-600";
 
   return (
     <>
-      <nav className={`fixed top-0 left-0 w-full z-30 flex items-center justify-between px-4 md:px-12 py-3 md:py-4 ${isTransparent ? 'bg-transparent' : 'bg-[#FAFAFA]'}`}>
+      <nav
+        className={`fixed top-0 left-0 w-full z-30 flex items-center justify-between px-4 md:px-12 py-3 md:py-4 ${
+          isTransparent ? "bg-transparent" : "bg-[#FAFAFA]"
+        }`}
+      >
         {/* 왼쪽: 로고 및 메뉴 */}
         <div className="flex items-center gap-4 md:gap-10">
           <Link to="/">
-            <img src={isTransparent ? logoBright : logo} alt="CAPS Logo" className="w-12 md:w-16 mr-2" />
+            <img
+              src={isTransparent ? logoBright : logo}
+              alt="CAPS Logo"
+              className="w-12 md:w-16 mr-2"
+            />
           </Link>
-          <Link to="/wiki" className={`text-base ${menuColor} transition font-semibold flex items-center`}> 
+          <Link
+            to="/wiki"
+            className={`text-base ${menuColor} transition font-semibold flex items-center`}
+          >
             <span className="hidden md:inline">캡스위키</span>
             <BookOpen className="md:hidden inline-block" size={20} />
           </Link>
-          <Link to="/aboutus" className={`text-base ${menuColor} transition font-semibold flex items-center`}>
+          <Link
+            to="/aboutus"
+            className={`text-base ${menuColor} transition font-semibold flex items-center`}
+          >
             <span className="hidden md:inline">집행부 소개</span>
             <Users className="md:hidden inline-block" size={20} />
           </Link>
-          <Link to="/faq" className={`text-base ${menuColor} transition font-semibold flex items-center`}>
+          <Link
+            to="/faq"
+            className={`text-base ${menuColor} transition font-semibold flex items-center`}
+          >
             <span className="hidden md:inline">FAQ</span>
             <HelpCircle className="md:hidden inline-block" size={20} />
           </Link>
-          <Link to="/caps-history" className={`text-base ${menuColor} transition font-semibold flex items-center`}>
+          <Link
+            to="/caps-history"
+            className={`text-base ${menuColor} transition font-semibold flex items-center`}
+          >
             <span className="hidden md:inline">연혁</span>
             <HistoryIcon className="md:hidden inline-block" size={20} />
           </Link>
@@ -131,9 +138,17 @@ function Navbar({ isTransparent = false }: NavbarProps) {
               <Link
                 to="#"
                 className={`text-base ${menuColor} transition font-semibold flex items-center`}
-                onClick={() => { dropdownOpen == null ? toggleDropdown(4) : closeDropdown() }}
+                onClick={() => {
+                  dropdownOpen == null ? toggleDropdown(4) : closeDropdown();
+                }}
               >
-                <span className="hidden md:inline">{user && <>{user.grade}기 {user.name}님 환영합니다!</>}</span>
+                <span className="hidden md:inline">
+                  {user && (
+                    <>
+                      {user.grade}기 {user.name}님 환영합니다!
+                    </>
+                  )}
+                </span>
                 <UserIcon className="md:hidden inline-block" size={22} />
               </Link>
               {dropdownOpen === 4 && (
@@ -156,11 +171,18 @@ function Navbar({ isTransparent = false }: NavbarProps) {
             </div>
           ) : (
             <>
-              <button className={`text-base ${menuColor} transition font-semibold flex items-center`} onClick={handleLoginClick}>
+              <button
+                className={`text-base ${menuColor} transition font-semibold flex items-center`}
+                onClick={handleLoginClick}
+              >
                 <span className="hidden md:inline">로그인</span>
                 <LogIn className="md:hidden inline-block" size={22} />
               </button>
-              <LoginModal open={loginModalOpen} onClose={() => setLoginModalOpen(false)} onKakaoLogin={handleKakaoLogin} />
+              <LoginModal
+                open={loginModalOpen}
+                onClose={() => setLoginModalOpen(false)}
+                onKakaoLogin={handleKakaoLogin}
+              />
             </>
           )}
         </div>

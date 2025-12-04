@@ -112,7 +112,7 @@ const LedgerDetailPage: React.FC = () => {
             <button
               type="button"
               className="px-7 py-3 text-sm font-semibold text-white bg-[#007AEB] rounded-full hover:bg-[#0066c7] transition-colors"
-              onClick={() => navigate(-1)}
+              onClick={() => navigate("/ledger")}
             >
               목록
             </button>

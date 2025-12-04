@@ -29,6 +29,7 @@ interface LedgerItem {
   title: string;
   member: LedgerMember;
   createdAt: string;
+  isPinned: boolean;
 }
 
 interface LedgerListData {
@@ -73,7 +74,7 @@ const LedgerBoard: React.FC = () => {
           date: formatDate(item.createdAt),
           title: item.title,
           hasAttachment: false,
-          isBookmarked: false,
+          isBookmarked: item.isPinned,
         }));
 
         setEntries(mappedEntries);

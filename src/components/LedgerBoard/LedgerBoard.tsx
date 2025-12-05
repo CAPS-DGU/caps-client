@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { match } from "ts-pattern";
 import { apiGetWithToken } from "../../utils/Api";
 
 const pushPinIcon = new URL("../../assets/PushPin.svg", import.meta.url).href;
@@ -30,6 +31,7 @@ interface LedgerItem {
   member: LedgerMember;
   createdAt: string;
   isPinned: boolean;
+  hasFile: boolean;
 }
 
 interface LedgerListData {
@@ -43,11 +45,17 @@ interface LedgerListResponse {
   data: LedgerListData;
 }
 
+interface JwtPayload {
+  role?: string;
+  [key: string]: any;
+}
+
 const LedgerBoard: React.FC = () => {
   const navigate = useNavigate();
   const [entries, setEntries] = useState<LedgerEntry[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [userRole, setUserRole] = useState<string | null>(null);
 
   const formatDate = (isoString: string) => {
     const date = new Date(isoString);
@@ -57,6 +65,33 @@ const LedgerBoard: React.FC = () => {
     const day = String(date.getDate()).padStart(2, "0");
     return `${year}. ${month}. ${day}`;
   };
+
+  const parseJwt = (token: string | null): JwtPayload | null => {
+    if (!token) return null;
+    try {
+      const base64Url = token.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split("")
+          .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
+          .join("")
+      );
+
+      return JSON.parse(jsonPayload);
+    } catch (error) {
+      console.error("Invalid JWT", error);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    const accessToken = localStorage.getItem("accessToken");
+    const decoded = parseJwt(accessToken);
+    if (decoded && decoded.role) {
+      setUserRole(decoded.role);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchLedgers = async () => {
@@ -73,7 +108,7 @@ const LedgerBoard: React.FC = () => {
           term: item.member.grade ? `${item.member.grade}기` : "",
           date: formatDate(item.createdAt),
           title: item.title,
-          hasAttachment: false,
+          hasAttachment: item.hasFile,
           isBookmarked: item.isPinned,
         }));
 
@@ -127,14 +162,18 @@ const LedgerBoard: React.FC = () => {
                 장부 기록를 작성하고 확인할 수 있는 공간입니다
               </p>
             </div>
-            <button
-              type="button"
-              onClick={() => navigate("/ledger/edit")}
-              className="px-6 py-4 text-sm font-semibold text-white bg-[#007AEB] rounded-full hover:bg-[#0079ebcc] transition-colors flex items-center gap-2"
-            >
-              <img src={editIcon} alt="작성하기" className="w-6 h-6" />
-              <span className="hidden md:inline">작성하기</span>
-            </button>
+            {match(userRole)
+              .with("ADMIN", "COUNCIL", "PRESIDENT", () => (
+                <button
+                  type="button"
+                  onClick={() => navigate("/ledger/edit")}
+                  className="px-6 py-4 text-sm font-semibold text-white bg-[#007AEB] rounded-full hover:bg-[#0079ebcc] transition-colors flex items-center gap-2"
+                >
+                  <img src={editIcon} alt="작성하기" className="w-6 h-6" />
+                  <span className="hidden md:inline">작성하기</span>
+                </button>
+              ))
+              .otherwise(() => null)}
           </div>
         </div>
       </div>

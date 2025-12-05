@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { match } from "ts-pattern";
 import Navbar from "../components/NavBar";
 import Footer from "../components/MainPage/Footer";
 import {
@@ -33,12 +34,18 @@ interface LedgerDetailResponse {
   data: LedgerDetailData;
 }
 
+interface JwtPayload {
+  role?: string;
+  [key: string]: any;
+}
+
 const LedgerDetailPage: React.FC = () => {
   const { ledgerId } = useParams<{ ledgerId: string }>();
   const navigate = useNavigate();
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [ledger, setLedger] = useState<LedgerDetailData | null>(null);
   const [isDeleteSuccessOpen, setIsDeleteSuccessOpen] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
 
   const formatDateTime = (isoString: string) => {
     const date = new Date(isoString);
@@ -50,6 +57,33 @@ const LedgerDetailPage: React.FC = () => {
     const minutes = String(date.getMinutes()).padStart(2, "0");
     return `${year}. ${month}. ${day} ${hours}:${minutes}`;
   };
+
+  const parseJwt = (token: string | null): JwtPayload | null => {
+    if (!token) return null;
+    try {
+      const base64Url = token.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split("")
+          .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
+          .join("")
+      );
+
+      return JSON.parse(jsonPayload);
+    } catch (error) {
+      console.error("Invalid JWT", error);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    const accessToken = localStorage.getItem("accessToken");
+    const decoded = parseJwt(accessToken);
+    if (decoded && decoded.role) {
+      setUserRole(decoded.role);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchLedgerDetail = async () => {
@@ -90,10 +124,19 @@ const LedgerDetailPage: React.FC = () => {
           <LedgerDetailHeader
             ledgerId={ledgerId}
             title={ledger?.title ?? "장부 제목"}
-            onEdit={() => {
-              navigate(`/ledger/${ledgerId}/edit`);
-            }}
-            onDelete={() => setIsDeleteOpen(true)}
+            onEdit={match(userRole)
+              .with("ADMIN", "COUNCIL", "PRESIDENT", () => () => {
+                navigate(`/ledger/${ledgerId}/edit`);
+              })
+              .otherwise(() => undefined)}
+            onDelete={match(userRole)
+              .with(
+                "ADMIN",
+                "COUNCIL",
+                "PRESIDENT",
+                () => () => setIsDeleteOpen(true)
+              )
+              .otherwise(() => undefined)}
           />
 
           {/* 본문 영역 */}

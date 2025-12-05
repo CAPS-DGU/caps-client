@@ -54,22 +54,28 @@ export const LedgerDetailHeader: React.FC<LedgerDetailHeaderProps> = ({
           <span className="font-semibold text-gray-700">{ledgerId}</span>
         </p>
       </div>
-      <div className="flex gap-3 items-center">
-        <button
-          type="button"
-          className="px-7 py-3 text-sm font-semibold text-white bg-[#007AEB] rounded-full hover:bg-[#0066c7] transition-colors"
-          onClick={onEdit}
-        >
-          수정
-        </button>
-        <button
-          type="button"
-          className="px-7 py-3 text-sm font-semibold text-white bg-[#007AEB] rounded-full hover:bg-[#0066c7] transition-colors"
-          onClick={onDelete}
-        >
-          삭제
-        </button>
-      </div>
+      {(onEdit || onDelete) && (
+        <div className="flex gap-3 items-center">
+          {onEdit && (
+            <button
+              type="button"
+              className="px-7 py-3 text-sm font-semibold text-white bg-[#007AEB] rounded-full hover:bg-[#0066c7] transition-colors"
+              onClick={onEdit}
+            >
+              수정
+            </button>
+          )}
+          {onDelete && (
+            <button
+              type="button"
+              className="px-7 py-3 text-sm font-semibold text-white bg-[#007AEB] rounded-full hover:bg-[#0066c7] transition-colors"
+              onClick={onDelete}
+            >
+              삭제
+            </button>
+          )}
+        </div>
+      )}
     </div>
   </header>
 );

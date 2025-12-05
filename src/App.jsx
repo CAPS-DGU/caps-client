@@ -40,7 +40,7 @@ function App() {
         <NavBar />
 
         <Routes >
-          {/* <Route path="/" element={<MainPage />} /> */}
+          <Route path="/" element={<MainPage />} />
 
           <Route path="/board" element={<BoardPage />}>
             <Route path=":board_id" element={<BoardPage />} />

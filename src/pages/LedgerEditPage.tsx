@@ -182,9 +182,6 @@ const LedgerEditPage: React.FC = () => {
               onTogglePin={() => setIsPinned((prev) => !prev)}
               onCancel={() => navigate(-1)}
             />
-            {uploading && (
-              <div className="text-sm text-blue-600">파일 업로드 중...</div>
-            )}
           </div>
 
           {/* 제목 */}
@@ -223,7 +220,7 @@ const LedgerEditPage: React.FC = () => {
             )}
             {uploading && (
               <div className="px-4 py-2 text-sm text-blue-600 bg-blue-50 rounded-lg">
-                파일 업로드 중...
+                업로드 중...
               </div>
             )}
           </div>

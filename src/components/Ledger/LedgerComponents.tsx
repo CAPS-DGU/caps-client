@@ -1,4 +1,5 @@
 import React from "react";
+import { getS3FileURL } from "../../utils/s3Upload";
 
 // 공통 아이콘 리소스
 export const pushPinIcon = new URL(
@@ -84,40 +85,61 @@ export interface LedgerDetailMetaProps {
   author: string;
   term: string;
   date: string;
-  fileName?: string;
+  fileUrls?: string[];
 }
 
 export const LedgerDetailMeta: React.FC<LedgerDetailMetaProps> = ({
   author,
   term,
   date,
-  fileName,
-}) => (
-  <div className="px-4 py-4 space-y-2 bg-white border border-gray-200 rounded-[15px] shadow-md md:px-6 md:py-5">
-    <div className="flex flex-wrap justify-between items-center text-sm text-gray-700 md:text-base">
-      <div>
-        <span className="font-semibold">작성자</span>{" "}
-        <span>
-          {author} [{term}]
-        </span>
+  fileUrls = [],
+}) => {
+  return (
+    <div className="px-4 py-4 space-y-2 bg-white border border-gray-200 rounded-[15px] shadow-md md:px-6 md:py-5">
+      <div className="flex flex-wrap justify-between items-center text-sm text-gray-700 md:text-base">
+        <div>
+          <span className="font-semibold">작성자</span>{" "}
+          <span>
+            {author} [{term}]
+          </span>
+        </div>
+        <div>
+          <span className="font-semibold">작성일자</span> <span>{date}</span>
+        </div>
       </div>
-      <div>
-        <span className="font-semibold">작성일자</span> <span>{date}</span>
-      </div>
-    </div>
 
-    {fileName && (
-      <div className="flex gap-2 items-center pt-2 text-sm text-gray-700 md:text-base">
-        <img
-          src={attachFileIcon}
-          alt="첨부파일"
-          className="w-5 h-5 md:w-6 md:h-6"
-        />
-        <span className="font-semibold">{fileName}</span>
-      </div>
-    )}
-  </div>
-);
+      {fileUrls.length > 0 && (
+        <div className="pt-2 space-y-2">
+          {fileUrls.map((fileUrl, index) => {
+            const fileName = fileUrl.split("/").pop() || "첨부파일";
+            const fileDownloadUrl = getS3FileURL(fileUrl);
+            return (
+              <div
+                key={index}
+                className="flex gap-2 items-center text-sm text-gray-700 md:text-base"
+              >
+                <img
+                  src={attachFileIcon}
+                  alt="첨부파일"
+                  className="w-5 h-5 md:w-6 md:h-6"
+                />
+                <a
+                  href={fileDownloadUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-[#007AEB] hover:underline"
+                  download={fileName}
+                >
+                  {fileName}
+                </a>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+};
 
 export interface LedgerDetailContentProps {
   content: string;

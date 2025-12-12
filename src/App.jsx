@@ -1,8 +1,6 @@
-import { useState } from 'react'
 import './App.css'
 import './index.css';
 import { BrowserRouter, Route, Router, Routes } from "react-router-dom";
-import MainPage from './pages/MainPage.jsx';
 import BoardPage from './pages/BoardPage.jsx';
 import GalleryPage from './pages/GalleryPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';

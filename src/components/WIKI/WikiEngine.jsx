@@ -3,15 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import ReactDiffViewer from 'react-diff-viewer-continued';
 import { toRelativeTime } from '../../utils/Time';
 import useWindowDimensions from '../../hooks/useWindowDimensions';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
 
 const WikiContent = ({ author, DocTitle, content, notFoundFlag, history, prevContent }) => {
   const [toc, setToc] = useState([]);
   const [comments, setComments] = useState([]);
   const [activeSection, setActiveSection] = useState(null);  // 활성화된 섹션 추적
   const [isContentVisible, setIsContentVisible] = useState(history === undefined ? true : false);
-  const [isHistoryVisible, setIsHistoryVisible] = useState(history === undefined ? true : false);
+  const [isHistoryVisible, setIsHistoryVisible] = useState(false);
   const navigate = useNavigate();
-  let accessToken = localStorage.getItem("accessToken");
+  const { isLoggedIn } = useAuth();
   const { height, width } = useWindowDimensions();
 
   const applyFormatting = (text) => {
@@ -147,14 +149,16 @@ const WikiContent = ({ author, DocTitle, content, notFoundFlag, history, prevCon
   const editButton = (
 
     <div className="flex space-x-4">
-      {accessToken && <>
-        <a href={`/wiki/edit/${DocTitle}`} className='px-4 py-2 text-white bg-gray-600 rounded-md shadow-md hover:bg-gray-700'>
-          수정
-        </a>
-        <a href={`/wiki/history/${DocTitle}`} className='px-4 py-2 text-white bg-gray-600 rounded-md shadow-md hover:bg-gray-700'>
+      <>
+        {isLoggedIn &&
+          <Link to={`/wiki/edit/${DocTitle}`} className='px-4 py-2 text-white bg-gray-600 rounded-md shadow-md hover:bg-gray-700'>
+            수정
+          </Link>
+        }
+        <Link to={`/wiki/history/${DocTitle}`} className='px-4 py-2 text-white bg-gray-600 rounded-md shadow-md hover:bg-gray-700'>
           수정 내역
-        </a>
-      </>}
+        </Link>
+      </>
     </div>
   );
 
@@ -227,8 +231,8 @@ const WikiContent = ({ author, DocTitle, content, notFoundFlag, history, prevCon
         <div className="wiki-content" dangerouslySetInnerHTML={{ __html: escapeScriptTags(htmlContent) }}></div>
       )}
 
-      {isHistoryVisible && prevContent && (
-        <ReactDiffViewer oldValue={prevContent} newValue={content} splitView={width > 768} hideLineNumbers={width <= 768} />
+      {isHistoryVisible && (
+        <ReactDiffViewer oldValue={prevContent ? prevContent : ""} newValue={content} splitView={width > 768} hideLineNumbers={width <= 768} />
       )}
 
       {comments.length > 0 && isContentVisible && (

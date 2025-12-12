@@ -1,9 +1,95 @@
+@import url("//fonts.googleapis.com/earlyaccess/notosanskr.css");
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  body {
+    font-family: "pretendard", sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #333;
+    background-color: #f8f9fa;
+  }
+
+  /*h1, h2, h3, h4, h5, h6 {*/
+  /*  font-weight: bold;*/
+  /*  margin-top: 1rem;*/
+  /*  margin-bottom: 0.5rem;*/
+  /*}*/
+  /**/
+  /*p {*/
+  /*  margin-bottom: 1rem;*/
+  /*}*/
+  /**/
+  /*a {*/
+  /*  color: #007bff;*/
+  /*  text-decoration: none;*/
+  /*}*/
+  /**/
+  /*a:hover {*/
+  /*  text-decoration: underline;*/
+  /*}*/
+}
+
 @layer utilities {
   .animate-spin-slow {
     animation: spin 1.5s linear infinite;
+  }
+}
+.comment-box {
+  min-width: 150px; /* 최소 너비 증가 */
+  max-width: 500px; /* 최대 너비 증가 */
+  white-space: normal; /* 텍스트가 여러 줄로 표시되도록 변경 */
+  text-align: center; /* 왼쪽 정렬로 변경 */
+  display: none; /* 기본적으로 숨김 */
+  word-wrap: break-word; /* 긴 단어가 있을 경우 줄바꿈 */
+  position: absolute; /* 절대 위치 */
+  z-index: 10; /* 다른 요소 위에 표시 */
+}
+
+/* 주석 참조에 마우스를 올렸을 때 주석 박스 표시 */
+.comment-ref:hover .comment-box {
+  display: block; /* 마우스를 올렸을 때 표시 */
+}
+
+.marquee {
+  overflow: hidden;
+  position: relative;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.marquee-track {
+  display: inline-block;
+  white-space: nowrap;
+  /* flex 적용해도 무관 */
+  will-change: transform;
+}
+
+.animate-marquee-left {
+  animation: marquee-left 50s linear infinite;
+}
+.animate-marquee-right {
+  animation: marquee-right 50s linear infinite;
+}
+
+@keyframes marquee-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee-right {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0%);
   }
 }

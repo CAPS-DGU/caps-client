@@ -1,0 +1,28 @@
+/// <reference types="vite/client" />
+
+declare module '*.png' {
+  const src: string;
+  export default src;
+}
+
+declare module '*.jpg' {
+  const src: string;
+  export default src;
+}
+
+declare module '*.svg' {
+  const src: string;
+  export default src;
+}
+
+interface ImportMetaEnv {
+  readonly VITE_API_HOST: string;
+  readonly VITE_LAMBDA_URL?: string; // Lambda Function URL (S3 파일 업로드/삭제용)
+  // 다른 환경변수를 여기에 추가하세요
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
+  readonly glob: ImportMetaGlobFunction;
+  readonly globEager: ImportMetaGlobEagerFunction;
+}

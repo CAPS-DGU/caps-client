@@ -5,6 +5,8 @@ import { useParams } from 'react-router-dom';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { apiGetWithToken } from '../utils/Api';
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../components/NavBar';
+import Footer from '../components/MainPage/Footer';
 
 
 const WikiHistoryPage = () => {
@@ -18,7 +20,7 @@ const WikiHistoryPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await apiGetWithToken(`/api/wiki/history?title=${wiki_title}`, navigate);
+        const response = await apiGetWithToken(`/api/v1/wikis/${wiki_title}/history`, navigate);
         console.log(response.status);
         if (response.status === 200) {
           setWikiData(response.data.data); // Set the fetched data
@@ -50,16 +52,22 @@ const WikiHistoryPage = () => {
   return (
 
     <div>
+      <Navbar />
+      <div className="pb-20"></div>
       <WikiSearch></WikiSearch>
 
       {wikiData && !error ? (wikiData.map((wiki, index) => {
         return (
           <div key={index}>
             {index < wikiData.length - 1 &&
-              <Template key={index} data={wiki} notFoundFlag={true} history={wiki.time} prevData={wikiData[index + 1]} />
+              <Template key={index} data={wiki} notFoundFlag={true} history={wiki.createdAt} prevData={wikiData[index + 1]} />
+            }
+            {wikiData.length === 1 &&
+              <Template key={index} data={wiki} notFoundFlag={true} history={wiki.createdAt} prevData={{content: ""}} />
             }
           </div>)
       })) : (handleRedirect())}
+      <Footer />
     </div >
   );
 };

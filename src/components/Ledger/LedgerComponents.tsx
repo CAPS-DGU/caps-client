@@ -1,5 +1,5 @@
-import React from "react";
-import { getS3FileURL } from "../../utils/s3Upload";
+import React, { useState } from "react";
+import { getPresignedDownloadURL } from "../../utils/s3Upload";
 
 // 공통 아이콘 리소스
 export const pushPinIcon = new URL(
@@ -94,6 +94,33 @@ export const LedgerDetailMeta: React.FC<LedgerDetailMetaProps> = ({
   date,
   fileUrls = [],
 }) => {
+  const [loadingFile, setLoadingFile] = useState<string | null>(null);
+
+  const handleFileClick = async (fileUrl: string, fileName: string, e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    
+    if (loadingFile === fileUrl) return; // 이미 로딩 중이면 무시
+    
+    try {
+      setLoadingFile(fileUrl);
+      const presignedUrl = await getPresignedDownloadURL(fileUrl);
+      
+      // 새 창에서 다운로드
+      const link = document.createElement('a');
+      link.href = presignedUrl;
+      link.download = fileName;
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("파일 다운로드 실패:", error);
+      alert("파일 다운로드에 실패했습니다.");
+    } finally {
+      setLoadingFile(null);
+    }
+  };
+
   return (
     <div className="px-4 py-4 space-y-2 bg-white border border-gray-200 rounded-[15px] shadow-md md:px-6 md:py-5">
       <div className="flex flex-wrap justify-between items-center text-sm text-gray-700 md:text-base">
@@ -112,7 +139,7 @@ export const LedgerDetailMeta: React.FC<LedgerDetailMetaProps> = ({
         <div className="pt-2 space-y-2">
           {fileUrls.map((fileUrl, index) => {
             const fileName = fileUrl.split("/").pop() || "첨부파일";
-            const fileDownloadUrl = getS3FileURL(fileUrl);
+            const isLoading = loadingFile === fileUrl;
             return (
               <div
                 key={index}
@@ -124,13 +151,13 @@ export const LedgerDetailMeta: React.FC<LedgerDetailMetaProps> = ({
                   className="w-5 h-5 md:w-6 md:h-6"
                 />
                 <a
-                  href={fileDownloadUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-semibold text-[#007AEB] hover:underline"
-                  download={fileName}
+                  href="#"
+                  onClick={(e) => handleFileClick(fileUrl, fileName, e)}
+                  className={`font-semibold text-[#007AEB] hover:underline ${
+                    isLoading ? "opacity-50 cursor-wait" : "cursor-pointer"
+                  }`}
                 >
-                  {fileName}
+                  {isLoading ? "다운로드 중..." : fileName}
                 </a>
               </div>
             );

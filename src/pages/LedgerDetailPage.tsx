@@ -10,7 +10,7 @@ import {
   LedgerDeleteModal,
 } from "../components/Ledger/LedgerComponents";
 import { apiDeleteWithToken, apiGetWithToken } from "../utils/Api";
-import { deleteFileFromS3, getS3FileURL } from "../utils/s3Upload";
+import { deleteFileFromS3 } from "../utils/s3Upload";
 
 interface LedgerMember {
   id: number;

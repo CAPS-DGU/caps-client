@@ -18,7 +18,6 @@ import {
   uploadFileToS3,
   uploadMultipleFilesToS3,
   deleteFileFromS3,
-  getS3FileURL,
 } from "../utils/s3Upload";
 
 interface LedgerEditResponse {
@@ -110,8 +109,7 @@ const LedgerEditPage: React.FC = () => {
       if (files.length > 0) {
         try {
           const fileObjects = files.map((item) => item.file);
-          const ledgerIdForPath = ledgerId || "temp";
-          const basePath = `ledger/${ledgerIdForPath}`;
+          const basePath = "ledger";
 
           // 여러 파일 업로드
           const paths = await uploadMultipleFilesToS3(fileObjects, basePath);

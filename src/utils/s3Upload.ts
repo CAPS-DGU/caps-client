@@ -10,23 +10,28 @@ export async function getPresignedUploadURL(
   fileName: string,
   fileType: string = 'image/jpeg'
 ): Promise<{ uploadURL: string; fileName: string }> {
-  const lambdaUrl = (import.meta as any).env?.VITE_LAMBDA_URL || '';
+  const apiHost = (import.meta as any).env.VITE_API_HOST as string;
   
-  if (!lambdaUrl) {
-    throw new Error('Lambda URL이 설정되지 않았습니다. VITE_LAMBDA_URL 환경변수를 확인하세요.');
+  if (!apiHost) {
+    throw new Error('API 호스트가 설정되지 않았습니다. VITE_API_HOST 환경변수를 확인하세요.');
   }
 
-  // Lambda Function URL에 직접 요청 (CORS 처리됨)
-  const response = await axios.post(lambdaUrl, {
-    fileName,
-    fileType,
-  }, {
-    headers: {
-      'Content-Type': 'application/json',
+  // Spring Boot API에 요청 (인증 토큰 포함)
+  const response = await axios.post(
+    `${apiHost}/api/v1/files/presigned-url`,
+    {
+      fileName,
+      fileType,
     },
-  });
+    {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      withCredentials: true, // 쿠키(인증 토큰) 포함
+    }
+  );
 
-  return response.data;
+  return response.data.data; // SuccessResponse 래핑 제거
 }
 
 /**
@@ -69,31 +74,59 @@ export async function uploadFileToS3(
  * @param fileKey - 삭제할 파일의 S3 키 (경로)
  */
 export async function deleteFileFromS3(fileKey: string): Promise<void> {
-  const lambdaUrl = (import.meta as any).env?.VITE_LAMBDA_URL || '';
+  const apiHost = (import.meta as any).env.VITE_API_HOST as string;
   
-  if (!lambdaUrl) {
-    throw new Error('Lambda URL이 설정되지 않았습니다. VITE_LAMBDA_URL 환경변수를 확인하세요.');
+  if (!apiHost) {
+    throw new Error('API 호스트가 설정되지 않았습니다. VITE_API_HOST 환경변수를 확인하세요.');
   }
 
-  // Lambda 함수에 DELETE 요청 (query parameter로 key 전달)
-  const url = new URL(lambdaUrl);
+  // Spring Boot API에 DELETE 요청 (query parameter로 key 전달)
+  const url = new URL(`${apiHost}/api/v1/files`);
   url.searchParams.append('key', fileKey);
 
   const response = await axios.delete(url.toString(), {
     headers: {
       'Content-Type': 'application/json',
     },
+    withCredentials: true, // 쿠키(인증 토큰) 포함
   });
 
-  if (response.status !== 200) {
+  if (response.status !== 200 && response.status !== 204) {
     throw new Error(`파일 삭제 실패: ${response.statusText}`);
   }
 }
 
 /**
- * S3 파일 URL 생성 (조회용)
+ * S3 파일 다운로드용 Presigned URL 요청
  * @param fileKey - S3에 저장된 파일의 키 (경로)
- * @returns S3 파일의 공개 URL
+ * @returns Presigned URL
+ */
+export async function getPresignedDownloadURL(fileKey: string): Promise<string> {
+  const apiHost = (import.meta as any).env.VITE_API_HOST as string;
+  
+  if (!apiHost) {
+    throw new Error('API 호스트가 설정되지 않았습니다. VITE_API_HOST 환경변수를 확인하세요.');
+  }
+
+  // Spring Boot API에 요청 (인증 토큰 포함)
+  const url = new URL(`${apiHost}/api/v1/files/presigned-url`);
+  url.searchParams.append('key', fileKey);
+
+  const response = await axios.get(url.toString(), {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    withCredentials: true, // 쿠키(인증 토큰) 포함
+  });
+
+  return response.data.data.downloadURL; // SuccessResponse 래핑 제거
+}
+
+/**
+ * S3 파일 URL 생성 (조회용) - Deprecated: Presigned URL 사용 권장
+ * @param fileKey - S3에 저장된 파일의 키 (경로)
+ * @returns S3 파일의 공개 URL (퍼블릭 액세스 차단 시 사용 불가)
+ * @deprecated getPresignedDownloadURL 사용 권장
  */
 export function getS3FileURL(fileKey: string): string {
   const bucketName = 'www.dgucaps.kr';

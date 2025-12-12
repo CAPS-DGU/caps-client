@@ -17,6 +17,7 @@ declare module '*.svg' {
 
 interface ImportMetaEnv {
   readonly VITE_API_HOST: string;
+  readonly VITE_LAMBDA_URL?: string; // Lambda Function URL (S3 파일 업로드/삭제용)
   // 다른 환경변수를 여기에 추가하세요
 }
 

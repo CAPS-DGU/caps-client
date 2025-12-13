@@ -12,6 +12,7 @@ import {
 import { apiDeleteWithToken, apiGetWithToken } from "../utils/Api";
 import { useAuth } from "../hooks/useAuth";
 import { deleteFileFromS3 } from "../utils/s3Upload";
+import { getCookie } from "../utils/cookie";
 
 interface LedgerMember {
   id: number;
@@ -88,7 +89,7 @@ const LedgerDetailPage: React.FC = () => {
   }, [isLoading, isLoggedIn, navigate]);
 
   useEffect(() => {
-    const accessToken = localStorage.getItem("accessToken");
+    const accessToken = getCookie("accessToken");
     const decoded = parseJwt(accessToken);
     if (decoded && decoded.role) {
       setUserRole(decoded.role);

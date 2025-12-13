@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { match } from "ts-pattern";
 import { apiGetWithToken } from "../../utils/Api";
+import { getCookie } from "../../utils/cookie";
 
 const pushPinIcon = new URL("../../assets/PushPin.svg", import.meta.url).href;
 const attachFileIcon = new URL("../../assets/attach_file.svg", import.meta.url)
@@ -86,7 +87,7 @@ const LedgerBoard: React.FC = () => {
   };
 
   useEffect(() => {
-    const accessToken = localStorage.getItem("accessToken");
+    const accessToken = getCookie("accessToken");
     const decoded = parseJwt(accessToken);
     console.log(decoded);
     if (decoded && decoded.role) {

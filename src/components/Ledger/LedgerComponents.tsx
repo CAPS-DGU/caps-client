@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import { getPresignedDownloadURL } from "../../utils/s3Upload";
 
 // 공통 아이콘 리소스
 export const pushPinIcon = new URL(
@@ -84,40 +85,88 @@ export interface LedgerDetailMetaProps {
   author: string;
   term: string;
   date: string;
-  fileName?: string;
+  fileUrls?: string[];
 }
 
 export const LedgerDetailMeta: React.FC<LedgerDetailMetaProps> = ({
   author,
   term,
   date,
-  fileName,
-}) => (
-  <div className="px-4 py-4 space-y-2 bg-white border border-gray-200 rounded-[15px] shadow-md md:px-6 md:py-5">
-    <div className="flex flex-wrap justify-between items-center text-sm text-gray-700 md:text-base">
-      <div>
-        <span className="font-semibold">작성자</span>{" "}
-        <span>
-          {author} [{term}]
-        </span>
-      </div>
-      <div>
-        <span className="font-semibold">작성일자</span> <span>{date}</span>
-      </div>
-    </div>
+  fileUrls = [],
+}) => {
+  const [loadingFile, setLoadingFile] = useState<string | null>(null);
 
-    {fileName && (
-      <div className="flex gap-2 items-center pt-2 text-sm text-gray-700 md:text-base">
-        <img
-          src={attachFileIcon}
-          alt="첨부파일"
-          className="w-5 h-5 md:w-6 md:h-6"
-        />
-        <span className="font-semibold">{fileName}</span>
+  const handleFileClick = async (fileUrl: string, fileName: string, e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    
+    if (loadingFile === fileUrl) return; // 이미 로딩 중이면 무시
+    
+    try {
+      setLoadingFile(fileUrl);
+      const presignedUrl = await getPresignedDownloadURL(fileUrl);
+      
+      // 새 창에서 다운로드
+      const link = document.createElement('a');
+      link.href = presignedUrl;
+      link.download = fileName;
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("파일 다운로드 실패:", error);
+      alert("파일 다운로드에 실패했습니다.");
+    } finally {
+      setLoadingFile(null);
+    }
+  };
+
+  return (
+    <div className="px-4 py-4 space-y-2 bg-white border border-gray-200 rounded-[15px] shadow-md md:px-6 md:py-5">
+      <div className="flex flex-wrap justify-between items-center text-sm text-gray-700 md:text-base">
+        <div>
+          <span className="font-semibold">작성자</span>{" "}
+          <span>
+            {author} [{term}]
+          </span>
+        </div>
+        <div>
+          <span className="font-semibold">작성일자</span> <span>{date}</span>
+        </div>
       </div>
-    )}
-  </div>
-);
+
+      {fileUrls.length > 0 && (
+        <div className="pt-2 space-y-2">
+          {fileUrls.map((fileUrl, index) => {
+            const fileName = fileUrl.split("/").pop() || "첨부파일";
+            const isLoading = loadingFile === fileUrl;
+            return (
+              <div
+                key={index}
+                className="flex gap-2 items-center text-sm text-gray-700 md:text-base"
+              >
+                <img
+                  src={attachFileIcon}
+                  alt="첨부파일"
+                  className="w-5 h-5 md:w-6 md:h-6"
+                />
+                <a
+                  href="#"
+                  onClick={(e) => handleFileClick(fileUrl, fileName, e)}
+                  className={`font-semibold text-[#007AEB] hover:underline ${
+                    isLoading ? "opacity-50 cursor-wait" : "cursor-pointer"
+                  }`}
+                >
+                  {isLoading ? "다운로드 중..." : fileName}
+                </a>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+};
 
 export interface LedgerDetailContentProps {
   content: string;

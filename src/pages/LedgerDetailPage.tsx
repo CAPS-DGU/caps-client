@@ -11,6 +11,7 @@ import {
 } from "../components/Ledger/LedgerComponents";
 import { apiDeleteWithToken, apiGetWithToken } from "../utils/Api";
 import { useAuth } from "../hooks/useAuth";
+import { deleteFileFromS3 } from "../utils/s3Upload";
 
 interface LedgerMember {
   id: number;
@@ -23,7 +24,7 @@ interface LedgerDetailData {
   id: number;
   title: string;
   content: string;
-  fileUrl: string | null;
+  fileUrls: string[] | null;
   member: LedgerMember;
   createdAt: string;
   isPinned: boolean;
@@ -116,7 +117,21 @@ const LedgerDetailPage: React.FC = () => {
     if (!ledgerId) return;
 
     try {
+      // 1. DB에서 장부 삭제
       await apiDeleteWithToken(`/api/v1/ledgers/${ledgerId}`, navigate);
+
+      // 2. S3에서 파일 삭제 (파일이 있는 경우)
+      if (ledger?.fileUrls && ledger.fileUrls.length > 0) {
+        try {
+          await Promise.all(
+            ledger.fileUrls.map((fileUrl) => deleteFileFromS3(fileUrl))
+          );
+        } catch (s3Error) {
+          console.error("S3 파일 삭제 실패:", s3Error);
+          // 파일 삭제 실패해도 DB 삭제는 완료되었으므로 계속 진행
+        }
+      }
+
       setIsDeleteOpen(false);
       setIsDeleteSuccessOpen(true);
     } catch (error) {
@@ -169,7 +184,7 @@ const LedgerDetailPage: React.FC = () => {
               author={ledger?.member.name ?? ""}
               term={ledger?.member.grade ? `${ledger.member.grade}기` : ""}
               date={ledger ? formatDateTime(ledger.createdAt) : ""}
-              fileName={ledger?.fileUrl ?? undefined}
+              fileUrls={ledger?.fileUrls ?? []}
             />
             <LedgerDetailContent content={ledger?.content ?? ""} />
           </section>

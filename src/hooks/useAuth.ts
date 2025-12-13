@@ -7,6 +7,7 @@ interface UserAuthMe {
   name: string;
   profileImageUrl: string;
   grade: string;
+  role?: string;
   registrationComplete: boolean;
 }
 

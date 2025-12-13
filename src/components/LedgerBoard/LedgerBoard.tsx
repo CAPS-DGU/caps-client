@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { match } from "ts-pattern";
 import { apiGetWithToken } from "../../utils/Api";
-import { getCookie } from "../../utils/cookie";
+import { useAuth } from "../../hooks/useAuth";
 
 const pushPinIcon = new URL("../../assets/PushPin.svg", import.meta.url).href;
 const attachFileIcon = new URL("../../assets/attach_file.svg", import.meta.url)
@@ -46,17 +46,14 @@ interface LedgerListResponse {
   data: LedgerListData;
 }
 
-interface JwtPayload {
-  role?: string;
-  [key: string]: any;
-}
-
 const LedgerBoard: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [entries, setEntries] = useState<LedgerEntry[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [userRole, setUserRole] = useState<string | null>(null);
+
+  const userRole = user?.role || null;
 
   const formatDate = (isoString: string) => {
     const date = new Date(isoString);
@@ -66,34 +63,6 @@ const LedgerBoard: React.FC = () => {
     const day = String(date.getDate()).padStart(2, "0");
     return `${year}. ${month}. ${day}`;
   };
-
-  const parseJwt = (token: string | null): JwtPayload | null => {
-    if (!token) return null;
-    try {
-      const base64Url = token.split(".")[1];
-      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-      const jsonPayload = decodeURIComponent(
-        atob(base64)
-          .split("")
-          .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
-          .join("")
-      );
-
-      return JSON.parse(jsonPayload);
-    } catch (error) {
-      console.error("Invalid JWT", error);
-      return null;
-    }
-  };
-
-  useEffect(() => {
-    const accessToken = getCookie("accessToken");
-    const decoded = parseJwt(accessToken);
-    console.log(decoded);
-    if (decoded && decoded.role) {
-      setUserRole(decoded.role);
-    }
-  }, []);
 
   useEffect(() => {
     const fetchLedgers = async () => {

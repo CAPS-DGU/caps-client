@@ -10,6 +10,7 @@ import {
   LedgerDeleteModal,
 } from "../components/Ledger/LedgerComponents";
 import { apiDeleteWithToken, apiGetWithToken } from "../utils/Api";
+import { useAuth } from "../hooks/useAuth";
 
 interface LedgerMember {
   id: number;
@@ -42,6 +43,7 @@ interface JwtPayload {
 const LedgerDetailPage: React.FC = () => {
   const { ledgerId } = useParams<{ ledgerId: string }>();
   const navigate = useNavigate();
+  const { isLoggedIn, isLoading } = useAuth();
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [ledger, setLedger] = useState<LedgerDetailData | null>(null);
   const [isDeleteSuccessOpen, setIsDeleteSuccessOpen] = useState(false);
@@ -76,6 +78,13 @@ const LedgerDetailPage: React.FC = () => {
       return null;
     }
   };
+
+  // 회원이 아니면 접근 차단
+  useEffect(() => {
+    if (!isLoading && !isLoggedIn) {
+      navigate("/");
+    }
+  }, [isLoading, isLoggedIn, navigate]);
 
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
@@ -115,6 +124,21 @@ const LedgerDetailPage: React.FC = () => {
       alert("장부 삭제 중 오류가 발생했습니다.");
     }
   };
+
+  // 로딩 중이거나 로그인하지 않은 경우 아무것도 렌더링하지 않음
+  if (isLoading || !isLoggedIn) {
+    return (
+      <div className="flex flex-col min-h-screen">
+        <Navbar />
+        <main className="flex-1 mt-20 bg-transparent">
+          <div className="flex justify-center items-center min-h-[60vh]">
+            <p className="text-gray-500">로딩 중...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen">

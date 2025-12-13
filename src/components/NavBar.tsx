@@ -12,6 +12,7 @@ import {
   History as HistoryIcon,
   LogIn,
   User as UserIcon,
+  FileText,
 } from "lucide-react";
 
 interface NavbarProps {
@@ -130,6 +131,15 @@ function Navbar({ isTransparent = false }: NavbarProps) {
             <span className="hidden md:inline">연혁</span>
             <HistoryIcon className="inline-block md:hidden" size={20} />
           </Link>
+          {isLoggedIn && (
+            <Link
+              to="/ledger"
+              className={`flex items-center text-base font-semibold transition ${menuColor}`}
+            >
+              <span className="hidden md:inline">장부게시판</span>
+              <FileText className="inline-block md:hidden" size={20} />
+            </Link>
+          )}
         </div>
         {/* 오른쪽: 로그인/회원가입 */}
         <div className="flex gap-4 items-center md:gap-8">

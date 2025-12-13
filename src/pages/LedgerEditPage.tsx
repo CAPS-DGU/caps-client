@@ -14,6 +14,7 @@ import {
   apiPatchWithToken,
   apiPostWithToken,
 } from "../utils/Api";
+import { useAuth } from "../hooks/useAuth";
 
 interface LedgerEditResponse {
   status: number;
@@ -30,12 +31,20 @@ interface LedgerEditResponse {
 const LedgerEditPage: React.FC = () => {
   const { ledgerId } = useParams<{ ledgerId?: string }>();
   const navigate = useNavigate();
+  const { isLoggedIn, isLoading } = useAuth();
 
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [isPinned, setIsPinned] = useState<boolean>(false);
   const [files, setFiles] = useState<LedgerFileItem[]>([]);
   const [fileUrl, setFileUrl] = useState<string | null>(null);
+
+  // 회원이 아니면 접근 차단
+  useEffect(() => {
+    if (!isLoading && !isLoggedIn) {
+      navigate("/");
+    }
+  }, [isLoading, isLoggedIn, navigate]);
 
   // 편집 모드일 때 기존 데이터 불러오기
   useEffect(() => {
@@ -117,6 +126,21 @@ const LedgerEditPage: React.FC = () => {
       alert("장부 저장 중 오류가 발생했습니다.");
     }
   };
+
+  // 로딩 중이거나 로그인하지 않은 경우 아무것도 렌더링하지 않음
+  if (isLoading || !isLoggedIn) {
+    return (
+      <div className="flex flex-col min-h-screen">
+        <Navbar />
+        <main className="flex-1 mt-20 bg-transparent">
+          <div className="flex justify-center items-center min-h-[60vh]">
+            <p className="text-gray-500">로딩 중...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen">

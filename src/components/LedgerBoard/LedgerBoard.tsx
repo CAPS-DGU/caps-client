@@ -88,6 +88,7 @@ const LedgerBoard: React.FC = () => {
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
     const decoded = parseJwt(accessToken);
+    console.log(decoded);
     if (decoded && decoded.role) {
       setUserRole(decoded.role);
     }

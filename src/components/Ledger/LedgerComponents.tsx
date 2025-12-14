@@ -43,18 +43,18 @@ export const LedgerDetailHeader: React.FC<LedgerDetailHeaderProps> = ({
   onDelete,
 }) => (
   <header className="pb-6 mb-8 border-b border-gray-200">
-    <div className="flex gap-4 justify-between items-end">
-      <div>
-        <h1 className="mb-2 text-2xl font-extrabold text-black tracking-[1.9px]">
+    <div className="flex gap-4 justify-between items-start">
+      <div className="flex-1 min-w-0">
+        <h1 className="text-2xl font-extrabold text-black tracking-[1.9px] break-words">
           {title}
         </h1>
       </div>
       {(onEdit || onDelete) && (
-        <div className="flex gap-3 items-center">
+        <div className="flex flex-shrink-0 gap-3 items-center">
           {onEdit && (
             <button
               type="button"
-              className="px-7 py-3 text-sm font-semibold text-white bg-[#007AEB] rounded-full hover:bg-[#0066c7] transition-colors"
+              className="px-7 py-3 text-sm font-semibold text-white bg-[#007AEB] rounded-full hover:bg-[#0066c7] transition-colors whitespace-nowrap"
               onClick={onEdit}
             >
               수정
@@ -63,7 +63,7 @@ export const LedgerDetailHeader: React.FC<LedgerDetailHeaderProps> = ({
           {onDelete && (
             <button
               type="button"
-              className="px-7 py-3 text-sm font-semibold text-white bg-[#007AEB] rounded-full hover:bg-[#0066c7] transition-colors"
+              className="px-7 py-3 text-sm font-semibold text-white bg-[#007AEB] rounded-full hover:bg-[#0066c7] transition-colors whitespace-nowrap"
               onClick={onDelete}
             >
               삭제
@@ -90,20 +90,24 @@ export const LedgerDetailMeta: React.FC<LedgerDetailMetaProps> = ({
 }) => {
   const [loadingFile, setLoadingFile] = useState<string | null>(null);
 
-  const handleFileClick = async (fileUrl: string, fileName: string, e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleFileClick = async (
+    fileUrl: string,
+    fileName: string,
+    e: React.MouseEvent<HTMLAnchorElement>
+  ) => {
     e.preventDefault();
-    
+
     if (loadingFile === fileUrl) return; // 이미 로딩 중이면 무시
-    
+
     try {
       setLoadingFile(fileUrl);
       const presignedUrl = await getPresignedDownloadURL(fileUrl);
-      
+
       // 새 창에서 다운로드
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = presignedUrl;
       link.download = fileName;
-      link.target = '_blank';
+      link.target = "_blank";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);

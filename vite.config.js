@@ -11,7 +11,7 @@ export default defineConfig({
     basicSsl(),
   ],
   server: {
-    port: 3000,
+    port: 8081,
     host: true,
   },
 })

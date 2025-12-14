@@ -249,8 +249,7 @@ export const PinToggle: React.FC<PinToggleProps> = ({ isPinned, onToggle }) => (
     >
       <div
         className={`w-3 h-3 bg-white rounded-full transform transition-transform ${
-          isPinned ? "translate-x-3" : ""
-        }`}
+          isPinned ? "translate-x-3" : ""}`}
       />
     </div>
   </button>
@@ -280,41 +279,38 @@ export interface TopActionsProps {
   isPinned: boolean;
   onTogglePin: () => void;
   onCancel: () => void;
+  submitLabel?: string;
 }
 
 export const LedgerTopActions: React.FC<TopActionsProps> = ({
   isPinned,
   onTogglePin,
   onCancel,
+  submitLabel = "등록",
 }) => (
   <div className="flex gap-3 items-center">
     <PinToggle isPinned={isPinned} onToggle={onTogglePin} />
+    <button
+      type="submit"
+      className="px-7 py-3 text-sm font-semibold text-white bg-[#007AEB] rounded-full hover:bg-[#0066c7] transition-colors"
+    >
+      {submitLabel}
+    </button>
   </div>
 );
 
 export interface BottomActionsProps {
   onCancel: () => void;
-  submitLabel?: string;
-  isLoading?: boolean;
 }
 
 export const LedgerBottomActions: React.FC<BottomActionsProps> = ({
   onCancel,
-  submitLabel = "등록",
-  isLoading = false,
 }) => (
-  <div className="flex gap-3 justify-between items-center pt-4 border-t border-gray-200">
-    <button
-      type="submit"
-      disabled={isLoading}
-      className="px-7 py-3 text-sm font-semibold text-white bg-[#007AEB] rounded-full hover:bg-[#0066c7] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-    >
-      {isLoading ? "등록 중..." : submitLabel}
-    </button>
+  <div className="flex justify-start pt-4">
     <button
       type="button"
       onClick={onCancel}
-      className="px-7 py-3 text-sm font-semibold text-gray-700 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
+      className="px-7 py-3 text-sm font-semibold text-white bg-[#007AEB] rounded-full hover:bg-[#0066c7] transition-colors"
     >
       목록
     </button>

@@ -103,6 +103,12 @@ const LedgerEditPage: React.FC = () => {
     }
   };
 
+  const handleListClick = () => {
+    if (window.confirm("이 페이지를 떠나겠습니까?")) {
+      navigate("/ledger");
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -204,6 +210,7 @@ const LedgerEditPage: React.FC = () => {
               isPinned={isPinned}
               onTogglePin={() => setIsPinned((prev) => !prev)}
               onCancel={() => navigate(-1)}
+              submitLabel={ledgerId ? "수정" : "등록"}
             />
           </div>
 
@@ -247,12 +254,8 @@ const LedgerEditPage: React.FC = () => {
               </div>
             )}
           </div>
-          {/* 하단 액션 버튼 (목록 + 등록) */}
-          <LedgerBottomActions
-            onCancel={() => navigate("/ledger")}
-            submitLabel={ledgerId ? "수정" : "등록"}
-            isLoading={uploading}
-          />
+          {/* 하단 목록 버튼 */}
+          <LedgerBottomActions onCancel={handleListClick} />
         </form>
       </main>
       <Footer />

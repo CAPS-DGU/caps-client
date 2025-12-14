@@ -45,6 +45,8 @@ const LedgerDetailPage: React.FC = () => {
   const [isDeleteSuccessOpen, setIsDeleteSuccessOpen] = useState(false);
 
   const userRole = user?.role || null;
+  const canManage =
+    userRole === "ADMIN" || userRole === "COUNCIL" || userRole === "PRESIDENT";
 
   const formatDateTime = (isoString: string) => {
     const date = new Date(isoString);
@@ -132,19 +134,10 @@ const LedgerDetailPage: React.FC = () => {
           <LedgerDetailHeader
             ledgerId={ledgerId}
             title={ledger?.title ?? "장부 제목"}
-            onEdit={match(userRole)
-              .with("ADMIN", "COUNCIL", "PRESIDENT", () => () => {
-                navigate(`/ledger/${ledgerId}/edit`);
-              })
-              .otherwise(() => undefined)}
-            onDelete={match(userRole)
-              .with(
-                "ADMIN",
-                "COUNCIL",
-                "PRESIDENT",
-                () => () => setIsDeleteOpen(true)
-              )
-              .otherwise(() => undefined)}
+            onEdit={
+              canManage ? () => navigate(`/ledger/${ledgerId}/edit`) : undefined
+            }
+            onDelete={canManage ? () => setIsDeleteOpen(true) : undefined}
           />
 
           {/* 본문 영역 */}

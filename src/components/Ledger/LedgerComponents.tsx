@@ -291,11 +291,34 @@ export const LedgerTopActions: React.FC<TopActionsProps> = ({
 }) => (
   <div className="flex gap-3 items-center">
     <PinToggle isPinned={isPinned} onToggle={onTogglePin} />
+  </div>
+);
+
+export interface BottomActionsProps {
+  onCancel: () => void;
+  submitLabel?: string;
+  isLoading?: boolean;
+}
+
+export const LedgerBottomActions: React.FC<BottomActionsProps> = ({
+  onCancel,
+  submitLabel = "등록",
+  isLoading = false,
+}) => (
+  <div className="flex gap-3 justify-between items-center pt-4 border-t border-gray-200">
     <button
       type="submit"
-      className="px-7 py-3 text-sm font-semibold text-white bg-[#007AEB] rounded-full hover:bg-[#0066c7] transition-colors"
+      disabled={isLoading}
+      className="px-7 py-3 text-sm font-semibold text-white bg-[#007AEB] rounded-full hover:bg-[#0066c7] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
     >
-      등록
+      {isLoading ? "등록 중..." : submitLabel}
+    </button>
+    <button
+      type="button"
+      onClick={onCancel}
+      className="px-7 py-3 text-sm font-semibold text-gray-700 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
+    >
+      목록
     </button>
   </div>
 );

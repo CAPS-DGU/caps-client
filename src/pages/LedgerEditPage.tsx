@@ -5,6 +5,7 @@ import Footer from "../components/MainPage/Footer";
 import {
   LedgerTitleInput,
   LedgerTopActions,
+  LedgerBottomActions,
   LedgerFileSection,
   LedgerContentSection,
   LedgerFileItem,
@@ -194,7 +195,7 @@ const LedgerEditPage: React.FC = () => {
           onSubmit={handleSubmit}
           className="px-4 py-10 mx-auto space-y-6 max-w-4xl"
         >
-          {/* 상단 타이틀 + 상단고정/등록 버튼 (한 줄) */}
+          {/* 상단 타이틀 + 상단고정 토글 */}
           <div className="flex justify-between items-end pb-4 mb-2 border-b border-gray-200">
             <h1 className="text-2xl font-extrabold text-black tracking-[1.9px]">
               장부게시판
@@ -246,16 +247,12 @@ const LedgerEditPage: React.FC = () => {
               </div>
             )}
           </div>
-          {/* 하단 목록 버튼 */}
-          <div className="flex justify-start pt-4">
-            <button
-              type="button"
-              className="px-7 py-3 text-sm font-semibold text-white bg-[#007AEB] rounded-full hover:bg-[#0066c7] transition-colors"
-              onClick={() => navigate("/ledger")}
-            >
-              목록
-            </button>
-          </div>
+          {/* 하단 액션 버튼 (목록 + 등록) */}
+          <LedgerBottomActions
+            onCancel={() => navigate("/ledger")}
+            submitLabel={ledgerId ? "수정" : "등록"}
+            isLoading={uploading}
+          />
         </form>
       </main>
       <Footer />

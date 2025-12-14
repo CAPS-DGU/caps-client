@@ -32,14 +32,12 @@ export const defaultFileIcon = new URL(
  * ===================== */
 
 export interface LedgerDetailHeaderProps {
-  ledgerId?: string;
   title: string;
   onEdit?: () => void;
   onDelete?: () => void;
 }
 
 export const LedgerDetailHeader: React.FC<LedgerDetailHeaderProps> = ({
-  ledgerId,
   title,
   onEdit,
   onDelete,
@@ -50,10 +48,6 @@ export const LedgerDetailHeader: React.FC<LedgerDetailHeaderProps> = ({
         <h1 className="mb-2 text-2xl font-extrabold text-black tracking-[1.9px]">
           {title}
         </h1>
-        <p className="text-sm text-gray-500">
-          글 번호{" "}
-          <span className="font-semibold text-gray-700">{ledgerId}</span>
-        </p>
       </div>
       {(onEdit || onDelete) && (
         <div className="flex gap-3 items-center">

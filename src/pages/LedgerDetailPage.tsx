@@ -45,8 +45,10 @@ const LedgerDetailPage: React.FC = () => {
   const [isDeleteSuccessOpen, setIsDeleteSuccessOpen] = useState(false);
 
   const userRole = user?.role || null;
-  const canManage =
-    userRole === "ADMIN" || userRole === "COUNCIL" || userRole === "PRESIDENT";
+  const isAdmin = userRole === "ADMIN";
+  const isAuthor =
+    user?.id && ledger?.member.id && user.id === ledger.member.id;
+  const canManage = isAdmin || isAuthor;
 
   const formatDateTime = (isoString: string) => {
     const date = new Date(isoString);
@@ -132,7 +134,6 @@ const LedgerDetailPage: React.FC = () => {
       <main className="flex-1 mt-20 bg-transparent">
         <div className="px-4 py-10 mx-auto max-w-4xl">
           <LedgerDetailHeader
-            ledgerId={ledgerId}
             title={ledger?.title ?? "장부 제목"}
             onEdit={
               canManage ? () => navigate(`/ledger/${ledgerId}/edit`) : undefined

@@ -136,7 +136,8 @@ export const LedgerDetailMeta: React.FC<LedgerDetailMetaProps> = ({
       {fileUrls.length > 0 && (
         <div className="pt-2 space-y-2">
           {fileUrls.map((fileUrl, index) => {
-            const fileName = fileUrl.split("/").pop() || "첨부파일";
+            const fullFileName = fileUrl.split("/").pop() || "첨부파일";
+            const fileName = fullFileName.replace(/^\d+_\d+_/, '');
             const isLoading = loadingFile === fileUrl;
             return (
               <div
@@ -381,7 +382,7 @@ export const LedgerFileSection: React.FC<FileSectionProps> = ({
                 className="truncate max-w-[10rem] md:max-w-[14rem]"
                 title={file.name}
               >
-                {file.name}
+                {file.name.replace(/^\d+_\d+_/, '')}
               </span>
             </div>
             <button

@@ -235,7 +235,7 @@ const LedgerEditPage: React.FC = () => {
                     className="flex gap-2 items-center px-4 py-2 bg-gray-50 rounded-lg border border-gray-200"
                   >
                     <span className="text-sm text-gray-700">
-                      기존 파일: {fileUrl.split("/").pop()}
+                      기존 파일: {fileUrl.split("/").pop()?.replace(/^\d+_\d+_/, '') || "첨부파일"}
                     </span>
                     <button
                       type="button"

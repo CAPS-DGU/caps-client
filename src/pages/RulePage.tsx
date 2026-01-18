@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Template from "../components/WIKI/template";
 import { useParams, useNavigate } from "react-router-dom";
-import { apiGetWithToken } from "../utils/Api";
+import { apiGet, apiGetWithToken } from "../utils/Api";
 import { WikiData } from "../types/pages";
 import Navbar from "../components/NavBar";
 
@@ -32,10 +32,7 @@ const RulePage: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await apiGetWithToken(
-          `/api/v1/wikis/CAPS%20회칙`,
-          navigate
-        );
+        const response = await apiGet(`/api/v1/wikis/CAPS%20회칙`);
         if (response.status === 200) {
           // API 응답의 member를 writer로 변환
           const apiData = response.data.data;
@@ -63,10 +60,11 @@ const RulePage: React.FC = () => {
   if (loading) return <div>Loading...</div>; // Show loading state
 
   return (
-    <div>
+    <div className="flex flex-col min-h-screen">
       <Navbar />
-
-      <Template data={wikiData} />
+      <main className="flex-1 mt-20">
+        <Template data={wikiData} />
+      </main>
     </div>
   );
 };

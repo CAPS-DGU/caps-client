@@ -13,5 +13,12 @@ export default defineConfig({
   server: {
     port: 8081,
     host: true,
+    proxy: {
+      '/api': {
+        target: 'https://api.dgucaps.kr',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
   },
 })

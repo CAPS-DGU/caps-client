@@ -1,61 +1,71 @@
-import React, { useState, useEffect } from 'react';
-import Template from '../components/WIKI/template';
-import { useParams } from 'react-router-dom';
-import axios from "axios";
+import React, { useState, useEffect } from "react";
+import Template from "../components/WIKI/template";
+import { useParams, useNavigate } from "react-router-dom";
+import { apiGetWithToken } from "../utils/Api";
+import { WikiData } from "../types/pages";
 
-const wikiIntroData = {
-    "title": "대문",
-    "content": `[[CAPS 위키]]에 오신 것을 환영합니다!
-[[CAPS]] 회원이라면 원하는 문서를 생성 및 편집할 수 있습니다.
-더 자세한 내용은 [[CAPS 위키]], [[도움말]]을 참고하시기 바랍니다.
+const wikiIntroData: WikiData = {
+    title: "CAPS 규칙",
+    content: `[[CAPS 위키]]의 규칙 페이지입니다.
+CAPS 회원이라면 반드시 숙지해야 할 규칙들이 있습니다.
 
-<div class="bg-gray-200 p-4 border-2 border-gray-300 rounded-xl">||[[도움말]] || CAPS 위키를 어떻게 써야할 지 모르겠다면 도움말을 클릭하세요!</div>
-<div class="bg-gray-200 p-4 border-2 border-gray-300 rounded-xl ">||[[CAPS 위키 프로젝트]] 진행 중!! || 프로젝트에 참여해서 관련 문서에 기여의 손길을 보내주세요!</div>
-<div class="bg-gray-200 p-4 border-2 border-gray-300 rounded-xl">||[[C언어 프로젝트]] 진행 중!! || 2024-여름학기 동안 C언어 및 여러가지 위키 페이지를 작성하고 수정하고 싶습니다! 같이 하실분 구해요~</div>
-`
+<div class="bg-gray-200 p-4 border-2 border-gray-300 rounded-xl">||[[회원 규칙]] || CAPS 회원으로서 지켜야 할 규칙들입니다.</div>
+<div class="bg-gray-200 p-4 border-2 border-gray-300 rounded-xl">||[[위키 규칙]] || CAPS 위키를 사용할 때 지켜야 할 규칙들입니다.</div>
+<div class="bg-gray-200 p-4 border-2 border-gray-300 rounded-xl">||[[스터디 규칙]] || CAPS 스터디를 진행할 때 지켜야 할 규칙들입니다.</div>
+`,
 };
 
-const IntroducePage = () => {
-    const { wiki_title } = useParams();
+const RulePage: React.FC = () => {
+    const { wiki_title } = useParams < { wiki_title: string } > ();
+    const navigate = useNavigate();
 
-    const NotFoundData = {
-        "title": wiki_title,
-        "content": `<div>해당 문서가 없습니다.</div> <a class="text-blue-500 hover:underline" href='/wiki/edit/${wiki_title}'>새 문서 만들기</a>`
+    const NotFoundData: WikiData = {
+        title: wiki_title || "",
+        content: `<div>해당 문서가 없습니다.</div> <a class="text-blue-500 hover:underline" href='/wiki/edit/${wiki_title}'>새 문서 만들기</a>`,
     };
 
-    const [wikiData, setWikiData] = useState(null);  // For fetched data
-    const [error, setError] = useState(null);        // For error handling
-    const [loading, setLoading] = useState(true);    // For loading state
+    const [wikiData, setWikiData] = useState < WikiData | null > (null); // For fetched data
+    const [error, setError] = useState < string | null > (null); // For error handling
+    const [loading, setLoading] = useState < boolean > (true); // For loading state
+
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`/api/wiki?title=CAPS 회칙`);
-                console.log(response.data.data);
+                const response = await apiGetWithToken(
+                    `/api/v1/wikis/CAPS%20회칙`,
+                    navigate
+                );
                 if (response.status === 200) {
-                    setWikiData(response.data.data); // Set the fetched data
+                    // API 응답의 member를 writer로 변환
+                    const apiData = response.data.data;
+                    const convertedData: WikiData = {
+                        title: apiData.title,
+                        content: apiData.content,
+                        writer: apiData.member || apiData.writer,
+                    };
+                    setWikiData(convertedData);
                     setError(null);
                 } else {
                     setError("Failed to fetch data");
                 }
             } catch (err) {
-                setError(err.message);
+                setError(err instanceof Error ? err.message : "An error occurred");
+                // 에러 발생 시 기본 데이터 표시
+                setWikiData(wikiIntroData);
             } finally {
-                setLoading(false);  // Stop loading after fetching data
+                setLoading(false); // Stop loading after fetching data
             }
         };
         fetchData();
-            // If no title, show intro data
-            setWikiData(wikiIntroData);
-            setLoading(false);  // Stop loading
-    }, [wiki_title]);
-    if (loading) return <div>Loading...</div>;  // Show loading state
-    // console.log(error);
-    return (
+    }, [wiki_title, navigate]);
 
+    if (loading) return <div>Loading...</div>; // Show loading state
+
+    return (
         <div>
-            <Template data={wikiData} /> 
-        </div >
+            <Template data={wikiData} />
+        </div>
     );
 };
 
-export default IntroducePage;
+export default RulePage;

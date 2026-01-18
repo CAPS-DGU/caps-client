@@ -10,7 +10,6 @@ import MainPage from "./pages/MainPage";
 import WikiPage from "./pages/WikiPage";
 import IntroPage from "./pages/IntroPage";
 import HistoryPage from "./pages/HistoryPage";
-import RulePage from "./pages/RulePage";
 import ExecutivePage from "./pages/ExecutivePage";
 import HomepagePage from "./pages/HomepagePage";
 import BoardPage from "./pages/BoardPage";
@@ -34,6 +33,7 @@ import FAQPage from "./pages/FAQPage.tsx";
 import LedgerBoardPage from "./pages/LedgerBoardPage.tsx";
 import LedgerDetailPage from "./pages/LedgerDetailPage.tsx";
 import LedgerEditPage from "./pages/LedgerEditPage.tsx";
+import RulePage from "./pages/RulePage.tsx";
 
 // Types
 interface RouteConfig {

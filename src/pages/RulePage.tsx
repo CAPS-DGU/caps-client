@@ -31,7 +31,7 @@ const RulePage: React.FC = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get<{ data: WikiData }>(
-          `/api/wiki?title=CAPS 회칙`
+          `/api/vi/wikis/CAPS 회칙`
         );
         if (response.status === 200) {
           setWikiData(response.data.data); // Set the fetched data

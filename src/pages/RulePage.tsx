@@ -3,6 +3,7 @@ import Template from "../components/WIKI/template";
 import { useParams, useNavigate } from "react-router-dom";
 import { apiGetWithToken } from "../utils/Api";
 import { WikiData } from "../types/pages";
+import Navbar from "../components/NavBar";
 
 const wikiIntroData: WikiData = {
   title: "CAPS 규칙",
@@ -63,6 +64,8 @@ const RulePage: React.FC = () => {
 
   return (
     <div>
+      <Navbar />
+
       <Template data={wikiData} />
     </div>
   );

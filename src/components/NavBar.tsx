@@ -149,7 +149,7 @@ function Navbar({ isTransparent = false }: NavbarProps) {
               {/* 신고 버튼 (로그인 시에만 표시) */}
               <Link
                 to="/report"
-                className="flex items-center justify-center w-9 h-9 rounded-full border border-white text-red-600 hover:bg-red-50 transition"
+                className="flex items-center justify-center w-9 h-9 rounded-full border border-white text-white transition"
                 title="문의 / 신고"
               >
                 <FileWarning size={18} />

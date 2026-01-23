@@ -59,32 +59,32 @@ const ReportPage: React.FC = () => {
     });
 
     // presigned URL 추출
-    // 응답 구조: { data: { presignedUrl: string, key: string } } 또는 { presignedUrl: string, key: string }
-    // 실제 API 응답 구조에 맞게 수정 필요할 수 있음
-    let presignedUrl: string = "";
-    let fileKey: string = "";
+    // 실제 응답 예:
+    // { status: 200, message: "...", data: { fileName: string, uploadURL: string } }
+    let uploadURL: string = "";
 
     try {
       // orvalClient가 이미 response.data를 반환하므로, 실제 응답 구조 확인 필요
       const responseData = presignedResponse as any;
       
-      if (typeof responseData === 'string') {
-        presignedUrl = responseData;
-      } else if (responseData?.presignedUrl) {
-        presignedUrl = responseData.presignedUrl;
-        fileKey = responseData.key || responseData.fileKey || "";
-      } else if (responseData?.data) {
-        presignedUrl = responseData.data.presignedUrl || responseData.data.url || "";
-        fileKey = responseData.data.key || responseData.data.fileKey || "";
+      if (typeof responseData === "string") {
+        uploadURL = responseData;
+      } else if (responseData?.uploadURL) {
+        uploadURL = responseData.uploadURL;
+      } else if (responseData?.data?.uploadURL) {
+        uploadURL = responseData.data.uploadURL;
+      } else if (responseData?.data?.presignedUrl) {
+        // 혹시 서버가 다른 키로 내려주는 경우 대비
+        uploadURL = responseData.data.presignedUrl;
       }
 
-      if (!presignedUrl) {
+      if (!uploadURL) {
         console.error("Presigned URL 응답 구조:", responseData);
         throw new Error("Presigned URL을 받지 못했습니다. 응답 구조를 확인해주세요.");
       }
 
       // 파일을 presigned URL로 업로드
-      const uploadResponse = await fetch(presignedUrl, {
+      const uploadResponse = await fetch(uploadURL, {
         method: "PUT",
         body: file,
         headers: {
@@ -96,16 +96,9 @@ const ReportPage: React.FC = () => {
         throw new Error(`파일 업로드 실패: ${uploadResponse.statusText}`);
       }
 
-      // 파일 키가 응답에 포함되어 있으면 사용, 없으면 presigned URL에서 추출
-      if (fileKey) {
-        return fileKey;
-      }
-      
-      // presigned URL에서 파일 키 추출 (S3 등 일반적인 구조)
-      const urlObj = new URL(presignedUrl);
-      fileKey = urlObj.pathname.split('?')[0];
-      
-      return fileKey;
+      // 신고 API에는 쿼리스트링 없는 "파일 URL"을 넣어주는 게 일반적
+      // (uploadURL은 presigned query가 포함되어 있으므로 제거)
+      return uploadURL.split("?")[0];
     } catch (error) {
       console.error("파일 업로드 중 오류:", error);
       throw error;

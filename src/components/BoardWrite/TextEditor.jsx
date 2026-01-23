@@ -1,31 +1,17 @@
 import React, { useState } from 'react';
-import { Editor } from '@toast-ui/react-editor';
-import '@toast-ui/editor/dist/toastui-editor.css';
 import { board_categories } from '../../constants/Board';
 
 const TextEditor = ({ onSubmit }) => {
   const [category, setCategory] = useState(2);
   const [title, setTitle] = useState('');
-  const [image, setImage] = useState(null);
-  const editorRef = React.createRef();
-
-  const handleImageChange = (e) => {
-    setImage(e.target.files[0]);
-  };
+  const [content, setContent] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const editorInstance = editorRef.current.getInstance();
-    const content = editorInstance.getHTML();
-    console.log(content);
-
     const formData = new FormData();
     formData.append('category', category);
     formData.append('title', title);
     formData.append('content', content);
-    // if (image) {
-    //   formData.append('image', image);
-    // }
 
     onSubmit(formData);
   };
@@ -63,16 +49,14 @@ const TextEditor = ({ onSubmit }) => {
         />
       </div>
 
-      {/* 내용 입력 (Toast UI Editor) */}
+      {/* 내용 입력 */}
       <div>
         <label className="block text-sm font-medium text-gray-700">내용</label>
-        <Editor
-          ref={editorRef}
-          initialEditType="markdown"
-          previewStyle="vertical"
-          height="400px"
-          initialValue="내용을 입력하세요"
-          useCommandShortcut={true}
+        <textarea
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 h-64 resize-none"
+          placeholder="내용을 입력하세요"
         />
       </div>
 

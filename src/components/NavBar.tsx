@@ -13,7 +13,7 @@ import {
   LogIn,
   User as UserIcon,
   FileText,
-  AlertTriangle,
+  Flag,
 } from "lucide-react";
 
 interface NavbarProps {
@@ -149,10 +149,10 @@ function Navbar({ isTransparent = false }: NavbarProps) {
               {/* 신고 버튼 (로그인 시에만 표시) */}
               <Link
                 to="/report"
-                className="flex items-center justify-center w-9 h-9 rounded-full bg-red-50 text-red-600 hover:bg-red-100 transition"
+                className="flex items-center justify-center w-9 h-9 rounded-full text-red-600 hover:bg-red-50 transition"
                 title="문의 / 신고"
               >
-                <AlertTriangle size={18} />
+                <Flag size={18} />
               </Link>
 
               {/* 프로필 드롭다운 */}

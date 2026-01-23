@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import NavBar from "../components/NavBar";
 import {
   CreateReportRequest,
   CreateReportRequestCategory,
@@ -26,6 +27,7 @@ const ReportPage: React.FC = () => {
   );
   const [content, setContent] = useState("");
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
 
   const {
     mutateAsync: submitReport,
@@ -108,12 +110,18 @@ const ReportPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // 이미 전송 중이거나 한 번 제출한 직후에는 재제출 방지
+    if (isPending || hasSubmitted) {
+      return;
+    }
+
     if (!category || !content.trim()) {
       alert("카테고리와 내용을 모두 입력해주세요.");
       return;
     }
 
     try {
+      setHasSubmitted(true);
       // 파일 업로드
       let fileUrls: string[] = [];
       if (selectedFiles.length > 0) {
@@ -142,15 +150,19 @@ const ReportPage: React.FC = () => {
     } catch (error) {
       console.error(error);
       alert("문의/신고 접수 중 오류가 발생했습니다.");
+      // 실패 시에만 다시 제출 가능하도록 플래그 해제
+      setHasSubmitted(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-lg bg-white rounded-xl shadow-md p-6 md:p-8 space-y-6"
-      >
+    <div className="min-h-screen bg-gray-50">
+      <NavBar />
+      <div className="flex items-center justify-center px-4 py-24">
+        <form
+          onSubmit={handleSubmit}
+          className="w-full max-w-lg bg-white rounded-xl shadow-md p-6 md:p-8 space-y-6"
+        >
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
             CAPS 문의 · 신고
@@ -275,7 +287,8 @@ const ReportPage: React.FC = () => {
             작성해주세요.
           </p>
         )}
-      </form>
+        </form>
+      </div>
     </div>
   );
 };

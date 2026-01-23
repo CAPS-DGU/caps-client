@@ -35,6 +35,7 @@ import LedgerDetailPage from "./pages/LedgerDetailPage.tsx";
 import LedgerEditPage from "./pages/LedgerEditPage.tsx";
 import RulePage from "./pages/RulePage.tsx";
 import ReportPage from "./pages/ReportPage.tsx";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 // Types
 interface RouteConfig {
@@ -84,7 +85,11 @@ const App: React.FC = () => {
     },
     {
       path: "/report",
-      element: <ReportPage />,
+      element: (
+        <ProtectedRoute>
+          <ReportPage />
+        </ProtectedRoute>
+      ),
     },
     {
       path: "/executive",

@@ -13,6 +13,7 @@ import {
   LogIn,
   User as UserIcon,
   FileText,
+  AlertTriangle,
 } from "lucide-react";
 
 interface NavbarProps {
@@ -141,44 +142,56 @@ function Navbar({ isTransparent = false }: NavbarProps) {
             </Link>
           )}
         </div>
-        {/* 오른쪽: 로그인/회원가입 */}
+        {/* 오른쪽: 로그인/신고/프로필 */}
         <div className="flex gap-4 items-center md:gap-8">
           {isLoggedIn ? (
-            <div className="relative">
+            <>
+              {/* 신고 버튼 (로그인 시에만 표시) */}
               <Link
-                to="#"
-                className={`flex items-center text-base font-semibold transition ${menuColor}`}
-                onClick={() => {
-                  dropdownOpen == null ? toggleDropdown(4) : closeDropdown();
-                }}
+                to="/report"
+                className="flex items-center justify-center w-9 h-9 rounded-full bg-red-50 text-red-600 hover:bg-red-100 transition"
+                title="문의 / 신고"
               >
-                <span className="hidden md:inline">
-                  {user && (
-                    <>
-                      {user.grade}기 {user.name}님 환영합니다!
-                    </>
-                  )}
-                </span>
-                <UserIcon className="inline-block md:hidden" size={22} />
+                <AlertTriangle size={18} />
               </Link>
-              {dropdownOpen === 4 && (
-                <div className="absolute right-0 z-50 py-2 mt-2 w-40 bg-white rounded-lg shadow-xl">
-                  <Link
-                    to="#"
-                    className="block px-4 py-2 text-xs text-gray-800 hover:bg-gray-200"
-                    onClick={Logout}
-                  >
-                    로그아웃
-                  </Link>
-                  <Link
-                    to="/mypage"
-                    className="block px-4 py-2 text-xs text-gray-800 hover:bg-gray-200"
-                  >
-                    마이페이지
-                  </Link>
-                </div>
-              )}
-            </div>
+
+              {/* 프로필 드롭다운 */}
+              <div className="relative">
+                <Link
+                  to="#"
+                  className={`flex items-center text-base font-semibold transition ${menuColor}`}
+                  onClick={() => {
+                    dropdownOpen == null ? toggleDropdown(4) : closeDropdown();
+                  }}
+                >
+                  <span className="hidden md:inline">
+                    {user && (
+                      <>
+                        {user.grade}기 {user.name}님 환영합니다!
+                      </>
+                    )}
+                  </span>
+                  <UserIcon className="inline-block md:hidden" size={22} />
+                </Link>
+                {dropdownOpen === 4 && (
+                  <div className="absolute right-0 z-50 py-2 mt-2 w-40 bg-white rounded-lg shadow-xl">
+                    <Link
+                      to="#"
+                      className="block px-4 py-2 text-xs text-gray-800 hover:bg-gray-200"
+                      onClick={Logout}
+                    >
+                      로그아웃
+                    </Link>
+                    <Link
+                      to="/mypage"
+                      className="block px-4 py-2 text-xs text-gray-800 hover:bg-gray-200"
+                    >
+                      마이페이지
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </>
           ) : (
             <>
               <button

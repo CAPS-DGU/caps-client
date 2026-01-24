@@ -85,10 +85,10 @@ export default function OnBoarding() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
-      <form
+    <form
         className="bg-white p-8 rounded-xl shadow max-w-sm w-full"
-        onSubmit={handleSubmit}
-      >
+      onSubmit={handleSubmit}
+    >
       <div className="font-bold text-2xl mb-4 text-blue-900">CAPS</div>
       <div className="mb-4 text-gray-800 font-semibold">
         정확한 정보 기록을 위해<br />
@@ -140,14 +140,14 @@ export default function OnBoarding() {
         type="submit"
         className={`w-full p-2 rounded text-white font-bold ${
           validate() && validatePhone() && generation
-            ? "bg-blue-600 hover:bg-blue-700"
-            : "bg-gray-400 cursor-not-allowed"
-        }`}
+          ? "bg-blue-600 hover:bg-blue-700"
+          : "bg-gray-400 cursor-not-allowed"
+          }`}
         disabled={!(validate() && validatePhone() && generation)}
       >
         가입 완료하기
       </button>
-      </form>
+    </form>
     </div>
   );
 }

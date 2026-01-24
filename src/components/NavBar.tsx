@@ -146,7 +146,14 @@ function Navbar({ isTransparent = false }: NavbarProps) {
         <div className="flex gap-4 items-center md:gap-8">
           {isLoggedIn ? (
             <>
-              
+              {/* 신고 버튼 (로그인 시에만 표시) */}
+              <Link
+                to="/report"
+                className={`flex items-center justify-center w-9 h-9 transition ${menuColor}`}
+                title="문의 / 신고"
+              >
+                <FileWarning size={18} />
+              </Link>
               {/* 프로필 드롭다운 */}
               <div className="relative">
                 <Link
@@ -200,14 +207,6 @@ function Navbar({ isTransparent = false }: NavbarProps) {
               />
             </>
           )}
-          {/* 신고 버튼 (로그인 시에만 표시) */}
-              <Link
-                to="/report"
-                className={`flex items-center justify-center w-9 h-9 transition ${menuColor}`}
-                title="문의 / 신고"
-              >
-                <FileWarning size={18} />
-              </Link>
 
         </div>
       </nav>

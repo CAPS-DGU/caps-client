@@ -9,11 +9,6 @@ const department: Department = {
       img: "박재관.jpeg",
     },
     {
-      name: "34기 한병헌",
-      position: "정보통신공학과",
-      img: "한병헌.jpeg",
-    },
-    {
       name: "39기 김영민",
       position: "컴퓨터공학전공",
       img: "김영민.jpeg",
@@ -23,7 +18,9 @@ const department: Department = {
       position: "열린전공학부",
       img: "강유민.jpeg",
     },
-    { name: "39.5기 이승은", position: "수학과", img: "이승은.jpeg" },
+    { name: "39.5기 이승은", 
+      position: "수학과", 
+      img: "이승은.jpeg" },
   ],
 };
 

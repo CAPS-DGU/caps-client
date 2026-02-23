@@ -13,6 +13,11 @@ const department: Department = {
       position: "데이터사이언스전공",
       img: "이강민.jpeg",
     },
+    { 
+      name: "39기 정이현", 
+      position: "통계학과", 
+      img: "정이현.jpeg" 
+    },
     { name: "39.5기 지휘서", 
       position: "수학과", 
       img: "지휘서.jpeg" },

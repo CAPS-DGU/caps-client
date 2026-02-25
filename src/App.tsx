@@ -23,7 +23,7 @@ import { WikiContent } from "./components/WIKI/WikiContent";
 import { WikiHistory } from "./components/WIKI/WikiHistory";
 import { WikiCompare } from "./components/WIKI/WikiCompare";
 import OnBoarding from "./pages/OnBoarding.tsx";
-import WikiHistoryPage from "./pages/WikiHistoryPage.jsx";
+import WikiHistoryPage from "./pages/WikiHistoryPage.tsx";
 import { UserProvider } from "./contexts/UserContext.tsx";
 import MyPage from "./pages/MyPage.tsx";
 import WikiEditPage from "./pages/WikiEditPage.jsx";

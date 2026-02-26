@@ -1,5 +1,5 @@
 import React from 'react';
-import { toRelativeTime } from '../../utils/Time';
+import { toRelativeTime } from '../../utils/Time.ts';
 
 function PostItem({ id, title, author, time, hit, comments }) {
 

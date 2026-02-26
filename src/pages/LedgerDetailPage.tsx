@@ -10,6 +10,7 @@ import {
   LedgerDeleteModal,
 } from "../components/Ledger/LedgerComponents";
 import { apiDeleteWithToken, apiGetWithToken } from "../utils/Api";
+import { useAuth } from "../hooks/useAuth";
 import { deleteFileFromS3 } from "../utils/s3Upload";
 
 interface LedgerMember {
@@ -35,18 +36,19 @@ interface LedgerDetailResponse {
   data: LedgerDetailData;
 }
 
-interface JwtPayload {
-  role?: string;
-  [key: string]: any;
-}
-
 const LedgerDetailPage: React.FC = () => {
   const { ledgerId } = useParams<{ ledgerId: string }>();
   const navigate = useNavigate();
+  const { isLoggedIn, isLoading, user } = useAuth();
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [ledger, setLedger] = useState<LedgerDetailData | null>(null);
   const [isDeleteSuccessOpen, setIsDeleteSuccessOpen] = useState(false);
-  const [userRole, setUserRole] = useState<string | null>(null);
+
+  const userRole = user?.role || null;
+  const isAdmin = userRole === "ADMIN";
+  const isAuthor =
+    user?.id && ledger?.member.id && user.id === ledger.member.id;
+  const canManage = isAdmin || isAuthor;
 
   const formatDateTime = (isoString: string) => {
     const date = new Date(isoString);
@@ -59,32 +61,12 @@ const LedgerDetailPage: React.FC = () => {
     return `${year}. ${month}. ${day} ${hours}:${minutes}`;
   };
 
-  const parseJwt = (token: string | null): JwtPayload | null => {
-    if (!token) return null;
-    try {
-      const base64Url = token.split(".")[1];
-      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-      const jsonPayload = decodeURIComponent(
-        atob(base64)
-          .split("")
-          .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
-          .join("")
-      );
-
-      return JSON.parse(jsonPayload);
-    } catch (error) {
-      console.error("Invalid JWT", error);
-      return null;
-    }
-  };
-
+  // 회원이 아니면 접근 차단
   useEffect(() => {
-    const accessToken = localStorage.getItem("accessToken");
-    const decoded = parseJwt(accessToken);
-    if (decoded && decoded.role) {
-      setUserRole(decoded.role);
+    if (!isLoading && !isLoggedIn) {
+      navigate("/");
     }
-  }, []);
+  }, [isLoading, isLoggedIn, navigate]);
 
   useEffect(() => {
     const fetchLedgerDetail = async () => {
@@ -110,7 +92,7 @@ const LedgerDetailPage: React.FC = () => {
     try {
       // 1. DB에서 장부 삭제
       await apiDeleteWithToken(`/api/v1/ledgers/${ledgerId}`, navigate);
-      
+
       // 2. S3에서 파일 삭제 (파일이 있는 경우)
       if (ledger?.fileUrls && ledger.fileUrls.length > 0) {
         try {
@@ -122,7 +104,7 @@ const LedgerDetailPage: React.FC = () => {
           // 파일 삭제 실패해도 DB 삭제는 완료되었으므로 계속 진행
         }
       }
-      
+
       setIsDeleteOpen(false);
       setIsDeleteSuccessOpen(true);
     } catch (error) {
@@ -131,27 +113,32 @@ const LedgerDetailPage: React.FC = () => {
     }
   };
 
+  // 로딩 중이거나 로그인하지 않은 경우 아무것도 렌더링하지 않음
+  if (isLoading || !isLoggedIn) {
+    return (
+      <div className="flex flex-col min-h-screen">
+        <Navbar />
+        <main className="flex-1 mt-20 bg-transparent">
+          <div className="flex justify-center items-center min-h-[60vh]">
+            <p className="text-gray-500">로딩 중...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
       <main className="flex-1 mt-20 bg-transparent">
         <div className="px-4 py-10 mx-auto max-w-4xl">
           <LedgerDetailHeader
-            ledgerId={ledgerId}
             title={ledger?.title ?? "장부 제목"}
-            onEdit={match(userRole)
-              .with("ADMIN", "COUNCIL", "PRESIDENT", () => () => {
-                navigate(`/ledger/${ledgerId}/edit`);
-              })
-              .otherwise(() => undefined)}
-            onDelete={match(userRole)
-              .with(
-                "ADMIN",
-                "COUNCIL",
-                "PRESIDENT",
-                () => () => setIsDeleteOpen(true)
-              )
-              .otherwise(() => undefined)}
+            onEdit={
+              canManage ? () => navigate(`/ledger/${ledgerId}/edit`) : undefined
+            }
+            onDelete={canManage ? () => setIsDeleteOpen(true) : undefined}
           />
 
           {/* 본문 영역 */}

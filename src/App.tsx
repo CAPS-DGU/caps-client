@@ -10,7 +10,6 @@ import MainPage from "./pages/MainPage";
 import WikiPage from "./pages/WikiPage";
 import IntroPage from "./pages/IntroPage";
 import HistoryPage from "./pages/HistoryPage";
-import RulePage from "./pages/RulePage";
 import ExecutivePage from "./pages/ExecutivePage";
 import HomepagePage from "./pages/HomepagePage";
 import BoardPage from "./pages/BoardPage";
@@ -24,7 +23,7 @@ import { WikiContent } from "./components/WIKI/WikiContent";
 import { WikiHistory } from "./components/WIKI/WikiHistory";
 import { WikiCompare } from "./components/WIKI/WikiCompare";
 import OnBoarding from "./pages/OnBoarding.tsx";
-import WikiHistoryPage from "./pages/WikiHistoryPage.jsx";
+import WikiHistoryPage from "./pages/WikiHistoryPage.tsx";
 import { UserProvider } from "./contexts/UserContext.tsx";
 import MyPage from "./pages/MyPage.tsx";
 import WikiEditPage from "./pages/WikiEditPage.jsx";
@@ -34,6 +33,9 @@ import FAQPage from "./pages/FAQPage.tsx";
 import LedgerBoardPage from "./pages/LedgerBoardPage.tsx";
 import LedgerDetailPage from "./pages/LedgerDetailPage.tsx";
 import LedgerEditPage from "./pages/LedgerEditPage.tsx";
+import RulePage from "./pages/RulePage.tsx";
+import ReportPage from "./pages/ReportPage.tsx";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 // Types
 interface RouteConfig {
@@ -80,6 +82,14 @@ const App: React.FC = () => {
     {
       path: "/rule",
       element: <RulePage />,
+    },
+    {
+      path: "/report",
+      element: (
+        <ProtectedRoute>
+          <ReportPage />
+        </ProtectedRoute>
+      ),
     },
     {
       path: "/executive",

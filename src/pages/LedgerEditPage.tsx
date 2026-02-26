@@ -5,6 +5,7 @@ import Footer from "../components/MainPage/Footer";
 import {
   LedgerTitleInput,
   LedgerTopActions,
+  LedgerBottomActions,
   LedgerFileSection,
   LedgerContentSection,
   LedgerFileItem,
@@ -14,6 +15,7 @@ import {
   apiPatchWithToken,
   apiPostWithToken,
 } from "../utils/Api";
+import { useAuth } from "../hooks/useAuth";
 import {
   uploadFileToS3,
   uploadMultipleFilesToS3,
@@ -35,6 +37,7 @@ interface LedgerEditResponse {
 const LedgerEditPage: React.FC = () => {
   const { ledgerId } = useParams<{ ledgerId?: string }>();
   const navigate = useNavigate();
+  const { isLoggedIn, isLoading } = useAuth();
 
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
@@ -42,6 +45,13 @@ const LedgerEditPage: React.FC = () => {
   const [files, setFiles] = useState<LedgerFileItem[]>([]);
   const [existingFileUrls, setExistingFileUrls] = useState<string[]>([]);
   const [uploading, setUploading] = useState<boolean>(false);
+
+  // 회원이 아니면 접근 차단
+  useEffect(() => {
+    if (!isLoading && !isLoggedIn) {
+      navigate("/");
+    }
+  }, [isLoading, isLoggedIn, navigate]);
 
   // 편집 모드일 때 기존 데이터 불러오기
   useEffect(() => {
@@ -90,6 +100,12 @@ const LedgerEditPage: React.FC = () => {
     } catch (error) {
       console.error("파일 삭제 실패:", error);
       alert("파일 삭제에 실패했습니다.");
+    }
+  };
+
+  const handleListClick = () => {
+    if (window.confirm("이 페이지를 떠나겠습니까?")) {
+      navigate("/ledger");
     }
   };
 
@@ -162,6 +178,21 @@ const LedgerEditPage: React.FC = () => {
     }
   };
 
+  // 로딩 중이거나 로그인하지 않은 경우 아무것도 렌더링하지 않음
+  if (isLoading || !isLoggedIn) {
+    return (
+      <div className="flex flex-col min-h-screen">
+        <Navbar />
+        <main className="flex-1 mt-20 bg-transparent">
+          <div className="flex justify-center items-center min-h-[60vh]">
+            <p className="text-gray-500">로딩 중...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
@@ -170,7 +201,7 @@ const LedgerEditPage: React.FC = () => {
           onSubmit={handleSubmit}
           className="px-4 py-10 mx-auto space-y-6 max-w-4xl"
         >
-          {/* 상단 타이틀 + 상단고정/등록 버튼 (한 줄) */}
+          {/* 상단 타이틀 + 상단고정 토글 */}
           <div className="flex justify-between items-end pb-4 mb-2 border-b border-gray-200">
             <h1 className="text-2xl font-extrabold text-black tracking-[1.9px]">
               장부게시판
@@ -179,6 +210,7 @@ const LedgerEditPage: React.FC = () => {
               isPinned={isPinned}
               onTogglePin={() => setIsPinned((prev) => !prev)}
               onCancel={() => navigate(-1)}
+              submitLabel={ledgerId ? "수정" : "등록"}
             />
           </div>
 
@@ -200,15 +232,15 @@ const LedgerEditPage: React.FC = () => {
                 {existingFileUrls.map((fileUrl, index) => (
                   <div
                     key={index}
-                    className="flex gap-2 items-center px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg"
+                    className="flex gap-2 items-center px-4 py-2 bg-gray-50 rounded-lg border border-gray-200"
                   >
                     <span className="text-sm text-gray-700">
-                      기존 파일: {fileUrl.split("/").pop()}
+                      기존 파일: {fileUrl.split("/").pop()?.replace(/^\d+_\d+_/, '') || "첨부파일"}
                     </span>
                     <button
                       type="button"
                       onClick={() => handleRemoveExistingFile(fileUrl)}
-                      className="px-3 py-1 text-xs font-semibold text-red-600 bg-red-50 rounded hover:bg-red-100 transition-colors"
+                      className="px-3 py-1 text-xs font-semibold text-red-600 bg-red-50 rounded transition-colors hover:bg-red-100"
                     >
                       삭제
                     </button>
@@ -223,15 +255,7 @@ const LedgerEditPage: React.FC = () => {
             )}
           </div>
           {/* 하단 목록 버튼 */}
-          <div className="flex justify-start pt-4">
-            <button
-              type="button"
-              className="px-7 py-3 text-sm font-semibold text-white bg-[#007AEB] rounded-full hover:bg-[#0066c7] transition-colors"
-              onClick={() => navigate("/ledger")}
-            >
-              목록
-            </button>
-          </div>
+          <LedgerBottomActions onCancel={handleListClick} />
         </form>
       </main>
       <Footer />

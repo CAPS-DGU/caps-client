@@ -62,13 +62,13 @@ function Navbar() {
                         <img
                             src="/new-club-logo-white-small.png"
                             alt="Logo"
-                            className="h-12 mx-auto"
+                            className="mx-auto h-12"
                         />
                     </a>
                 </div>
 
                 {/* Menu Items for Desktop */}
-                <div className="justify-center hidden mt-4 space-x-6 md:flex">
+                <div className="hidden justify-center mt-4 space-x-6 md:flex">
                     <div className="relative">
                         <a
                             href="#"
@@ -78,7 +78,7 @@ function Navbar() {
                             ABOUT
                         </a>
                         {dropdownOpen === 0 && (
-                            <div className="absolute z-50 w-40 py-1 mt-1 bg-white rounded-lg shadow-xl">
+                            <div className="absolute z-50 py-1 mt-1 w-40 bg-white rounded-lg shadow-xl">
                                 <a
                                     href="/intro"
                                     className="block px-4 py-2 text-xs text-gray-800 hover:bg-gray-200"
@@ -121,7 +121,7 @@ function Navbar() {
                             STUDY
                         </a>
                         {dropdownOpen === 1 && (
-                            <div className="absolute z-50 w-40 py-2 mt-2 bg-white rounded-lg shadow-xl">
+                            <div className="absolute z-50 py-2 mt-2 w-40 bg-white rounded-lg shadow-xl">
                                 <a
                                     href="/study"
                                     className="block px-4 py-2 text-xs text-gray-800 hover:bg-gray-200"
@@ -140,7 +140,7 @@ function Navbar() {
                             FORUM
                         </a>
                         {dropdownOpen === 2 && (
-                            <div className="absolute z-50 w-40 py-2 mt-2 bg-white rounded-lg shadow-xl">
+                            <div className="absolute z-50 py-2 mt-2 w-40 bg-white rounded-lg shadow-xl">
                                 <a
                                     href="/board"
                                     className="block px-4 py-2 text-xs text-gray-800 hover:bg-gray-200"
@@ -198,7 +198,7 @@ function Navbar() {
                             UTIL
                         </a>
                         {dropdownOpen === 3 && (
-                            <div className="absolute z-50 w-40 py-2 mt-2 bg-white rounded-lg shadow-xl">
+                            <div className="absolute z-50 py-2 mt-2 w-40 bg-white rounded-lg shadow-xl">
                                 <a
                                     href="/library"
                                     className="block px-4 py-2 text-xs text-gray-800 hover:bg-gray-200"
@@ -265,7 +265,7 @@ function Navbar() {
                             </a>
                         )}
                         {dropdownOpen === 4 && (
-                            <div className="absolute z-50 w-40 py-2 mt-2 bg-white rounded-lg shadow-xl">
+                            <div className="absolute z-50 py-2 mt-2 w-40 bg-white rounded-lg shadow-xl">
                                 <a
                                     href="#"
                                     className="block px-4 py-2 text-xs text-gray-800 hover:bg-gray-200"
@@ -293,7 +293,7 @@ function Navbar() {
                     {/* <div className="relative">
                             <button onClick={() => toggleMobileDropdown(0)} className="text-white hover:text-gray-400">ABOUT</button>
                             {mobileDropdownOpen === 0 && (
-                                <div className="absolute z-50 w-40 py-1 mt-2 bg-white rounded-lg shadow-xl">
+                                <div className="absolute z-50 py-1 mt-2 w-40 bg-white rounded-lg shadow-xl">
                                     <a href="/intro" className="block px-4 py-2 text-xs text-gray-800 hover:bg-gray-200">CAPS 소개</a>
                                     <a href="#" className="block px-4 py-2 text-xs text-gray-800 hover:bg-gray-200">CAPS 연혁</a>
                                     <a href="#" className="block px-4 py-2 text-xs text-gray-800 hover:bg-gray-200">CAPS 회칙</a>
@@ -305,7 +305,7 @@ function Navbar() {
                         <div className="relative">
                             <button onClick={() => toggleMobileDropdown(1)} className="text-white hover:text-gray-400">STUDY</button>
                             {mobileDropdownOpen === 1 && (
-                                <div className="absolute z-50 w-40 py-2 mt-2 bg-white rounded-lg shadow-xl">
+                                <div className="absolute z-50 py-2 mt-2 w-40 bg-white rounded-lg shadow-xl">
                                     <a href="#" className="block px-4 py-2 text-xs text-gray-800 hover:bg-gray-200">스터디 목록</a>
                                 </div>
                             )}
@@ -313,7 +313,7 @@ function Navbar() {
                         <div className="relative">
                             <button onClick={() => toggleMobileDropdown(2)} className="text-white hover:text-gray-400">FORUM</button>
                             {mobileDropdownOpen === 2 && (
-                                <div className="absolute z-50 w-40 py-2 mt-2 bg-white rounded-lg shadow-xl">
+                                <div className="absolute z-50 py-2 mt-2 w-40 bg-white rounded-lg shadow-xl">
                                     <a href="/board" className="block px-4 py-2 text-xs text-gray-800 hover:bg-gray-200">전체 글 보기</a>
                                     <hr />
                                     <a href="/board/1" className="block px-4 py-2 text-xs text-gray-800 hover:bg-gray-200">자유게시판</a>
@@ -332,7 +332,7 @@ function Navbar() {
                                 UTIL
                             </a>
                             {mobileDropdownOpen === 3 && (
-                                <div className="absolute z-50 w-40 py-2 mt-2 bg-white rounded-lg shadow-xl">
+                                <div className="absolute z-50 py-2 mt-2 w-40 bg-white rounded-lg shadow-xl">
                                     <a href="#" className="block px-4 py-2 text-xs text-gray-800 hover:bg-gray-200">CAPS 도서관</a>
                                     <a href="#" className="block px-4 py-2 text-xs text-gray-800 hover:bg-gray-200">CAPS 활동 랭킹</a>
                                     <a href="#" className="block px-4 py-2 text-xs text-gray-800 hover:bg-gray-200">오늘의 학식</a>

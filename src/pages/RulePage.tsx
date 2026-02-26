@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Template from "../components/WIKI/template";
-import { useParams } from "react-router-dom";
-import axios from "axios";
+import { useParams, useNavigate } from "react-router-dom";
+import { apiGet, apiGetWithToken } from "../utils/Api";
 import { WikiData } from "../types/pages";
+import Navbar from "../components/NavBar";
 
 const wikiIntroData: WikiData = {
   title: "CAPS 규칙",
@@ -17,6 +18,7 @@ CAPS 회원이라면 반드시 숙지해야 할 규칙들이 있습니다.
 
 const RulePage: React.FC = () => {
   const { wiki_title } = useParams<{ wiki_title: string }>();
+  const navigate = useNavigate();
 
   const NotFoundData: WikiData = {
     title: wiki_title || "",
@@ -30,32 +32,39 @@ const RulePage: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get<{ data: WikiData }>(
-          `/api/wiki?title=caps 규칙`
-        );
+        const response = await apiGet(`/api/v1/wikis/CAPS%20회칙`);
         if (response.status === 200) {
-          setWikiData(response.data.data); // Set the fetched data
+          // API 응답의 member를 writer로 변환
+          const apiData = response.data.data;
+          const convertedData: WikiData = {
+            title: apiData.title,
+            content: apiData.content,
+            writer: apiData.member || apiData.writer,
+          };
+          setWikiData(convertedData);
           setError(null);
         } else {
           setError("Failed to fetch data");
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
+        // 에러 발생 시 기본 데이터 표시
+        setWikiData(wikiIntroData);
       } finally {
         setLoading(false); // Stop loading after fetching data
       }
     };
     fetchData();
-    // If no title, show intro data
-    setWikiData(wikiIntroData);
-    setLoading(false); // Stop loading
-  }, [wiki_title]);
+  }, [wiki_title, navigate]);
 
   if (loading) return <div>Loading...</div>; // Show loading state
 
   return (
-    <div>
-      <Template data={wikiData} />
+    <div className="flex flex-col min-h-screen">
+      <Navbar />
+      <main className="flex-1 mt-20">
+        <Template data={wikiData} />
+      </main>
     </div>
   );
 };

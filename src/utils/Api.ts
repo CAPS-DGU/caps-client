@@ -16,6 +16,23 @@ export async function apiDeleteWithToken(path, navigate) {
   return await apiWithToken("delete", path, null, navigate);
 }
 
+// 토큰 없는 공개 API 호출 함수들
+export async function apiGet(path) {
+  return await apiWithoutToken("get", path, null);
+}
+
+export async function apiPost(path, data) {
+  return await apiWithoutToken("post", path, data);
+}
+
+export async function apiPatch(path, data) {
+  return await apiWithoutToken("patch", path, data);
+}
+
+export async function apiDelete(path) {
+  return await apiWithoutToken("delete", path, null);
+}
+
 export async function apiWithToken(
   method,
   path,
@@ -46,6 +63,29 @@ export async function apiWithToken(
       }
     }
 
+    throw error;
+  }
+}
+
+export async function apiWithoutToken(
+  method,
+  path,
+  data
+): Promise<AxiosResponse> {
+  try {
+    const response = await axios({
+      method: method,
+      url: `${(import.meta as any).env.VITE_API_HOST}${path}`,
+      data: data,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "*/*",
+      },
+    });
+
+    return response;
+  } catch (error) {
+    console.error("API 요청 실패:", error);
     throw error;
   }
 }

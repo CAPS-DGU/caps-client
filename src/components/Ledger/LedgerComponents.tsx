@@ -32,35 +32,29 @@ export const defaultFileIcon = new URL(
  * ===================== */
 
 export interface LedgerDetailHeaderProps {
-  ledgerId?: string;
   title: string;
   onEdit?: () => void;
   onDelete?: () => void;
 }
 
 export const LedgerDetailHeader: React.FC<LedgerDetailHeaderProps> = ({
-  ledgerId,
   title,
   onEdit,
   onDelete,
 }) => (
   <header className="pb-6 mb-8 border-b border-gray-200">
-    <div className="flex gap-4 justify-between items-end">
-      <div>
-        <h1 className="mb-2 text-2xl font-extrabold text-black tracking-[1.9px]">
+    <div className="flex gap-4 justify-between items-start">
+      <div className="flex-1 min-w-0">
+        <h1 className="text-2xl font-extrabold text-black tracking-[1.9px] break-words">
           {title}
         </h1>
-        <p className="text-sm text-gray-500">
-          글 번호{" "}
-          <span className="font-semibold text-gray-700">{ledgerId}</span>
-        </p>
       </div>
       {(onEdit || onDelete) && (
-        <div className="flex gap-3 items-center">
+        <div className="flex flex-shrink-0 gap-3 items-center">
           {onEdit && (
             <button
               type="button"
-              className="px-7 py-3 text-sm font-semibold text-white bg-[#007AEB] rounded-full hover:bg-[#0066c7] transition-colors"
+              className="px-7 py-3 text-sm font-semibold text-white bg-[#007AEB] rounded-full hover:bg-[#0066c7] transition-colors whitespace-nowrap"
               onClick={onEdit}
             >
               수정
@@ -69,7 +63,7 @@ export const LedgerDetailHeader: React.FC<LedgerDetailHeaderProps> = ({
           {onDelete && (
             <button
               type="button"
-              className="px-7 py-3 text-sm font-semibold text-white bg-[#007AEB] rounded-full hover:bg-[#0066c7] transition-colors"
+              className="px-7 py-3 text-sm font-semibold text-white bg-[#007AEB] rounded-full hover:bg-[#0066c7] transition-colors whitespace-nowrap"
               onClick={onDelete}
             >
               삭제
@@ -96,20 +90,24 @@ export const LedgerDetailMeta: React.FC<LedgerDetailMetaProps> = ({
 }) => {
   const [loadingFile, setLoadingFile] = useState<string | null>(null);
 
-  const handleFileClick = async (fileUrl: string, fileName: string, e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleFileClick = async (
+    fileUrl: string,
+    fileName: string,
+    e: React.MouseEvent<HTMLAnchorElement>
+  ) => {
     e.preventDefault();
-    
+
     if (loadingFile === fileUrl) return; // 이미 로딩 중이면 무시
-    
+
     try {
       setLoadingFile(fileUrl);
       const presignedUrl = await getPresignedDownloadURL(fileUrl);
-      
+
       // 새 창에서 다운로드
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = presignedUrl;
       link.download = fileName;
-      link.target = '_blank';
+      link.target = "_blank";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -138,7 +136,8 @@ export const LedgerDetailMeta: React.FC<LedgerDetailMetaProps> = ({
       {fileUrls.length > 0 && (
         <div className="pt-2 space-y-2">
           {fileUrls.map((fileUrl, index) => {
-            const fileName = fileUrl.split("/").pop() || "첨부파일";
+            const fullFileName = fileUrl.split("/").pop() || "첨부파일";
+            const fileName = fullFileName.replace(/^\d+_\d+_/, '');
             const isLoading = loadingFile === fileUrl;
             return (
               <div
@@ -251,8 +250,7 @@ export const PinToggle: React.FC<PinToggleProps> = ({ isPinned, onToggle }) => (
     >
       <div
         className={`w-3 h-3 bg-white rounded-full transform transition-transform ${
-          isPinned ? "translate-x-3" : ""
-        }`}
+          isPinned ? "translate-x-3" : ""}`}
       />
     </div>
   </button>
@@ -282,12 +280,14 @@ export interface TopActionsProps {
   isPinned: boolean;
   onTogglePin: () => void;
   onCancel: () => void;
+  submitLabel?: string;
 }
 
 export const LedgerTopActions: React.FC<TopActionsProps> = ({
   isPinned,
   onTogglePin,
   onCancel,
+  submitLabel = "등록",
 }) => (
   <div className="flex gap-3 items-center">
     <PinToggle isPinned={isPinned} onToggle={onTogglePin} />
@@ -295,7 +295,25 @@ export const LedgerTopActions: React.FC<TopActionsProps> = ({
       type="submit"
       className="px-7 py-3 text-sm font-semibold text-white bg-[#007AEB] rounded-full hover:bg-[#0066c7] transition-colors"
     >
-      등록
+      {submitLabel}
+    </button>
+  </div>
+);
+
+export interface BottomActionsProps {
+  onCancel: () => void;
+}
+
+export const LedgerBottomActions: React.FC<BottomActionsProps> = ({
+  onCancel,
+}) => (
+  <div className="flex justify-start pt-4">
+    <button
+      type="button"
+      onClick={onCancel}
+      className="px-7 py-3 text-sm font-semibold text-white bg-[#007AEB] rounded-full hover:bg-[#0066c7] transition-colors"
+    >
+      목록
     </button>
   </div>
 );
@@ -364,7 +382,7 @@ export const LedgerFileSection: React.FC<FileSectionProps> = ({
                 className="truncate max-w-[10rem] md:max-w-[14rem]"
                 title={file.name}
               >
-                {file.name}
+                {file.name.replace(/^\d+_\d+_/, '')}
               </span>
             </div>
             <button

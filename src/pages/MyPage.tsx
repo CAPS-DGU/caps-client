@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { useUser } from "../contexts/UserContext";
+import NavBar from "../components/NavBar";
 
 interface MyPageProps { }
 
 const MyPage: React.FC<MyPageProps> = () => {
-  const { user, isAuthenticated, isLoading, logout, login } = useUser();
+  const { user, isLoading} = useUser();
 
 
   if (isLoading) {
@@ -29,6 +30,7 @@ const MyPage: React.FC<MyPageProps> = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen p-4">
+      <NavBar />
       <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
         <h1 className="mb-6 text-2xl font-bold text-center">마이페이지</h1>
 

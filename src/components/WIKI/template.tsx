@@ -4,7 +4,7 @@ import { User } from "../../types/common";
 import { WikiData } from "../../types/pages";
 
 interface TemplateProps {
-  data: (WikiData & { writer?: User }) | null;
+  data: (WikiData & { member?: User }) | null;
   notFoundFlag?: boolean;
   history?: any;
   prevData?: {
@@ -23,7 +23,7 @@ const Template: React.FC<TemplateProps> = ({
   return (
     <div className="m-4 wiki-page">
       <WikiContent
-        author={data.writer}
+        author={data.member}
         DocTitle={data.title}
         content={data.content}
         notFoundFlag={notFoundFlag}

@@ -139,7 +139,7 @@ function Navbar({ isTransparent = false, transparentBackground = false }: Navbar
             <span className="hidden md:inline">연혁</span>
             <HistoryIcon className="inline-block md:hidden" size={20} />
           </Link>
-          {isLoggedIn && (
+          {isLoggedIn && user?.role !== "NEW_MEMBER" && (
             <Link
               to="/ledger"
               className={`flex items-center text-base font-semibold transition ${menuColor}`}

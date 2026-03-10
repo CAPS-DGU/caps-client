@@ -1,7 +1,7 @@
 import React from "react";
 import Navbar from "../components/NavBar";
 import Footer from "../components/MainPage/Footer";
-import logo from "../assets/logo.png";
+const logo = new URL("../assets/logo.png", import.meta.url).href;
 
 const historyData = [
   {
@@ -298,7 +298,16 @@ const CapsHistoryPage: React.FC = () => {
       <Navbar />
       <div className="max-w-3xl mx-auto pb-20">
         <div className="pt-20 pb-8 text-center">
-          <div className="text-3xl font-bold mb-2"><span className="inline-block mr-2"><img src={logo} alt="logo" className="w-16 mx-auto" /></span> 연혁</div>
+          <div className="text-3xl font-bold mb-4 inline-flex items-baseline">
+            <span className="inline-block mr-2">
+              <img
+                src={logo}
+                alt="logo"
+                className="w-16 mx-auto relative translate-y-1"
+              />
+            </span>
+            연혁
+          </div>
           <div className="text-gray-500">동국대학교 CAPS의 주요 연혁을 소개합니다.</div>
         </div>
         <Timeline />

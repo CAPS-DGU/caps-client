@@ -1,40 +1,78 @@
-import { useState, useEffect } from 'react';
-import homeImage from '../assets/home.png';
-import logo from '../assets/logo.png';
-import logoBright from '../assets/logo-bright.png';
-import intro1 from '../assets/intro1.png';
-import intro2 from '../assets/intro2.jpg';
-import intro3 from '../assets/intro3.png';
-import intro4 from '../assets/intro4.png';
-import intro5 from '../assets/intro5.png';
-import intro6 from '../assets/intro6.png';
-import intro7 from '../assets/intro7.png';
-import intro8 from '../assets/intro8.png';
+import React, { useEffect, useRef, useState } from 'react';
+const homeImage = new URL("../assets/home.png", import.meta.url).href;
+const logo = new URL("../assets/logo.png", import.meta.url).href;
+const logoBright = new URL("../assets/logo-bright.png", import.meta.url).href;
+const intro1 = new URL("../assets/intro1.png", import.meta.url).href;
+const intro2 = new URL("../assets/intro2.jpg", import.meta.url).href;
+const intro3 = new URL("../assets/intro3.png", import.meta.url).href;
+const intro4 = new URL("../assets/intro4.png", import.meta.url).href;
+const intro5 = new URL("../assets/intro5.png", import.meta.url).href;
+const intro6 = new URL("../assets/intro6.png", import.meta.url).href;
+const intro7 = new URL("../assets/intro7.png", import.meta.url).href;
+const intro8 = new URL("../assets/intro8.png", import.meta.url).href;
 // Posters are loaded dynamically via import.meta.glob below
 // import poster4 from '../assets/poster4.jpeg';
 // import poster5 from '../assets/poster5.png';
 // import { useNavigate } from 'react-router-dom';
 import Footer from '../components/MainPage/Footer';
 import { motion } from "framer-motion";
-import arrow from '../assets/u_angle-double-down.png';
+const arrow = new URL("../assets/u_angle-double-down.png", import.meta.url).href;
 import Navbar from '../components/NavBar';
 
-function shuffleArray(array) {
-  return array
-    .map((a) => [Math.random(), a])
-    .sort((a, b) => a[0] - b[0])
-    .map((a) => a[1]);
+function shuffleArray<T>(array: T[]): T[] {
+  // Fisher–Yates (no type gymnastics, no logic change for callers)
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
 }
 
 
 const MainPage = () => {
+  // NavBar theme control:
+  // - First (hero) slide visible OR footer visible => transparent (white text)
+  // - Otherwise => default (black text)
+  const scrollRootRef = useRef<HTMLDivElement | null>(null);
+  const heroRef = useRef<HTMLDivElement | null>(null);
+  const footerRef = useRef<HTMLDivElement | null>(null);
+  const [isHeroInView, setIsHeroInView] = useState(true);
+  const [isFooterInView, setIsFooterInView] = useState(false);
+  const navbarTransparent = isHeroInView || isFooterInView;
+
+  useEffect(() => {
+    const rootEl = scrollRootRef.current;
+    const heroEl = heroRef.current;
+    const footerEl = footerRef.current;
+    if (!heroEl && !footerEl) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.target === heroEl) setIsHeroInView(entry.isIntersecting);
+          if (entry.target === footerEl) setIsFooterInView(entry.isIntersecting);
+        }
+      },
+      {
+        // "In view" when a meaningful portion is visible
+        root: rootEl ?? null,
+        threshold: 0.25,
+      }
+    );
+
+    if (heroEl) observer.observe(heroEl);
+    if (footerEl) observer.observe(footerEl);
+
+    return () => observer.disconnect();
+  }, []);
 
   // Dynamically import all poster images matching poster*.{png,jpg,jpeg}
-  const posterModules = import.meta.glob('../assets/poster*.{png,PNG,jpg,JPG,jpeg,JPEG}', { eager: true });
+  const posterModules = (import.meta as any).glob('../assets/poster*.{png,PNG,jpg,JPG,jpeg,JPEG}', { eager: true }) as Record<string, any>;
   const posters = Object
-    .entries(posterModules)
+    .entries(posterModules ?? {})
     .sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true }))
-    .map(([, mod]) => (mod && mod.default) ? mod.default : mod);
+    .map(([, mod]) => (mod && (mod as any).default) ? (mod as any).default : mod);
   // Fallback: if none matched, keep previous three if any existed
   // (No-op in current setup because at least poster1~ are present)
   // Preload poster images early to avoid blank gap at sequence boundary
@@ -145,11 +183,14 @@ const MainPage = () => {
 
   return (
     <>
-      <div className="bg-[#FAFAFA] snap-y snap-mandatory overflow-y-auto h-screen">
+      <div ref={scrollRootRef} className="bg-[#FAFAFA] snap-y snap-mandatory overflow-y-auto h-screen">
         {/* <img src={homeImage} alt="설명적인 이미지 텍스트" /> */}
         {/* <Navbar /> */}
-        <div className="flex overflow-hidden relative justify-center items-center w-full min-h-screen snap-start">
-          <Navbar isTransparent={true} />
+        <div
+          ref={heroRef}
+          className="flex overflow-hidden relative justify-center items-center w-full min-h-screen snap-start"
+        >
+          <Navbar isTransparent={navbarTransparent} transparentBackground />
 
           {/* 배경 이미지 */}
           <img
@@ -391,7 +432,9 @@ const MainPage = () => {
           viewport={{ once: true, amount: 0.3 }}
           className="w-full snap-start min-h-screen bg-[#333] flex flex-col justify-center items-center"
         >
-          <Footer />
+          <div ref={footerRef} className="w-full">
+            <Footer />
+          </div>
         </motion.div>
       </div>
     </>

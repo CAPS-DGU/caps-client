@@ -18,9 +18,10 @@ import {
 
 interface NavbarProps {
   isTransparent?: boolean;
+  transparentBackground?: boolean;
 }
 
-function Navbar({ isTransparent = false }: NavbarProps) {
+function Navbar({ isTransparent = false, transparentBackground = false }: NavbarProps) {
   const [dropdownOpen, setDropdownOpen] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState(null);
@@ -88,11 +89,17 @@ function Navbar({ isTransparent = false }: NavbarProps) {
     ? "text-gray-200 hover:text-blue-300"
     : "text-gray-800 hover:text-blue-600";
 
+  const navBgClass = transparentBackground
+    ? "bg-transparent"
+    : isTransparent
+      ? "bg-transparent"
+      : "bg-[#FAFAFA]";
+
   return (
     <>
       <nav
         className={`fixed top-0 left-0 w-full z-30 flex items-center justify-between px-4 md:px-12 py-3 md:py-4 ${
-          isTransparent ? "bg-transparent" : "bg-[#FAFAFA]"
+          navBgClass
         }`}
       >
         {/* 왼쪽: 로고 및 메뉴 */}

@@ -39,6 +39,22 @@ const ReportPage: React.FC = () => {
     mutateAsync: getPresignedUrl,
   } = useGetPresignedUrl();
 
+  const getPlaceholder = () => {
+    switch (category) {
+      case "INFO_ERROR":
+        return "CAPS 홈페이지에서 잘못된 정보나 오타를 발견하셨다면 알려주세요.";
+      case "ACCOUNT_MANAGEMENT":
+        return "회원 정보 수정이나 권한 관련 문의가 있다면 작성해주세요.";
+      case "SUGGESTION":
+        return "CAPS 홈페이지에 추가되었으면 하는 기능이 있다면 자유롭게 적어주세요.";
+      case "USER_REPORT_AND_SECURITY_REPORT":
+        return "부적절한 이용 행위 또는 보안 관련 문제가 발견되었다면 상황과 내용을 최대한 자세히 적어주세요.";
+      case "ETC":
+      default:
+        return "상세한 내용을 적어주세요.";
+    }
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setSelectedFiles(Array.from(e.target.files));
@@ -200,7 +216,7 @@ const ReportPage: React.FC = () => {
             value={content}
             onChange={(e) => setContent(e.target.value)}
             className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-40 resize-none"
-            placeholder="상세한 내용을 적어주세요."
+            placeholder={getPlaceholder()}
           />
         </div>
 

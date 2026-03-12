@@ -114,7 +114,7 @@ const AboutUs: React.FC = () => {
       <Navbar />
       <div className="pt-20 max-w-4xl mx-auto pb-20">
         <div className="text-center mt-8">
-          <div className="text-xs text-gray-400 mb-1">제 38.5대 집행부</div>
+          <div className="text-xs text-gray-400 mb-1">제 39대 집행부</div>
           <div className="text-lg font-bold mb-2">
             모두가 참여할 수 있는 활동을 추구하는 집행부를 소개합니다!
           </div>

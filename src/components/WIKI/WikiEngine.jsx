@@ -48,7 +48,28 @@ const WikiContent = ({ author, DocTitle, content, notFoundFlag, history, prevCon
   const { isLoggedIn } = useAuth();
   const { height, width } = useWindowDimensions();
 
+  // 금지 태그/속성을 텍스트 단계에서 제거하여, DOMPurify가 문서 전체를 통째로 버리지 않도록 함
+  const stripForbiddenHtml = (text) => {
+    let result = text;
+
+    // 1) 멀티라인 / 단일 라인 iframe 블록 제거
+    //    <iframe ...>...</iframe> 는 안의 텍스트만 남기고 태그만 제거
+    result = result.replace(/<iframe[\s\S]*?>([\s\S]*?)<\/iframe>/gi, '$1');
+    //    self-closing iframe 태그 제거
+    result = result.replace(/<iframe[\s\S]*?\/>/gi, '');
+
+    // 2) onerror 같은 이벤트 핸들러 속성만 제거 (요소/텍스트는 유지)
+    //    백틱(`) 안에 여러 줄이 들어가는 패턴도 커버
+    result = result.replace(/\sonerror\s*=\s*`[\s\S]*?`/gi, '');
+    result = result.replace(/\sonerror\s*=\s*"(.*?)"/gi, '');
+    result = result.replace(/\sonerror\s*=\s*'(.*?)'/gi, '');
+
+    return result;
+  };
+
   const applyFormatting = (text) => {
+    // 먼저 금지 태그/속성을 제거
+    text = stripForbiddenHtml(text);
     text = text.replace(/\|\|(.+?)\|\|/g, '<b>$1</b>');
     text = text.replace(/\/\/(.+?)\/\//g, '<i>$1</i>');
     text = text.replace(/__(.+?)__/g, '<u>$1</u>');

@@ -10,6 +10,20 @@ const WikiEditor = ({ initialContent, onSave }) => {
 
   // 저장 버튼 클릭 시 호출
   const handleSave = () => {
+    // 금지어 / 금지 태그 검사 (iframe, onerror 등)
+    const forbiddenPatterns = [
+      /<iframe\b/i,
+      /\sonerror\s*=/i,
+      /\sonevent\s*=/i,
+    ];
+
+    const hasForbidden = forbiddenPatterns.some((re) => re.test(content));
+
+    if (hasForbidden) {
+      alert('보안상의 이유로 iframe / onerror 등의 태그 또는 속성은 사용할 수 없습니다.\n해당 내용을 제거한 뒤 다시 시도해 주세요.');
+      return;
+    }
+
     onSave(content);
   };
 

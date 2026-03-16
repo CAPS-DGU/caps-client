@@ -31,6 +31,11 @@ const ALLOWED_TAGS = [
 // 허용된 HTML 속성 목록
 const ALLOWED_ATTR = ["href", "class", "id", "style", "data-comment-index"];
 
+// 명시적으로 금지할 태그 / 속성 (iframe, script, on* 이벤트 등)
+const FORBID_TAGS = ["iframe", "script"];
+// DOMPurify 타입 정의상 RegExp는 직접 넣기 까다로우므로 대표적인 이벤트 핸들러만 문자열로 명시
+const FORBID_ATTR = ["onerror", "onclick", "onload"];
+
 interface WikiLink {
   text: string;
   href: string;
@@ -92,7 +97,9 @@ const WikiEngine: React.FC<WikiContentProps> = ({
     const sanitizedHtml = DOMPurify.sanitize(htmlContent, {
       ALLOWED_TAGS,
       ALLOWED_ATTR,
-    });
+      FORBID_TAGS,
+      FORBID_ATTR,
+    }) as string;
 
     // 주석 목록 추가
     let finalHtml = sanitizedHtml;

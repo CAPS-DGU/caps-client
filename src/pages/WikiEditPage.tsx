@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import { apiGetWithToken, apiPatchWithToken, apiPostWithToken } from '../utils/Api';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Navbar from '../components/NavBar';
 
 const WikiEditPage = () => {
   const { wiki_title } = useParams();
@@ -80,10 +81,15 @@ const WikiEditPage = () => {
   };
 
   return (
-    <div>
-      <h1 className="m-6 text-3xl font-bold text-center text-gray-800">{content.title} 수정하기</h1>
-      <WikiEditor initialContent={content} onSave={handleSave} />
-    </div>
+    <>
+      <Navbar />
+      <div>
+        <h1 className="m-6 text-3xl font-bold text-center text-gray-800">
+          {content.title} 수정하기
+        </h1>
+        <WikiEditor initialContent={content} onSave={handleSave} />
+      </div>
+    </>
   );
 };
 

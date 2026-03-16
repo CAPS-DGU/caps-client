@@ -5,6 +5,34 @@ import { toRelativeTime } from '../../utils/Time';
 import useWindowDimensions from '../../hooks/useWindowDimensions';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import DOMPurify from 'dompurify';
+
+// 허용할 HTML 태그 / 속성 (iframe, script, on* 속성 등은 전부 제거)
+const ALLOWED_TAGS = [
+  'p',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+  'ul',
+  'ol',
+  'li',
+  'a',
+  'strong',
+  'em',
+  'code',
+  'pre',
+  'blockquote',
+  'div',
+  'span',
+  'br',
+  'hr',
+  'sup',
+];
+
+const ALLOWED_ATTR = ['href', 'class', 'id', 'style', 'data-comment-index'];
 
 const WikiContent = ({ author, DocTitle, content, notFoundFlag, history, prevContent }) => {
   const [toc, setToc] = useState([]);
@@ -93,8 +121,16 @@ const WikiContent = ({ author, DocTitle, content, notFoundFlag, history, prevCon
 
     htmlContent = htmlContent.replace(/\n/g, '</p><p class="text-lg text-gray-700 leading-relaxed mb-4">');
 
+    const wrappedHtml = `<p class="text-lg text-gray-700 leading-relaxed mb-4">${htmlContent}</p>`;
+
+    // XSS / iframe 방어를 위한 sanitize
+    const sanitizedHtml = DOMPurify.sanitize(wrappedHtml, {
+      ALLOWED_TAGS,
+      ALLOWED_ATTR,
+    });
+
     return {
-      htmlContent: `<p class="text-lg text-gray-700 leading-relaxed mb-4">${htmlContent}</p>`,
+      htmlContent: sanitizedHtml,
       tocList,
       commentList
     };
@@ -162,13 +198,6 @@ const WikiContent = ({ author, DocTitle, content, notFoundFlag, history, prevCon
     </div>
   );
 
-  const escapeScriptTags = (str) => {
-    return str.replace(/(<script\b[^>]*>|<\/script>)/gi, match => {
-      return match.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    });
-  }
-
-
   return (
     <div className="max-w-3xl p-6 mx-auto bg-white rounded-md shadow-md">
       <div className="flex items-center justify-between mb-5">
@@ -203,7 +232,14 @@ const WikiContent = ({ author, DocTitle, content, notFoundFlag, history, prevCon
                 >
                   {section.number + "." + " "}
                 </a>
-                <span dangerouslySetInnerHTML={{ __html: escapeScriptTags(section.subtitle) }}></span>
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(section.subtitle, {
+                      ALLOWED_TAGS,
+                      ALLOWED_ATTR,
+                    }),
+                  }}
+                ></span>
               </li>
             ))}
           </ul>
@@ -228,7 +264,15 @@ const WikiContent = ({ author, DocTitle, content, notFoundFlag, history, prevCon
       )}
 
       {isContentVisible && (
-        <div className="wiki-content" dangerouslySetInnerHTML={{ __html: escapeScriptTags(htmlContent) }}></div>
+        <div
+          className="wiki-content"
+          dangerouslySetInnerHTML={{
+            __html: DOMPurify.sanitize(htmlContent, {
+              ALLOWED_TAGS,
+              ALLOWED_ATTR,
+            }),
+          }}
+        ></div>
       )}
 
       {isHistoryVisible && (
@@ -244,7 +288,14 @@ const WikiContent = ({ author, DocTitle, content, notFoundFlag, history, prevCon
                 <a href={`#comment-ref-${index + 1}`} className="text-blue-500 hover:underline">
                   [{index + 1}]
                 </a>{" "}
-                <span dangerouslySetInnerHTML={{ __html: escapeScriptTags(comment) }}></span>
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(comment, {
+                      ALLOWED_TAGS,
+                      ALLOWED_ATTR,
+                    }),
+                  }}
+                ></span>
               </li>
             ))}
           </ol>

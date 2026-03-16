@@ -34,6 +34,10 @@ const ALLOWED_TAGS = [
 
 const ALLOWED_ATTR = ['href', 'class', 'id', 'style', 'data-comment-index'];
 
+// 명시적으로 금지할 태그 / 속성 (iframe, script, on* 이벤트 등)
+const FORBID_TAGS = ['iframe', 'script'];
+const FORBID_ATTR = ['onerror', 'onclick', 'onload', /^on.*/];
+
 const WikiContent = ({ author, DocTitle, content, notFoundFlag, history, prevContent }) => {
   const [toc, setToc] = useState([]);
   const [comments, setComments] = useState([]);
@@ -127,6 +131,8 @@ const WikiContent = ({ author, DocTitle, content, notFoundFlag, history, prevCon
     const sanitizedHtml = DOMPurify.sanitize(wrappedHtml, {
       ALLOWED_TAGS,
       ALLOWED_ATTR,
+      FORBID_TAGS,
+      FORBID_ATTR,
     });
 
     return {
@@ -237,6 +243,8 @@ const WikiContent = ({ author, DocTitle, content, notFoundFlag, history, prevCon
                     __html: DOMPurify.sanitize(section.subtitle, {
                       ALLOWED_TAGS,
                       ALLOWED_ATTR,
+                      FORBID_TAGS,
+                      FORBID_ATTR,
                     }),
                   }}
                 ></span>
@@ -270,6 +278,8 @@ const WikiContent = ({ author, DocTitle, content, notFoundFlag, history, prevCon
             __html: DOMPurify.sanitize(htmlContent, {
               ALLOWED_TAGS,
               ALLOWED_ATTR,
+              FORBID_TAGS,
+              FORBID_ATTR,
             }),
           }}
         ></div>
@@ -293,6 +303,8 @@ const WikiContent = ({ author, DocTitle, content, notFoundFlag, history, prevCon
                     __html: DOMPurify.sanitize(comment, {
                       ALLOWED_TAGS,
                       ALLOWED_ATTR,
+                      FORBID_TAGS,
+                      FORBID_ATTR,
                     }),
                   }}
                 ></span>

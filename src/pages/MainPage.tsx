@@ -89,30 +89,29 @@ const MainPage = () => {
   const preloadThreshold = Math.min(eagerCount, posters.length * 2);
   const isCarouselReady = loadedCount >= Math.min(preloadThreshold, 8);
   const departments = [
-    "정보통신공학과",
-    "경영정보학과",
-    "산업시스템공학과",
-    "컴퓨터공학과",
-    "통계학과",
-    "수학과",
-    "AI소프트웨어융합학부(컴퓨터공학전공)",
-    "약학과",
-    "AI소프트웨어융합학부",
-    "AI소프트웨어융합학부(인공지능전공)",
-    "법학과",
-    "융합보안학과",
-    "가정교육과",
-    "멀티미디어공학과",
-    "반도체과학전공",
-    "AI소프트웨어융합학부(데이터사이언스전공)",
-    "한국음악과",
     "건설환경공학과",
-    "멀티미디어소프트웨어공학과",
-    "생명과학과",
+    "경영정보학과",
+    "데이터사이언스전공",
+    "멀티미디어소프트웨어공학전공",
+    "물리반도체과학부",
+    "수학과",
+    "시스템반도체학부",
+    "식품산압관리학과",
+    "약학과",
+    "에너지신소재공학과",
+    "인공지능전공",
+    "일본학과",
+    "의료인공지능공학과",
+    "열린전공학부",
+    "융합보안학과",
+    "지능형네트워크융합학과",
+    "정보통신공학과",
     "전자전기공학부",
-    "국제통상학과",
     "컴퓨터AI학부",
-    "열린전공학부"
+    "컴퓨터공학전공",
+    "통계학과",
+    "화공생물공학",
+    "산업시스템공학"
   ];
 
   // const navigate = useNavigate();
@@ -269,7 +268,7 @@ const MainPage = () => {
                 1988년부터 시작 되어 40년의 역사를 가진 캡스는 현재
               </div>
               <div className="text-2xl md:text-3xl font-[Pretendard] font-bold text-gray-800 mb-10 text-center">
-                <span className="text-blue-500">{departments.length}</span> 개의 학과, 총 <span className="text-blue-600">229</span> 명의 학우와 <br />함께하고 있습니다.
+                <span className="text-blue-500">{departments.length}</span> 개의 학과, 총 <span className="text-blue-600">228</span> 명의 학우와 <br />함께하고 있습니다.
                 <div className="text-xs font-medium text-gray-400">2026년 1학기 기준</div>
               </div>
 

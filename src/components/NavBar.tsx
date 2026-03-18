@@ -13,7 +13,7 @@ import {
   LogIn,
   User as UserIcon,
   FileText,
-  FileWarning,
+  AlertCircle,
 } from "lucide-react";
 
 interface NavbarProps {
@@ -158,8 +158,9 @@ function Navbar({ isTransparent = false, transparentBackground = false }: Navbar
                 to="/report"
                 className={`flex items-center justify-center w-9 h-9 transition ${menuColor}`}
                 title="문의 / 신고"
+                aria-label="문의 / 신고"
               >
-                <FileWarning size={18} />
+                <AlertCircle size={20} />
               </Link>
               {/* 프로필 드롭다운 */}
               <div className="relative">

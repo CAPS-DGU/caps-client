@@ -267,6 +267,12 @@ const historyData = [
       "11월 DGUPC 동국대학교 프로그래밍 경진대회 개최",
     ],
   },
+  {
+    year: "2026",
+    events: [
+      "1월 동국대학교 CAPS X 건국대학교 Alkon CS 연합 컨퍼런스 개최"
+    ],
+  },
 ];
 
 const Timeline = () => (

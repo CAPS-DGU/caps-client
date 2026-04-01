@@ -21,6 +21,11 @@ const department: Department = {
     { name: "39.5기 이승은", 
       position: "수학과", 
       img: "이승은.jpeg" },
+    {
+      name: "40기 김광섭",
+      position: "컴퓨터AI학부",
+      img: "김광섭.jpg",
+    },
   ],
 };
 

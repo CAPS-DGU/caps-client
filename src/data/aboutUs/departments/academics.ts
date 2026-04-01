@@ -18,9 +18,21 @@ const department: Department = {
       position: "통계학과", 
       img: "정이현.jpeg" 
     },
-    { name: "39.5기 지휘서", 
+    { 
+      name: "39.5기 지휘서", 
       position: "수학과", 
-      img: "지휘서.jpeg" },
+      img: "지휘서.jpg" 
+    },
+    {
+      name: "40기 심지용",
+      position: "컴퓨터AI학부",
+      img: "심지용.jpg",
+    },
+    {
+      name: "40기 조민철",
+      position: "컴퓨터AI학부",
+      img: "조민철.jpg",
+    },
   ],
 };
 

@@ -12,7 +12,7 @@ const rawProfileImages = (
       options: { eager: true; import: "default" }
     ) => Record<string, string>;
   }
-).glob("../assets/profiles/*.jpeg", { eager: true, import: "default" });
+).glob("../assets/profiles/*.{jpg,jpeg}", { eager: true, import: "default" });
 
 const profileImages = Object.entries(rawProfileImages).reduce<
   Record<string, string>

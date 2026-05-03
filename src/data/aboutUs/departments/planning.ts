@@ -18,9 +18,21 @@ const department: Department = {
       position: "멀티미디어소프트웨어공학전공",
       img: "김동원.jpeg",
     },
-    { name: "39기 박승우", 
+    {
+      name: "39기 박승우", 
       position: "컴퓨터AI학부", 
-      img: "박승우.jpeg" },
+      img: "박승우.jpeg" 
+    },
+    {
+      name: "39기 정형균",
+      position: "컴퓨터AI학부",
+      img: "정형균.jpg",
+    },
+    {
+      name: "40기 장동성",
+      position: "전자전기공학부",
+      img: "장동성.jpg",
+    },
   ],
 };
 

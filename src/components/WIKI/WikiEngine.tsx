@@ -19,6 +19,10 @@ const ALLOWED_TAGS = [
   "ol",
   "li",
   "a",
+  "b",
+  "i",
+  "u",
+  "s",
   "strong",
   "em",
   "code",
@@ -31,7 +35,7 @@ const ALLOWED_TAGS = [
   "sup",
 ];
 
-const ALLOWED_ATTR = ["href", "class", "id", "style", "data-comment-index"];
+const ALLOWED_ATTR = ["href", "target", "rel", "class", "id", "style", "data-comment-index"];
 
 const FORBID_TAGS = ["iframe", "script"];
 const FORBID_ATTR = ["onerror", "onclick", "onload", /^on.*/] as const;
@@ -81,11 +85,18 @@ function applyFormatting(text: string): string {
 }
 
 function wikiLinkReplace(_: string, linkText: string): string {
-  const [text] = linkText.split("|");
-  const link_text = text ? text.replace(/ /g, "+") : null;
-  return text
-    ? `<a href="/wiki/${link_text}" class="text-blue-500 hover:underline">${text}</a>`
-    : `<a href="#" class="text-blue-500 hover:underline">${text}</a>`;
+  const [text, href] = linkText.split("|").map((s) => s.trim());
+  if (!text) return "";
+
+  const isExternal = href && /^https?:\/\//i.test(href);
+
+  if (isExternal) {
+    return `<a href="${href}" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">${text}</a>`;
+  }
+
+  const target = href ?? text;
+  const link_text = target.replace(/ /g, "+");
+  return `<a href="/wiki/${link_text}" class="text-blue-500 hover:underline">${text}</a>`;
 }
 
 function parseContent(text: string): {

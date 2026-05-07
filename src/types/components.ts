@@ -15,11 +15,11 @@ export interface TemplateProps {
 }
 
 export interface WikiEngineProps {
-  author: User;
+  author?: User;
   DocTitle: string;
   content: string;
   notFoundFlag?: boolean;
-  history?: any;
+  history?: string;
   prevContent?: string;
   className?: string;
 }

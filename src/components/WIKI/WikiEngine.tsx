@@ -1,9 +1,12 @@
-import React, { useMemo, useEffect } from "react";
-import { marked } from "marked";
+import React, { useMemo, useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import ReactDiffViewer from "react-diff-viewer-continued";
 import DOMPurify from "dompurify";
+import { useAuth } from "../../hooks/useAuth";
+import useWindowDimensions from "../../hooks/useWindowDimensions";
+import { toRelativeTime } from "../../utils/Time";
 import { User } from "../../types/common";
 
-// 허용된 HTML 태그 목록
 const ALLOWED_TAGS = [
   "p",
   "h1",
@@ -28,150 +31,355 @@ const ALLOWED_TAGS = [
   "sup",
 ];
 
-// 허용된 HTML 속성 목록
 const ALLOWED_ATTR = ["href", "class", "id", "style", "data-comment-index"];
 
-// 명시적으로 금지할 태그 / 속성 (iframe, script, on* 이벤트 등)
 const FORBID_TAGS = ["iframe", "script"];
-// DOMPurify 타입 정의상 RegExp는 직접 넣기 까다로우므로 대표적인 이벤트 핸들러만 문자열로 명시
-const FORBID_ATTR = ["onerror", "onclick", "onload"];
+const FORBID_ATTR = ["onerror", "onclick", "onload", /^on.*/] as const;
 
-interface WikiLink {
-  text: string;
-  href: string;
+/** DOMPurify 타입은 RegExp forbid 목록을 허용하지 않지만 런타임에서는 지원합니다. */
+const SANITIZE_OPTIONS = {
+  ALLOWED_TAGS,
+  ALLOWED_ATTR,
+  FORBID_TAGS,
+  FORBID_ATTR: [...FORBID_ATTR],
+} as Parameters<typeof DOMPurify.sanitize>[1];
+
+interface TocSection {
+  id: string;
+  number: string;
+  subtitle: string;
+  level: number;
 }
 
-interface WikiContentProps {
+interface WikiEngineProps {
   author?: User;
   DocTitle: string;
   content: string;
   notFoundFlag?: boolean;
-  history?: any;
+  history?: string;
   prevContent?: string;
-  className?: string;
 }
 
-const WikiEngine: React.FC<WikiContentProps> = ({
+function stripForbiddenHtml(text: string): string {
+  let result = text;
+  result = result.replace(/<iframe[\s\S]*?>([\s\S]*?)<\/iframe>/gi, "$1");
+  result = result.replace(/<iframe[\s\S]*?\/>/gi, "");
+  result = result.replace(/\sonerror\s*=\s*`[\s\S]*?`/gi, "");
+  result = result.replace(/\sonerror\s*=\s*"(.*?)"/gi, "");
+  result = result.replace(/\sonerror\s*=\s*'(.*?)'/gi, "");
+  return result;
+}
+
+function applyFormatting(text: string): string {
+  let out = stripForbiddenHtml(text);
+  out = out.replace(/\|\|(.+?)\|\|/g, "<b>$1</b>");
+  out = out.replace(/\/\/(.+?)\/\//g, "<i>$1</i>");
+  out = out.replace(/__(.+?)__/g, "<u>$1</u>");
+  out = out.replace(/--(.+?)--/g, "<s>$1</s>");
+  out = out.replace(/\(\((.+?)\)\)/g, "<pre>$1</pre>");
+  return out;
+}
+
+function wikiLinkReplace(_: string, linkText: string): string {
+  const [text] = linkText.split("|");
+  const link_text = text ? text.replace(/ /g, "+") : null;
+  return text
+    ? `<a href="/wiki/${link_text}" class="text-blue-500 hover:underline">${text}</a>`
+    : `<a href="#" class="text-blue-500 hover:underline">${text}</a>`;
+}
+
+function parseContent(text: string): {
+  htmlContent: string;
+  tocList: TocSection[];
+  commentList: string[];
+} {
+  let htmlContent = applyFormatting(text);
+  const tocList: TocSection[] = [];
+  const commentList: string[] = [];
+
+  const numbering = [0, 0, 0, 0];
+  let currentLevel = 0;
+
+  htmlContent = htmlContent.replace(
+    /^(==+)(.*?)==+$/gm,
+    (_, levelStr: string, title: string) => {
+      const level = levelStr.length;
+
+      if (level > currentLevel) {
+        numbering[level - 2]++;
+      } else if (level < currentLevel) {
+        numbering[level - 2]++;
+        numbering[level - 1] = 0;
+      } else {
+        numbering[level - 2]++;
+      }
+
+      for (let i = level; i < numbering.length; i++) {
+        numbering[i] = 0;
+      }
+
+      currentLevel = level;
+      const sectionNumber = numbering
+        .slice(0, level - 1)
+        .filter((num) => num > 0)
+        .join(".");
+
+      const id = `section-${tocList.length + 1}`;
+      const headingRank = 6 - level;
+
+      const subtitleWithLinks = title.replace(
+        /\[\[([^\]]+?)\]\]/g,
+        wikiLinkReplace
+      );
+
+      tocList.push({
+        id,
+        number: sectionNumber,
+        subtitle: subtitleWithLinks.trim(),
+        level,
+      });
+
+      return `<h${headingRank} id="${id}" class="text-${headingRank}xl font-semibold text-gray-700 mb-4">
+                        <a href="#toc_${sectionNumber}" class="text-blue-500 hover:underline" onclick="document.getElementById('toc_${sectionNumber}').scrollIntoView();">${sectionNumber}.</a> ${subtitleWithLinks}
+                    </h${headingRank}><hr>`;
+    }
+  );
+
+  htmlContent = htmlContent.replace(/\[\[([^\]]+?)\]\]/g, wikiLinkReplace);
+
+  htmlContent = htmlContent.replace(/\{\{(.+?)\}\}/g, (_, commentText: string) => {
+    const commentIndex = commentList.length + 1;
+    commentList.push(commentText.trim());
+
+    return `<sup class="comment-ref text-blue-500 hover:underline cursor-pointer relative" id="comment-ref-${commentIndex}" data-comment-index="${commentIndex}"><a href="#comment-${commentIndex}" class="text-blue-500 hover:underline cursor-pointer">[${commentIndex}]</a><span class="comment-box absolute left-1/2 transform top-6 bg-gray-800 text-white text-sm p-1 rounded-md shadow-md hidden z-10">${commentText.trim()}</span></sup>`;
+  });
+
+  htmlContent = htmlContent.replace(
+    /^\* (.+)$/gm,
+    '<li class="text-lg text-gray-600">$1</li>'
+  );
+  htmlContent = htmlContent.replace(
+    /(<li>.*<\/li>)(?!.*<\/ul>)/g,
+    '<ul class="list-disc pl-6">$1</ul>'
+  );
+
+  htmlContent = htmlContent.replace(
+    /\n/g,
+    '</p><p class="text-lg text-gray-700 leading-relaxed mb-4">'
+  );
+
+  const wrappedHtml = `<p class="text-lg text-gray-700 leading-relaxed mb-4">${htmlContent}</p>`;
+
+  const sanitizedHtml = DOMPurify.sanitize(wrappedHtml, SANITIZE_OPTIONS);
+
+  return {
+    htmlContent: sanitizedHtml,
+    tocList,
+    commentList,
+  };
+}
+
+const WikiEngine: React.FC<WikiEngineProps> = ({
   author,
   DocTitle,
   content,
   notFoundFlag,
   history,
   prevContent,
-  className = "",
 }) => {
-  const processedContent = useMemo(() => {
-    // 주석 목록을 저장할 배열
-    const commentList: string[] = [];
+  const [activeSection, setActiveSection] = useState<string | null>(null);
+  const [isContentVisible, setIsContentVisible] = useState(history === undefined);
+  const [isHistoryVisible, setIsHistoryVisible] = useState(false);
+  const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
+  const { width } = useWindowDimensions();
 
-    // 위키 링크를 HTML로 변환
-    const wikiLinkRegex = /\[\[(.*?)\]\]/g;
-    let processedText = content.replace(wikiLinkRegex, (match, linkText) => {
-      const [text, href] = linkText.split("|").map((s) => s.trim());
-      return `<a href="/wiki/${
-        href || text
-      }" class="text-blue-500 hover:underline">${text}</a>`;
-    });
-
-    // 주석을 HTML로 변환
-    const commentRegex = /\{\{(.+?)\}\}/g;
-    processedText = processedText.replace(
-      commentRegex,
-      (match, commentText) => {
-        const commentIndex = commentList.length + 1;
-        commentList.push(commentText.trim());
-
-        return `<sup class="comment-ref text-blue-500 hover:underline cursor-pointer relative" id="comment-ref-${commentIndex}" data-comment-index="${commentIndex}">
-        <a href="#comment-${commentIndex}" class="text-blue-500 hover:underline cursor-pointer">[${commentIndex}]</a>
-        <div class="comment-box-container" data-display="none">
-          <div class="comment-box bg-gray-800 text-white text-sm p-2 rounded-md shadow-md"><span>${commentText.trim()}</span></div>
-        </div>
-      </sup>`;
-      }
-    );
-
-    // 마크다운을 HTML로 변환
-    const htmlContent = marked.parse(processedText) as string;
-
-    // HTML 정리 (허용된 태그와 속성만 남김)
-    const sanitizedHtml = DOMPurify.sanitize(htmlContent, {
-      ALLOWED_TAGS,
-      ALLOWED_ATTR,
-      FORBID_TAGS,
-      FORBID_ATTR,
-    }) as string;
-
-    // 주석 목록 추가
-    let finalHtml = sanitizedHtml;
-    if (commentList.length > 0) {
-      finalHtml +=
-        '<div class="mt-8 pt-4 border-t border-gray-200"><h3 class="text-lg font-semibold mb-2">주석</h3><ol class="list-decimal pl-5">';
-      commentList.forEach((comment, index) => {
-        finalHtml += `<li id="comment-${
-          index + 1
-        }" class="mb-2"><a href="#comment-ref-${
-          index + 1
-        }" class="text-blue-500 hover:underline">[${
-          index + 1
-        }]</a> ${comment}</li>`;
-      });
-      finalHtml += "</ol></div>";
-    }
-
-    return finalHtml;
-  }, [content]);
+  const { htmlContent, tocList, commentList } = useMemo(
+    () => parseContent(content),
+    [content]
+  );
 
   useEffect(() => {
-    // 주석 박스 표시/숨김 처리
-    const handleCommentHover = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      const commentRef = target.closest(".comment-ref");
-      const commentBoxContainer = target.closest(".comment-box-container");
+    const commentRefs = document.querySelectorAll(".comment-ref");
+    const cleanups: Array<() => void> = [];
 
-      if (commentRef) {
-        const container = commentRef.querySelector(".comment-box-container");
-        if (container) {
-          container.setAttribute("data-display", "block");
-        }
-      } else if (commentBoxContainer) {
-        commentBoxContainer.setAttribute("data-display", "block");
-      }
-    };
+    commentRefs.forEach((ref) => {
+      const commentBox = ref.querySelector(".comment-box");
+      if (!commentBox) return;
 
-    const handleCommentLeave = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      const commentRef = target.closest(".comment-ref");
-      const commentBoxContainer = target.closest(".comment-box-container");
+      const show = () => commentBox.classList.remove("hidden");
+      const hide = () => commentBox.classList.add("hidden");
 
-      if (commentRef && !commentRef.contains(event.relatedTarget as Node)) {
-        const container = commentRef.querySelector(".comment-box-container");
-        if (container) {
-          container.setAttribute("data-display", "none");
-        }
-      } else if (
-        commentBoxContainer &&
-        !commentBoxContainer.contains(event.relatedTarget as Node)
-      ) {
-        commentBoxContainer.setAttribute("data-display", "none");
-      }
-    };
+      ref.addEventListener("mouseover", show);
+      ref.addEventListener("mouseout", hide);
+      cleanups.push(() => {
+        ref.removeEventListener("mouseover", show);
+        ref.removeEventListener("mouseout", hide);
+      });
+    });
 
-    // 이벤트 리스너 등록
-    document.addEventListener("mouseover", handleCommentHover);
-    document.addEventListener("mouseout", handleCommentLeave);
-
-    // 컴포넌트 언마운트 시 이벤트 리스너 제거
     return () => {
-      document.removeEventListener("mouseover", handleCommentHover);
-      document.removeEventListener("mouseout", handleCommentLeave);
+      cleanups.forEach((fn) => fn());
     };
-  }, []);
+  }, [htmlContent]);
+
+  useEffect(() => {
+    const redirectToHashPage = (text: string) => {
+      const hashPattern = /^#(\S+)/g;
+      const match = hashPattern.exec(text);
+      if (match) {
+        const targetPage = text.replace("#", "");
+        setTimeout(() => {
+          navigate(`/wiki/${targetPage}`);
+        }, 500);
+      }
+    };
+
+    redirectToHashPage(content);
+  }, [content, navigate]);
+
+  const handleSectionClick = (sectionId: string) => {
+    setActiveSection(sectionId);
+    document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const editButton = (
+    <div className="flex space-x-4">
+      <>
+        {isLoggedIn && (
+          <Link
+            to={`/wiki/edit/${DocTitle}`}
+            className="px-4 py-2 text-white bg-gray-600 rounded-md shadow-md hover:bg-gray-700"
+          >
+            수정
+          </Link>
+        )}
+        <Link
+          to={`/wiki/history/${DocTitle}`}
+          className="px-4 py-2 text-white bg-gray-600 rounded-md shadow-md hover:bg-gray-700"
+        >
+          수정 내역
+        </Link>
+      </>
+    </div>
+  );
+
+  const sanitizeHtml = (fragment: string) =>
+    DOMPurify.sanitize(fragment, SANITIZE_OPTIONS);
 
   return (
-    <div
-      className={`prose max-w-none ${className}`}
-      dangerouslySetInnerHTML={{ __html: processedContent }}
-    />
+    <div className="max-w-3xl p-6 mx-auto bg-white rounded-md shadow-md">
+      <div className="flex items-center justify-between mb-5">
+        <h1 className="text-4xl font-semibold text-gray-700">
+          {DocTitle}{" "}
+          {history ? (
+            <span className="inline text-xl text-gray-400">
+              {(isHistoryVisible || isContentVisible
+                ? history
+                : toRelativeTime(history)) +
+                `에 ${author?.grade ?? ""}기 ${author?.name ?? ""}이(가) 작성했습니다.`}
+            </span>
+          ) : null}
+        </h1>
+        {notFoundFlag ? null : editButton}
+      </div>
+
+      {tocList.length > 0 && (!history || isContentVisible) && (
+        <div className="w-full p-4 mb-6 bg-gray-100 rounded-md">
+          <h2 className="mb-4 text-xl font-semibold text-gray-700">목차</h2>
+          <ul className="pl-6 text-lg text-gray-600 list-decimal">
+            {tocList.map((section) => (
+              <li
+                key={section.id}
+                className={`mb-2 list-none ${activeSection === section.id ? "text-red-500" : ""}`}
+                style={{ paddingLeft: `${(section.level - 2) * 20}px` }}
+              >
+                <a
+                  id={`toc_${section.number}`}
+                  href={`#${section.id}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleSectionClick(section.id);
+                  }}
+                  className="text-blue-500 hover:underline"
+                >
+                  {section.number + "." + " "}
+                </a>
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html: sanitizeHtml(section.subtitle),
+                  }}
+                />
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {history && (
+        <div className="mb-4">
+          <button
+            type="button"
+            onClick={() => setIsContentVisible(!isContentVisible)}
+            className="px-4 py-2 text-white bg-gray-600 rounded-md shadow-md hover:bg-gray-700"
+          >
+            {isContentVisible ? "본문 숨기기" : "본문 보기"}
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsHistoryVisible(!isHistoryVisible)}
+            className="px-4 py-2 ml-4 text-white bg-gray-600 rounded-md shadow-md hover:bg-gray-700"
+          >
+            {isHistoryVisible ? "변경사항 숨기기" : "변경사항 보기"}
+          </button>
+        </div>
+      )}
+
+      {isContentVisible && (
+        <div
+          className="wiki-content"
+          dangerouslySetInnerHTML={{
+            __html: sanitizeHtml(htmlContent),
+          }}
+        />
+      )}
+
+      {isHistoryVisible && (
+        <ReactDiffViewer
+          oldValue={prevContent ?? ""}
+          newValue={content}
+          splitView={width > 768}
+          hideLineNumbers={width <= 768}
+        />
+      )}
+
+      {commentList.length > 0 && isContentVisible && (
+        <div className="mt-10">
+          <h2 className="mb-4 text-xl font-semibold text-gray-700">주석</h2>
+          <ol className="pl-6 text-lg text-gray-600 list-decimal">
+            {commentList.map((comment, index) => (
+              <li
+                key={index}
+                id={`comment-${index + 1}`}
+                className="mb-2 list-none"
+              >
+                <a
+                  href={`#comment-ref-${index + 1}`}
+                  className="text-blue-500 hover:underline"
+                >
+                  [{index + 1}]
+                </a>{" "}
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html: sanitizeHtml(comment),
+                  }}
+                />
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
+    </div>
   );
 };
 

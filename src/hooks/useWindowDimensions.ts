@@ -25,3 +25,5 @@ export const useWindowDimensions = (): WindowDimensions => {
 
   return windowDimensions;
 };
+
+export default useWindowDimensions;

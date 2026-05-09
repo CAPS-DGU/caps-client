@@ -270,7 +270,8 @@ const historyData = [
   {
     year: "2026",
     events: [
-      "1월 동국대학교 CAPS X 건국대학교 Alkon CS 연합 컨퍼런스 개최"
+      "1월 동국대학교 CAPS X 건국대학교 Alkon CS 연합 컨퍼런스 개최",
+      "2월 40기 집행부 결성(39대 회장 22학번 김영모)"
     ],
   },
 ];

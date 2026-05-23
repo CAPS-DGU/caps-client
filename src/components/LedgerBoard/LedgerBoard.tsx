@@ -130,7 +130,7 @@ const LedgerBoard: React.FC = () => {
                 장부게시판
               </h1>
               <p className="md:text-base text-sm text-gray-700 tracking-[1.2px]">
-                장부 기록를 작성하고 확인할 수 있는 공간입니다
+                장부 기록을 작성하고 확인할 수 있는 공간입니다
               </p>
             </div>
             {match(userRole)

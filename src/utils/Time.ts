@@ -23,7 +23,7 @@ export const toRelativeTime = (dateString: string): string => {
   }
 
   const diffInWeeks = Math.floor(diffInDays / 7);
-  if (diffInWeeks < 4) {
+  if (diffInDays < 30) {
     return `${diffInWeeks}주 전`;
   }
 
@@ -32,6 +32,6 @@ export const toRelativeTime = (dateString: string): string => {
     return `${diffInMonths}개월 전`;
   }
 
-  const diffInYears = Math.floor(diffInDays / 365);
+  const diffInYears = Math.floor(diffInMonths / 12);
   return `${diffInYears}년 전`;
 };

@@ -443,9 +443,7 @@ const WikiEngine: React.FC<WikiEngineProps> = ({
           {DocTitle}{" "}
           {history ? (
             <span className="inline text-xl text-gray-400">
-              {(isHistoryVisible || isContentVisible
-                ? history
-                : toRelativeTime(history)) +
+              {toRelativeTime(history) +
                 `에 ${author?.grade ?? ""}기 ${author?.name ?? ""}이(가) 작성했습니다.`}
             </span>
           ) : null}

@@ -30,6 +30,8 @@ import WikiEditPage from "./pages/WikiEditPage.jsx";
 import AboutUs from "./pages/AboutUsPage.tsx";
 import CapsHistoryPage from "./pages/CapsHistoryPage.tsx";
 import FAQPage from "./pages/FAQPage.tsx";
+import BlogPage from "./pages/BlogPage.tsx";
+import BlogDetailPage from "./pages/BlogDetailPage.tsx";
 import LedgerBoardPage from "./pages/LedgerBoardPage.tsx";
 import LedgerDetailPage from "./pages/LedgerDetailPage.tsx";
 import LedgerEditPage from "./pages/LedgerEditPage.tsx";
@@ -62,6 +64,14 @@ const App: React.FC = () => {
     {
       path: "/faq",
       element: <FAQPage />,
+    },
+    {
+      path: "/blog",
+      element: <BlogPage />,
+    },
+    {
+      path: "/blog/:blogId",
+      element: <BlogDetailPage />,
     },
     {
       path: "/intro",

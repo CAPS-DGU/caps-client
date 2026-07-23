@@ -137,7 +137,11 @@ const App: React.FC = () => {
     },
     {
       path: "/wiki",
-      element: <WikiPage />,
+      element: (
+        <ProtectedRoute>
+          <WikiPage />
+        </ProtectedRoute>
+      ),
       children: [
         {
           path: ":wiki_title",
@@ -147,11 +151,19 @@ const App: React.FC = () => {
     },
     {
       path: "/wiki/history/:wiki_title",
-      element: <WikiHistoryPage />,
+      element: (
+        <ProtectedRoute>
+          <WikiHistoryPage />
+        </ProtectedRoute>
+      ),
     },
     {
       path: "/wiki/edit/:wiki_title",
-      element: <WikiEditPage />,
+      element: (
+        <ProtectedRoute>
+          <WikiEditPage />
+        </ProtectedRoute>
+      ),
     },
     {
       path: "*",

@@ -8,33 +8,32 @@ function Footer() {
         {/* CAPs 로고 */}
         <img src={logoBright} alt="CAPS Logo" className="w-24 mb-6" />
         <br className="md:hidden" />
-        {/* 인스타/링크트리/문의하기 */}
+        {/* FAQ/링크트리/문의하기/회칙 */}
         <div className="md:flex items-center justify-center gap-12 text-gray-200 text-lg mb-8">
+          {/* 공식 인스타그램 링크는 링크트리 안에 이미 포함되어 있어 FAQ로 대체 */}
           <a
-            href="https://www.instagram.com/caps_dongguk"
+            href="/faq"
             className="flex items-center gap-2 hover:text-blue-300 transition"
           >
-            {/* instagram icon */}
+            {/* FAQ icon */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
-              viewBox="2 2 20 20"
+              viewBox="0 0 24 24"
               className="w-6 h-6"
               stroke="currentColor"
             >
-              <rect
-                width="16"
-                height="16"
-                x="4"
-                y="4"
-                rx="4"
+              <circle cx="12" cy="12" r="9" stroke="#ccc" strokeWidth="2" />
+              <path
+                d="M9.5 9.5a2.5 2.5 0 1 1 3.6 2.3c-.7.4-1.1 1-1.1 1.7v.5"
                 stroke="#ccc"
                 strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               />
-              <circle cx="12" cy="12" r="4" stroke="#ccc" strokeWidth="2" />
-              <circle cx="16.5" cy="7.5" r="1.5" fill="#ccc" />
+              <circle cx="12" cy="17" r="1" fill="#ccc" />
             </svg>
-            공식 인스타그램
+            FAQ
           </a>
           <br className="md:hidden" />
           <a

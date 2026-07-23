@@ -17,7 +17,7 @@ const WikiSearch = () => {
   };
 
   const handleRandom = async () => {
-    const response = await axios.get(import.meta.env.VITE_API_HOST + '/api/v1/wikis/random')
+    const response = await axios.get(import.meta.env.VITE_API_HOST + '/api/v1/wikis/random', { withCredentials: true })
     const randomTitle = (response.data.data.title);
     navigate(`/wiki/${randomTitle}`); // 랜덤 페이지로 이동
   };

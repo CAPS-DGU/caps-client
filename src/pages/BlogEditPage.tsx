@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { Lock, Trash2, Paperclip, ImagePlus } from "lucide-react";
 import Navbar from "../components/NavBar";
 import Footer from "../components/MainPage/Footer";
+import { BLOG_CATEGORIES, BLOG_CATEGORY_MAP } from "../components/Blog/categories";
 import { useAuth } from "../hooks/useAuth";
 import { uploadFileToS3, uploadMultipleFilesToS3 } from "../utils/s3Upload";
 import { blogFileName } from "../utils/blogFiles";
@@ -19,11 +21,8 @@ import {
 
 const WRITE_ROLES = ["ADMIN", "COUNCIL", "PRESIDENT"];
 
-const CATEGORY_OPTIONS = [
-  { key: CreateOrModifyBlogRequestCategory.EVENTS, label: "행사" },
-  { key: CreateOrModifyBlogRequestCategory.ACADEMIC, label: "학술" },
-  { key: CreateOrModifyBlogRequestCategory.TECH, label: "기술" },
-];
+const TITLE_MAX = 50;
+const SUBTITLE_MAX = 50;
 
 /** 업로드 대기 중인 파일 (선택 시점엔 올리지 않고 저장할 때 한 번에 올린다) */
 interface PendingFile {
@@ -59,6 +58,18 @@ const BlogEditPage: React.FC = () => {
   const { mutateAsync: modifyBlog } = useModifyBlog();
 
   const canWrite = WRITE_ROLES.includes(user?.role ?? "");
+
+  // 새로 고른 썸네일 미리보기 (URL 은 언마운트/교체 시 해제한다)
+  const thumbnailPreview = useMemo(
+    () => (thumbnail ? URL.createObjectURL(thumbnail) : null),
+    [thumbnail]
+  );
+  useEffect(
+    () => () => {
+      if (thumbnailPreview) URL.revokeObjectURL(thumbnailPreview);
+    },
+    [thumbnailPreview]
+  );
 
   // 로그인/권한이 없으면 되돌려보낸다
   useEffect(() => {
@@ -166,171 +177,327 @@ const BlogEditPage: React.FC = () => {
     }
   };
 
+  const previewCat = BLOG_CATEGORY_MAP[category];
+  const totalImages = existingImageUrls.length + images.length;
+
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex min-h-screen flex-col bg-[#FAFAFA]">
       <Navbar />
-      <main className="flex-1 mt-20">
-        <form onSubmit={handleSubmit} className="px-4 py-10 mx-auto space-y-6 max-w-4xl">
-          <div className="pb-4 mb-2 border-b border-gray-200">
+      <main className="flex-1 pt-20">
+        <form
+          onSubmit={handleSubmit}
+          className="mx-auto max-w-5xl px-4 md:px-6 py-10 space-y-6"
+        >
+          {/* 헤더: 제목 + 비공개 토글 + 취소/발행 */}
+          <div className="flex flex-col gap-4 border-b border-gray-200 pb-5 sm:flex-row sm:items-center sm:justify-between">
+            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-black">블로그</h1>
+            <div className="flex flex-wrap items-center gap-2.5">
+              <button
+                type="button"
+                onClick={() => setIsPrivate((v) => !v)}
+                aria-pressed={isPrivate}
+                className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-bold transition-colors ${
+                  isPrivate
+                    ? "border-[#007AEB] bg-[#007AEB]/10 text-[#007AEB]"
+                    : "border-gray-300 bg-white text-gray-500"
+                }`}
+              >
+                <Lock className="h-4 w-4" strokeWidth={2.2} />
+                비공개
+                <span
+                  className={`relative h-5 w-9 rounded-full transition-colors ${
+                    isPrivate ? "bg-[#007AEB]" : "bg-gray-300"
+                  }`}
+                >
+                  <span
+                    className={`absolute top-0.5 h-4 w-4 rounded-full bg-white transition-all ${
+                      isPrivate ? "left-[18px]" : "left-0.5"
+                    }`}
+                  />
+                </span>
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate(isEdit ? `/blog/${id}` : "/blog")}
+                className="rounded-full border border-gray-300 px-6 py-2.5 text-sm font-bold text-gray-600 transition-colors hover:text-gray-900"
+              >
+                취소
+              </button>
+              <button
+                type="submit"
+                disabled={submitting}
+                className="rounded-full bg-[#007AEB] px-7 py-2.5 text-sm font-bold text-white transition-colors hover:bg-[#0069cc] disabled:bg-gray-300"
+              >
+                {submitting ? "저장 중..." : isEdit ? "수정" : "발행"}
+              </button>
+            </div>
+          </div>
+
+          {/* 제목 */}
+          <div className="relative">
             <input
               type="text"
               value={title}
+              maxLength={TITLE_MAX}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="제목을 입력하세요"
-              className="w-full text-xl font-extrabold placeholder-gray-400 text-black bg-transparent md:text-2xl focus:outline-none"
+              placeholder="제목을 입력하세요."
+              className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3.5 pr-16 text-lg font-bold text-black placeholder-gray-400 focus:border-[#007AEB] focus:outline-none focus:ring-2 focus:ring-[#007AEB]/20"
             />
+            <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-400">
+              {title.length}/{TITLE_MAX}
+            </span>
           </div>
 
-          <input
-            type="text"
-            value={subtitle}
-            onChange={(e) => setSubtitle(e.target.value)}
-            placeholder="부제목 (선택)"
-            className="w-full px-4 py-3 text-sm border border-gray-200 rounded-[15px] focus:outline-none focus:ring-2 focus:ring-[#007AEB] focus:border-transparent"
-          />
-
-          {/* 카테고리 / 공개여부 */}
-          <div className="flex flex-wrap items-center gap-3">
-            {CATEGORY_OPTIONS.map((option) => (
-              <button
-                key={option.key}
-                type="button"
-                onClick={() => setCategory(option.key)}
-                className={`whitespace-nowrap px-4 md:px-5 py-2 rounded-full text-sm font-semibold transition-colors duration-200 border ${
-                  category === option.key
-                    ? "bg-blue-500 text-white border-blue-500 shadow-sm"
-                    : "bg-white text-blue-600 border-blue-300 hover:bg-blue-50"
-                }`}
-              >
-                {option.label}
-              </button>
-            ))}
-            <label className="flex items-center gap-2 ml-auto text-sm font-semibold text-gray-700 cursor-pointer select-none">
-              <input
-                type="checkbox"
-                checked={isPrivate}
-                onChange={(e) => setIsPrivate(e.target.checked)}
-                className="w-4 h-4 accent-[#007AEB]"
-              />
-              비공개
-            </label>
+          {/* 부제목 */}
+          <div className="relative">
+            <input
+              type="text"
+              value={subtitle}
+              maxLength={SUBTITLE_MAX}
+              onChange={(e) => setSubtitle(e.target.value)}
+              placeholder="부제목을 입력하세요. (선택)"
+              className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 pr-16 text-sm text-gray-800 placeholder-gray-400 focus:border-[#007AEB] focus:outline-none focus:ring-2 focus:ring-[#007AEB]/20"
+            />
+            <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-400">
+              {subtitle.length}/{SUBTITLE_MAX}
+            </span>
           </div>
 
+          {/* 카테고리 선택 */}
+          <div className="flex flex-wrap gap-2.5">
+            {BLOG_CATEGORIES.map((c) => {
+              const active = category === c.key;
+              return (
+                <button
+                  key={c.key}
+                  type="button"
+                  onClick={() => setCategory(c.key)}
+                  className={`inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-bold transition-colors ${
+                    active
+                      ? "border-[#007AEB] bg-[#007AEB] text-white"
+                      : "border-[#bcbcbc] bg-white text-[#4e4e4e] hover:border-[#007AEB] hover:text-[#007AEB]"
+                  }`}
+                >
+                  <c.Icon className="h-4 w-4" strokeWidth={2} />
+                  {c.label}
+                  <span className={`text-xs font-medium ${active ? "text-white/80" : "text-gray-400"}`}>
+                    ({c.hint})
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* 내용 */}
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder="내용을 입력하세요"
-            className="w-full h-64 p-4 text-sm leading-relaxed border border-gray-200 rounded-[15px] resize-vertical focus:outline-none focus:ring-2 focus:ring-[#007AEB] focus:border-transparent"
+            placeholder="내용을 입력하세요."
+            className="min-h-[20rem] w-full resize-y rounded-xl border border-gray-200 bg-white p-4 text-[15px] leading-8 text-gray-800 placeholder-gray-400 focus:border-[#007AEB] focus:outline-none focus:ring-2 focus:ring-[#007AEB]/20"
           />
 
-          {/* 썸네일 */}
-          <div className="border border-gray-200 rounded-[15px] p-4">
-            <label className="flex justify-between items-center cursor-pointer select-none">
-              <span className="text-sm font-semibold text-[#007AEB]">썸네일 이미지</span>
-              <span className="text-sm text-gray-500">
-                {thumbnail ? thumbnail.name : "선택 안 함"}
-              </span>
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={(e) => setThumbnail(e.target.files?.[0] ?? null)}
-              />
-            </label>
-          </div>
+          <div className="grid gap-6 lg:grid-cols-2">
+            <div className="space-y-6">
+              {/* 대표 이미지 */}
+              <section>
+                <h2 className="mb-2 text-sm font-bold text-gray-700">대표 이미지 (선택)</h2>
+                {thumbnailPreview ? (
+                  <div className="relative overflow-hidden rounded-xl border border-gray-200 bg-white">
+                    <div className="aspect-[16/9] w-full">
+                      <img
+                        src={thumbnailPreview}
+                        alt="대표 이미지 미리보기"
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                    <div className="flex items-center justify-between gap-2 px-3 py-2">
+                      <span className="truncate text-sm text-gray-600">{thumbnail?.name}</span>
+                      <div className="flex shrink-0 items-center gap-1">
+                        <label className="cursor-pointer rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-600 hover:border-[#007AEB] hover:text-[#007AEB]">
+                          이미지 변경
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => setThumbnail(e.target.files?.[0] ?? null)}
+                          />
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => setThumbnail(null)}
+                          aria-label="대표 이미지 삭제"
+                          className="rounded-lg p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-500"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <label className="flex aspect-[16/9] cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-gray-300 bg-white text-gray-400 transition-colors hover:border-[#007AEB] hover:text-[#007AEB]">
+                    <ImagePlus className="h-8 w-8" strokeWidth={1.6} />
+                    <span className="text-sm font-medium">
+                      {isEdit ? "변경할 대표 이미지 선택" : "대표 이미지 선택"}
+                    </span>
+                    {isEdit && (
+                      <span className="text-xs text-gray-400">선택하지 않으면 기존 이미지가 유지됩니다</span>
+                    )}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => setThumbnail(e.target.files?.[0] ?? null)}
+                    />
+                  </label>
+                )}
+              </section>
 
-          {/* 본문 이미지 */}
-          <div className="border border-gray-200 rounded-[15px] p-4 space-y-2">
-            <label className="flex justify-between items-center cursor-pointer select-none">
-              <span className="text-sm font-semibold text-[#007AEB]">본문 이미지 추가</span>
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                className="hidden"
-                onChange={(e) => addPending(setImages, Array.from(e.target.files ?? []))}
-              />
-            </label>
-            {existingImageUrls.map((url, index) => (
-              <div key={url} className="flex items-center justify-between text-sm text-gray-600">
-                <span className="truncate">{blogFileName(url)}</span>
-                <button
-                  type="button"
-                  onClick={() =>
-                    setExistingImageUrls((prev) => prev.filter((_, i) => i !== index))
-                  }
-                  className="ml-3 text-xs text-gray-400 hover:text-red-500"
-                >
-                  제거
-                </button>
-              </div>
-            ))}
-            {images.map((item) => (
-              <div key={item.id} className="flex items-center justify-between text-sm text-gray-600">
-                <span className="truncate">{item.file.name}</span>
-                <button
-                  type="button"
-                  onClick={() => setImages((prev) => prev.filter((f) => f.id !== item.id))}
-                  className="ml-3 text-xs text-gray-400 hover:text-red-500"
-                >
-                  제거
-                </button>
-              </div>
-            ))}
-          </div>
+              {/* 본문 이미지 */}
+              <section className="rounded-xl border border-gray-200 bg-white p-4">
+                <label className="flex cursor-pointer items-center justify-between">
+                  <span className="text-sm font-bold text-[#007AEB]">본문 이미지 추가</span>
+                  <span className="inline-flex items-center gap-1.5 text-xs text-gray-400">
+                    <ImagePlus className="h-4 w-4" />
+                    {totalImages > 0 ? `${totalImages}개` : "선택"}
+                  </span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="hidden"
+                    onChange={(e) => addPending(setImages, Array.from(e.target.files ?? []))}
+                  />
+                </label>
+                {(existingImageUrls.length > 0 || images.length > 0) && (
+                  <ul className="mt-3 space-y-1.5">
+                    {existingImageUrls.map((url, index) => (
+                      <li key={url} className="flex items-center justify-between text-sm text-gray-600">
+                        <span className="truncate">{blogFileName(url)}</span>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setExistingImageUrls((prev) => prev.filter((_, i) => i !== index))
+                          }
+                          className="ml-3 shrink-0 text-xs text-gray-400 hover:text-red-500"
+                        >
+                          제거
+                        </button>
+                      </li>
+                    ))}
+                    {images.map((item) => (
+                      <li key={item.id} className="flex items-center justify-between text-sm text-gray-600">
+                        <span className="truncate">{item.file.name}</span>
+                        <button
+                          type="button"
+                          onClick={() => setImages((prev) => prev.filter((f) => f.id !== item.id))}
+                          className="ml-3 shrink-0 text-xs text-gray-400 hover:text-red-500"
+                        >
+                          제거
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </section>
 
-          {/* 첨부파일 */}
-          <div className="border border-gray-200 rounded-[15px] p-4 space-y-2">
-            <label className="flex justify-between items-center cursor-pointer select-none">
-              <span className="text-sm font-semibold text-[#007AEB]">첨부파일 추가</span>
-              <input
-                type="file"
-                multiple
-                className="hidden"
-                onChange={(e) => addPending(setFiles, Array.from(e.target.files ?? []))}
-              />
-            </label>
-            {existingFileUrls.map((url, index) => (
-              <div key={url} className="flex items-center justify-between text-sm text-gray-600">
-                <span className="truncate">{blogFileName(url)}</span>
-                <button
-                  type="button"
-                  onClick={() => setExistingFileUrls((prev) => prev.filter((_, i) => i !== index))}
-                  className="ml-3 text-xs text-gray-400 hover:text-red-500"
-                >
-                  제거
-                </button>
-              </div>
-            ))}
-            {files.map((item) => (
-              <div key={item.id} className="flex items-center justify-between text-sm text-gray-600">
-                <span className="truncate">{item.file.name}</span>
-                <button
-                  type="button"
-                  onClick={() => setFiles((prev) => prev.filter((f) => f.id !== item.id))}
-                  className="ml-3 text-xs text-gray-400 hover:text-red-500"
-                >
-                  제거
-                </button>
-              </div>
-            ))}
-          </div>
+              {/* 파일 업로드 */}
+              <section className="rounded-xl border border-gray-200 bg-white p-4">
+                <label className="flex cursor-pointer items-center justify-between">
+                  <span className="text-sm font-bold text-[#007AEB]">파일 업로드</span>
+                  <span className="inline-flex items-center gap-1.5 text-xs text-gray-400">
+                    <Paperclip className="h-4 w-4" />
+                    추가
+                  </span>
+                  <input
+                    type="file"
+                    multiple
+                    className="hidden"
+                    onChange={(e) => addPending(setFiles, Array.from(e.target.files ?? []))}
+                  />
+                </label>
+                {(existingFileUrls.length > 0 || files.length > 0) && (
+                  <ul className="mt-3 space-y-1.5">
+                    {existingFileUrls.map((url, index) => (
+                      <li key={url} className="flex items-center justify-between text-sm text-gray-600">
+                        <span className="flex min-w-0 items-center gap-1.5">
+                          <Paperclip className="h-3.5 w-3.5 shrink-0 text-gray-400" />
+                          <span className="truncate">{blogFileName(url)}</span>
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setExistingFileUrls((prev) => prev.filter((_, i) => i !== index))
+                          }
+                          className="ml-3 shrink-0 text-xs text-gray-400 hover:text-red-500"
+                        >
+                          삭제
+                        </button>
+                      </li>
+                    ))}
+                    {files.map((item) => (
+                      <li key={item.id} className="flex items-center justify-between text-sm text-gray-600">
+                        <span className="flex min-w-0 items-center gap-1.5">
+                          <Paperclip className="h-3.5 w-3.5 shrink-0 text-gray-400" />
+                          <span className="truncate">{item.file.name}</span>
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setFiles((prev) => prev.filter((f) => f.id !== item.id))}
+                          className="ml-3 shrink-0 text-xs text-gray-400 hover:text-red-500"
+                        >
+                          삭제
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </section>
+            </div>
 
-          <div className="flex justify-end gap-3">
-            <button
-              type="button"
-              onClick={() => navigate(isEdit ? `/blog/${id}` : "/blog")}
-              className="px-7 py-3 text-sm font-semibold text-gray-600 transition-colors rounded-full hover:text-gray-900"
-            >
-              취소
-            </button>
-            <button
-              type="submit"
-              disabled={submitting}
-              className="px-7 py-3 text-sm font-semibold text-white bg-[#007AEB] rounded-full hover:bg-[#0066c7] transition-colors disabled:bg-gray-300"
-            >
-              {submitting ? "저장 중..." : isEdit ? "수정" : "등록"}
-            </button>
+            {/* 블로그 카드 미리보기 */}
+            <section>
+              <h2 className="mb-2 text-sm font-bold text-gray-700">블로그 카드 미리보기</h2>
+              <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+                <div className="relative aspect-[16/9] w-full overflow-hidden bg-gray-100">
+                  {thumbnailPreview ? (
+                    <img
+                      src={thumbnailPreview}
+                      alt="카드 미리보기 썸네일"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 text-2xl font-black tracking-widest text-slate-300">
+                      CAPS
+                    </div>
+                  )}
+                  {previewCat && (
+                    <span className="absolute left-3 top-3 rounded-full bg-[#007AEB] px-3 py-1 text-xs font-bold text-white shadow-sm">
+                      {previewCat.label}
+                    </span>
+                  )}
+                  {isPrivate && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/45">
+                      <Lock className="h-8 w-8 text-white/90" strokeWidth={2} />
+                    </div>
+                  )}
+                </div>
+                <div className="p-5">
+                  <h3 className="truncate text-lg font-bold text-black">
+                    {title || "제목을 입력하세요."}
+                  </h3>
+                  {subtitle && <p className="mt-1.5 line-clamp-2 text-sm text-gray-500">{subtitle}</p>}
+                  <div className="mt-4 flex items-center justify-between text-xs text-[#9ca3af]">
+                    <span className="truncate">
+                      {user?.grade ? `${user.grade}기 ` : ""}
+                      {user?.name ?? ""}
+                    </span>
+                    <span className="shrink-0">
+                      {new Date().toLocaleDateString("ko-KR").replace(/\.$/, "")}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </section>
           </div>
         </form>
       </main>

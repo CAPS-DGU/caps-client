@@ -68,7 +68,11 @@ const App: React.FC = () => {
     },
     {
       path: "/blog",
-      element: <BlogPage />,
+      element: (
+        <ProtectedRoute>
+          <BlogPage />
+        </ProtectedRoute>
+      ),
     },
     {
       path: "/blog/edit",
@@ -80,7 +84,11 @@ const App: React.FC = () => {
     },
     {
       path: "/blog/:blogId",
-      element: <BlogDetailPage />,
+      element: (
+        <ProtectedRoute>
+          <BlogDetailPage />
+        </ProtectedRoute>
+      ),
     },
     {
       path: "/blog/:blogId/edit",

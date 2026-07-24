@@ -1,27 +1,30 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { match } from "ts-pattern";
 import Navbar from "../components/NavBar";
 import Footer from "../components/MainPage/Footer";
-import { apiGet } from "../utils/Api";
+import BlogImage from "../components/Blog/BlogImage";
+import { useAuth } from "../hooks/useAuth";
+import { useGetBlogs, GetBlogsCategory, BlogListResponse } from "../api/generated/capsApi";
 
-interface BlogListItem {
-  id: number;
-  title: string;
-  subtitle: string;
-  thumbnailUrl: string | null;
-  category: string;
-  isPrivate: boolean;
-  writerGrade: number;
-  writerName: string;
-  createdAt: string;
+/**
+ * 백엔드 OpenAPI 스펙이 목록 응답의 공통 엔벨로프/페이지네이션을 기술하지 않아
+ * 생성된 BlogListResponse가 "단일 아이템" 타입으로 나온다.
+ * 실제 응답은 { status, message, data: Page<BlogListResponse> } 이므로 여기서 좁혀 쓴다.
+ */
+interface BlogListPage {
+  content?: BlogListResponse[];
+  totalPages?: number;
+  number?: number;
+  totalElements?: number;
 }
 
-const CATEGORIES = [
+const CATEGORIES: { key: "ALL" | GetBlogsCategory; label: string }[] = [
   { key: "ALL", label: "전체" },
-  { key: "EVENTS", label: "행사" },
-  { key: "ACADEMIC", label: "학술" },
-  { key: "TECH", label: "기술" },
-] as const;
+  { key: GetBlogsCategory.EVENTS, label: "행사" },
+  { key: GetBlogsCategory.ACADEMIC, label: "학술" },
+  { key: GetBlogsCategory.TECH, label: "기술" },
+];
 
 const CATEGORY_LABEL: Record<string, string> = {
   EVENTS: "행사",
@@ -29,7 +32,7 @@ const CATEGORY_LABEL: Record<string, string> = {
   TECH: "기술",
 };
 
-function formatDate(iso: string): string {
+function formatDate(iso?: string): string {
   if (!iso) return "";
   const d = new Date(iso);
   if (isNaN(d.getTime())) return iso;
@@ -41,43 +44,19 @@ function formatDate(iso: string): string {
 
 const BlogPage: React.FC = () => {
   const navigate = useNavigate();
-  const [posts, setPosts] = useState<BlogListItem[]>([]);
-  const [category, setCategory] = useState<string>("ALL");
+  const { user } = useAuth();
+  const [category, setCategory] = useState<"ALL" | GetBlogsCategory>("ALL");
   const [page, setPage] = useState<number>(1);
-  const [totalPages, setTotalPages] = useState<number>(1);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<boolean>(false);
 
-  useEffect(() => {
-    let ignore = false;
-    const fetchPosts = async () => {
-      setLoading(true);
-      setError(false);
-      try {
-        const query = new URLSearchParams();
-        query.set("page", String(page));
-        if (category !== "ALL") query.set("category", category);
-        const res = await apiGet(`/api/v1/blogs?${query.toString()}`);
-        if (ignore) return;
-        const body = res.data?.data;
-        setPosts(body?.content ?? []);
-        setTotalPages(body?.totalPages && body.totalPages > 0 ? body.totalPages : 1);
-      } catch (e) {
-        if (ignore) return;
-        console.error("블로그 목록 조회 실패:", e);
-        setError(true);
-        setPosts([]);
-      } finally {
-        if (!ignore) setLoading(false);
-      }
-    };
-    fetchPosts();
-    return () => {
-      ignore = true;
-    };
-  }, [category, page]);
+  const { data, isLoading, isError } = useGetBlogs(
+    category === "ALL" ? { page } : { page, category }
+  );
 
-  const handleCategory = (key: string) => {
+  const pageData = data?.data as unknown as BlogListPage | undefined;
+  const posts = pageData?.content ?? [];
+  const totalPages = pageData?.totalPages && pageData.totalPages > 0 ? pageData.totalPages : 1;
+
+  const handleCategory = (key: "ALL" | GetBlogsCategory) => {
     setCategory(key);
     setPage(1);
   };
@@ -91,6 +70,21 @@ const BlogPage: React.FC = () => {
           <h1 className="text-3xl md:text-4xl font-bold text-black mb-3">블로그</h1>
           <p className="text-gray-500">CAPS의 활동과 소식을 전합니다.</p>
         </div>
+
+        {/* 작성하기 (집행부만) */}
+        {match(user?.role)
+          .with("ADMIN", "COUNCIL", "PRESIDENT", () => (
+            <div className="mb-6 flex justify-end">
+              <button
+                type="button"
+                onClick={() => navigate("/blog/edit")}
+                className="px-6 py-3 text-sm font-semibold text-white bg-[#007AEB] rounded-full hover:bg-[#0079ebcc] transition-colors"
+              >
+                작성하기
+              </button>
+            </div>
+          ))
+          .otherwise(() => null)}
 
         {/* 카테고리 필터 */}
         <div className="flex flex-wrap justify-center gap-2 mb-10">
@@ -113,9 +107,9 @@ const BlogPage: React.FC = () => {
         </div>
 
         {/* 목록 */}
-        {loading ? (
+        {isLoading ? (
           <p className="text-center text-gray-500 py-20">로딩 중...</p>
-        ) : error ? (
+        ) : isError ? (
           <p className="text-center text-gray-500 py-20">
             게시물을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.
           </p>
@@ -130,21 +124,20 @@ const BlogPage: React.FC = () => {
                 className="group cursor-pointer overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition hover:shadow-md"
               >
                 <div className="h-44 w-full overflow-hidden bg-gray-100">
-                  {post.thumbnailUrl ? (
-                    <img
-                      src={post.thumbnailUrl}
-                      alt={post.title}
-                      className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center text-sm tracking-widest text-gray-300">
-                      CAPS
-                    </div>
-                  )}
+                  <BlogImage
+                    src={post.thumbnailUrl}
+                    alt={post.title}
+                    className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                    fallback={
+                      <div className="flex h-full w-full items-center justify-center text-sm tracking-widest text-gray-300">
+                        CAPS
+                      </div>
+                    }
+                  />
                 </div>
                 <div className="p-4">
                   <span className="mb-2 inline-block rounded-full bg-blue-500 px-3 py-0.5 text-xs font-semibold text-white">
-                    {CATEGORY_LABEL[post.category] ?? post.category}
+                    {CATEGORY_LABEL[post.category ?? ""] ?? post.category}
                   </span>
                   <h3 className="truncate text-base font-semibold text-black">{post.title}</h3>
                   {post.subtitle && (
@@ -164,7 +157,7 @@ const BlogPage: React.FC = () => {
         )}
 
         {/* 페이지네이션 */}
-        {!loading && !error && totalPages > 1 && (
+        {!isLoading && !isError && totalPages > 1 && (
           <div className="mt-12 flex items-center justify-center gap-4">
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}

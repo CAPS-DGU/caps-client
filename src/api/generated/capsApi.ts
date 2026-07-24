@@ -116,6 +116,55 @@ export interface PresignedUrlRequest {
   fileType?: string;
 }
 
+export type CreateOrModifyBlogRequestCategory = typeof CreateOrModifyBlogRequestCategory[keyof typeof CreateOrModifyBlogRequestCategory];
+
+
+export const CreateOrModifyBlogRequestCategory = {
+  EVENTS: 'EVENTS',
+  ACADEMIC: 'ACADEMIC',
+  TECH: 'TECH',
+} as const;
+
+export interface CreateOrModifyBlogRequest {
+  /** @minLength 1 */
+  title?: string;
+  subtitle?: string;
+  /** @minLength 1 */
+  content?: string;
+  thumbnailUrl?: string;
+  category: CreateOrModifyBlogRequestCategory;
+  isPrivate: boolean;
+  writerGrade: number;
+  /** @minLength 1 */
+  writerName?: string;
+  fileUrls?: string[];
+  imageUrls?: string[];
+}
+
+export type BlogResponseCategory = typeof BlogResponseCategory[keyof typeof BlogResponseCategory];
+
+
+export const BlogResponseCategory = {
+  EVENTS: 'EVENTS',
+  ACADEMIC: 'ACADEMIC',
+  TECH: 'TECH',
+} as const;
+
+export interface BlogResponse {
+  id?: number;
+  title?: string;
+  subtitle?: string;
+  content?: string;
+  thumbnailUrl?: string;
+  category?: BlogResponseCategory;
+  isPrivate?: boolean;
+  writerGrade?: number;
+  writerName?: string;
+  createdAt?: string;
+  fileUrls?: string[];
+  imageUrls?: string[];
+}
+
 export interface UpdateMemberRequest {
   /**
    * @minLength 0
@@ -183,6 +232,50 @@ export interface LedgerListResponse {
   hasFile?: boolean;
 }
 
+export type BlogListResponseCategory = typeof BlogListResponseCategory[keyof typeof BlogListResponseCategory];
+
+
+export const BlogListResponseCategory = {
+  EVENTS: 'EVENTS',
+  ACADEMIC: 'ACADEMIC',
+  TECH: 'TECH',
+} as const;
+
+export interface BlogListResponse {
+  id?: number;
+  title?: string;
+  subtitle?: string;
+  thumbnailUrl?: string;
+  category?: BlogListResponseCategory;
+  isPrivate?: boolean;
+  writerGrade?: number;
+  writerName?: string;
+  createdAt?: string;
+}
+
+export type BlogDetailResponseCategory = typeof BlogDetailResponseCategory[keyof typeof BlogDetailResponseCategory];
+
+
+export const BlogDetailResponseCategory = {
+  EVENTS: 'EVENTS',
+  ACADEMIC: 'ACADEMIC',
+  TECH: 'TECH',
+} as const;
+
+export interface BlogDetailResponse {
+  id?: number;
+  title?: string;
+  subtitle?: string;
+  content?: string;
+  category?: BlogDetailResponseCategory;
+  isPrivate?: boolean;
+  writerGrade?: number;
+  writerName?: string;
+  createdAt?: string;
+  fileUrls?: string[];
+  imageUrls?: string[];
+}
+
 export type GetLedgersListParams = {
 /**
  * @minimum 1
@@ -197,8 +290,32 @@ export type GetPresignedDownloadUrlParams = {
 key: string;
 };
 
+export type GetBlogsParams = {
+category?: GetBlogsCategory;
+/**
+ * @minimum 1
+ */
+page?: number;
+};
+
+export type GetBlogsCategory = typeof GetBlogsCategory[keyof typeof GetBlogsCategory];
+
+
+export const GetBlogsCategory = {
+  EVENTS: 'EVENTS',
+  ACADEMIC: 'ACADEMIC',
+  TECH: 'TECH',
+} as const;
+
 export type GetAutocompleteWikiParams = {
 input: string;
+};
+
+export type GetBlogPresignedDownloadUrlParams = {
+/**
+ * @minLength 1
+ */
+key: string;
 };
 
 export type DeleteFileParams = {
@@ -212,6 +329,8 @@ type AwaitedInput<T> = PromiseLike<T> | T;
 
       type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
 
+
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 
 
@@ -262,15 +381,15 @@ export const createWiki = async (createWikiBody: Blob, options?: RequestInit): P
 
 
 export const getCreateWikiMutationOptions = <TError = Blob,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createWiki>>, TError,{data: Blob}, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createWiki>>, TError,{data: Blob}, TContext>, request?: SecondParameter<typeof orvalClient>}
 ): UseMutationOptions<Awaited<ReturnType<typeof createWiki>>, TError,{data: Blob}, TContext> => {
 
 const mutationKey = ['createWiki'];
-const {mutation: mutationOptions} = options ?
+const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
       : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
+      : {mutation: { mutationKey, }, request: undefined};
 
       
 
@@ -278,7 +397,7 @@ const {mutation: mutationOptions} = options ?
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof createWiki>>, {data: Blob}> = (props) => {
           const {data} = props ?? {};
 
-          return  createWiki(data,)
+          return  createWiki(data,requestOptions)
         }
 
 
@@ -296,7 +415,7 @@ const {mutation: mutationOptions} = options ?
  * @summary 위키 작성
  */
 export const useCreateWiki = <TError = Blob,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createWiki>>, TError,{data: Blob}, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createWiki>>, TError,{data: Blob}, TContext>, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createWiki>>,
         TError,
@@ -346,15 +465,15 @@ export const modifyWiki = async (modifyWikiBody: Blob, options?: RequestInit): P
 
 
 export const getModifyWikiMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof modifyWiki>>, TError,{data: Blob}, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof modifyWiki>>, TError,{data: Blob}, TContext>, request?: SecondParameter<typeof orvalClient>}
 ): UseMutationOptions<Awaited<ReturnType<typeof modifyWiki>>, TError,{data: Blob}, TContext> => {
 
 const mutationKey = ['modifyWiki'];
-const {mutation: mutationOptions} = options ?
+const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
       : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
+      : {mutation: { mutationKey, }, request: undefined};
 
       
 
@@ -362,7 +481,7 @@ const {mutation: mutationOptions} = options ?
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof modifyWiki>>, {data: Blob}> = (props) => {
           const {data} = props ?? {};
 
-          return  modifyWiki(data,)
+          return  modifyWiki(data,requestOptions)
         }
 
 
@@ -380,7 +499,7 @@ const {mutation: mutationOptions} = options ?
  * @summary 위키 수정
  */
 export const useModifyWiki = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof modifyWiki>>, TError,{data: Blob}, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof modifyWiki>>, TError,{data: Blob}, TContext>, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof modifyWiki>>,
         TError,
@@ -430,15 +549,15 @@ export const createReport = async (createReportBody: Blob, options?: RequestInit
 
 
 export const getCreateReportMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createReport>>, TError,{data: Blob}, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createReport>>, TError,{data: Blob}, TContext>, request?: SecondParameter<typeof orvalClient>}
 ): UseMutationOptions<Awaited<ReturnType<typeof createReport>>, TError,{data: Blob}, TContext> => {
 
 const mutationKey = ['createReport'];
-const {mutation: mutationOptions} = options ?
+const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
       : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
+      : {mutation: { mutationKey, }, request: undefined};
 
       
 
@@ -446,7 +565,7 @@ const {mutation: mutationOptions} = options ?
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof createReport>>, {data: Blob}> = (props) => {
           const {data} = props ?? {};
 
-          return  createReport(data,)
+          return  createReport(data,requestOptions)
         }
 
 
@@ -464,7 +583,7 @@ const {mutation: mutationOptions} = options ?
  * @summary 문의 및 신고 작성
  */
 export const useCreateReport = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createReport>>, TError,{data: Blob}, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createReport>>, TError,{data: Blob}, TContext>, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createReport>>,
         TError,
@@ -527,16 +646,16 @@ export const getGetLedgersListQueryKey = (params?: GetLedgersListParams,) => {
     }
 
     
-export const getGetLedgersListQueryOptions = <TData = Awaited<ReturnType<typeof getLedgersList>>, TError = unknown>(params?: GetLedgersListParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLedgersList>>, TError, TData>>, }
+export const getGetLedgersListQueryOptions = <TData = Awaited<ReturnType<typeof getLedgersList>>, TError = unknown>(params?: GetLedgersListParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLedgersList>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
 ) => {
 
-const {query: queryOptions} = options ?? {};
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetLedgersListQueryKey(params);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getLedgersList>>> = ({ signal }) => getLedgersList(params, { signal });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getLedgersList>>> = ({ signal }) => getLedgersList(params, { signal, ...requestOptions });
 
       
 
@@ -556,7 +675,7 @@ export function useGetLedgersList<TData = Awaited<ReturnType<typeof getLedgersLi
           TError,
           Awaited<ReturnType<typeof getLedgersList>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetLedgersList<TData = Awaited<ReturnType<typeof getLedgersList>>, TError = unknown>(
@@ -566,11 +685,11 @@ export function useGetLedgersList<TData = Awaited<ReturnType<typeof getLedgersLi
           TError,
           Awaited<ReturnType<typeof getLedgersList>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetLedgersList<TData = Awaited<ReturnType<typeof getLedgersList>>, TError = unknown>(
- params?: GetLedgersListParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLedgersList>>, TError, TData>>, }
+ params?: GetLedgersListParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLedgersList>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -578,7 +697,7 @@ export function useGetLedgersList<TData = Awaited<ReturnType<typeof getLedgersLi
  */
 
 export function useGetLedgersList<TData = Awaited<ReturnType<typeof getLedgersList>>, TError = unknown>(
- params?: GetLedgersListParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLedgersList>>, TError, TData>>, }
+ params?: GetLedgersListParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLedgersList>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -640,15 +759,15 @@ export const createLedger = async (createLedgerBody: Blob, options?: RequestInit
 
 
 export const getCreateLedgerMutationOptions = <TError = Blob,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createLedger>>, TError,{data: Blob}, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createLedger>>, TError,{data: Blob}, TContext>, request?: SecondParameter<typeof orvalClient>}
 ): UseMutationOptions<Awaited<ReturnType<typeof createLedger>>, TError,{data: Blob}, TContext> => {
 
 const mutationKey = ['createLedger'];
-const {mutation: mutationOptions} = options ?
+const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
       : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
+      : {mutation: { mutationKey, }, request: undefined};
 
       
 
@@ -656,7 +775,7 @@ const {mutation: mutationOptions} = options ?
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof createLedger>>, {data: Blob}> = (props) => {
           const {data} = props ?? {};
 
-          return  createLedger(data,)
+          return  createLedger(data,requestOptions)
         }
 
 
@@ -674,7 +793,7 @@ const {mutation: mutationOptions} = options ?
  * @summary 게시물 등록
  */
 export const useCreateLedger = <TError = Blob,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createLedger>>, TError,{data: Blob}, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createLedger>>, TError,{data: Blob}, TContext>, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createLedger>>,
         TError,
@@ -733,16 +852,16 @@ export const getGetPresignedDownloadUrlQueryKey = (params?: GetPresignedDownload
     }
 
     
-export const getGetPresignedDownloadUrlQueryOptions = <TData = Awaited<ReturnType<typeof getPresignedDownloadUrl>>, TError = unknown>(params: GetPresignedDownloadUrlParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPresignedDownloadUrl>>, TError, TData>>, }
+export const getGetPresignedDownloadUrlQueryOptions = <TData = Awaited<ReturnType<typeof getPresignedDownloadUrl>>, TError = unknown>(params: GetPresignedDownloadUrlParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPresignedDownloadUrl>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
 ) => {
 
-const {query: queryOptions} = options ?? {};
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetPresignedDownloadUrlQueryKey(params);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPresignedDownloadUrl>>> = ({ signal }) => getPresignedDownloadUrl(params, { signal });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPresignedDownloadUrl>>> = ({ signal }) => getPresignedDownloadUrl(params, { signal, ...requestOptions });
 
       
 
@@ -762,7 +881,7 @@ export function useGetPresignedDownloadUrl<TData = Awaited<ReturnType<typeof get
           TError,
           Awaited<ReturnType<typeof getPresignedDownloadUrl>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPresignedDownloadUrl<TData = Awaited<ReturnType<typeof getPresignedDownloadUrl>>, TError = unknown>(
@@ -772,16 +891,16 @@ export function useGetPresignedDownloadUrl<TData = Awaited<ReturnType<typeof get
           TError,
           Awaited<ReturnType<typeof getPresignedDownloadUrl>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPresignedDownloadUrl<TData = Awaited<ReturnType<typeof getPresignedDownloadUrl>>, TError = unknown>(
- params: GetPresignedDownloadUrlParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPresignedDownloadUrl>>, TError, TData>>, }
+ params: GetPresignedDownloadUrlParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPresignedDownloadUrl>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetPresignedDownloadUrl<TData = Awaited<ReturnType<typeof getPresignedDownloadUrl>>, TError = unknown>(
- params: GetPresignedDownloadUrlParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPresignedDownloadUrl>>, TError, TData>>, }
+ params: GetPresignedDownloadUrlParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPresignedDownloadUrl>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -832,15 +951,15 @@ export const getPresignedUrl = async (getPresignedUrlBody: Blob, options?: Reque
 
 
 export const getGetPresignedUrlMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getPresignedUrl>>, TError,{data: Blob}, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getPresignedUrl>>, TError,{data: Blob}, TContext>, request?: SecondParameter<typeof orvalClient>}
 ): UseMutationOptions<Awaited<ReturnType<typeof getPresignedUrl>>, TError,{data: Blob}, TContext> => {
 
 const mutationKey = ['getPresignedUrl'];
-const {mutation: mutationOptions} = options ?
+const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
       : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
+      : {mutation: { mutationKey, }, request: undefined};
 
       
 
@@ -848,7 +967,7 @@ const {mutation: mutationOptions} = options ?
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof getPresignedUrl>>, {data: Blob}> = (props) => {
           const {data} = props ?? {};
 
-          return  getPresignedUrl(data,)
+          return  getPresignedUrl(data,requestOptions)
         }
 
 
@@ -863,7 +982,7 @@ const {mutation: mutationOptions} = options ?
     export type GetPresignedUrlMutationError = unknown
 
     export const useGetPresignedUrl = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getPresignedUrl>>, TError,{data: Blob}, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getPresignedUrl>>, TError,{data: Blob}, TContext>, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof getPresignedUrl>>,
         TError,
@@ -874,23 +993,233 @@ const {mutation: mutationOptions} = options ?
     }
     
 /**
+ * 게시물 목록을 조회합니다.
+ * @summary 게시물 목록 조회
+ */
+export type getBlogsResponse200 = {
+  data: BlogListResponse
+  status: 200
+}
+    
+export type getBlogsResponseSuccess = (getBlogsResponse200) & {
+  headers: Headers;
+};
+;
+
+export type getBlogsResponse = (getBlogsResponseSuccess)
+
+export const getGetBlogsUrl = (params?: GetBlogsParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/v1/blogs?${stringifiedParams}` : `/api/v1/blogs`
+}
+
+export const getBlogs = async (params?: GetBlogsParams, options?: RequestInit): Promise<getBlogsResponse> => {
+  
+  return orvalClient<getBlogsResponse>(getGetBlogsUrl(params),
+  {      
+    ...options,
+    method: 'GET'
+    
+    
+  }
+);}
+
+
+
+
+
+export const getGetBlogsQueryKey = (params?: GetBlogsParams,) => {
+    return [
+    `/api/v1/blogs`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+    
+export const getGetBlogsQueryOptions = <TData = Awaited<ReturnType<typeof getBlogs>>, TError = unknown>(params?: GetBlogsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBlogs>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetBlogsQueryKey(params);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getBlogs>>> = ({ signal }) => getBlogs(params, { signal, ...requestOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getBlogs>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetBlogsQueryResult = NonNullable<Awaited<ReturnType<typeof getBlogs>>>
+export type GetBlogsQueryError = unknown
+
+
+export function useGetBlogs<TData = Awaited<ReturnType<typeof getBlogs>>, TError = unknown>(
+ params: undefined |  GetBlogsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBlogs>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getBlogs>>,
+          TError,
+          Awaited<ReturnType<typeof getBlogs>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof orvalClient>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetBlogs<TData = Awaited<ReturnType<typeof getBlogs>>, TError = unknown>(
+ params?: GetBlogsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBlogs>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getBlogs>>,
+          TError,
+          Awaited<ReturnType<typeof getBlogs>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof orvalClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetBlogs<TData = Awaited<ReturnType<typeof getBlogs>>, TError = unknown>(
+ params?: GetBlogsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBlogs>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary 게시물 목록 조회
+ */
+
+export function useGetBlogs<TData = Awaited<ReturnType<typeof getBlogs>>, TError = unknown>(
+ params?: GetBlogsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBlogs>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetBlogsQueryOptions(params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+/**
+ * 새 블로그 게시물을 작성합니다.
+ * @summary 게시물 작성
+ */
+export type createBlogResponse201 = {
+  data: BlogResponse
+  status: 201
+}
+
+export type createBlogResponse403 = {
+  data: Blob
+  status: 403
+}
+    
+export type createBlogResponseSuccess = (createBlogResponse201) & {
+  headers: Headers;
+};
+export type createBlogResponseError = (createBlogResponse403) & {
+  headers: Headers;
+};
+
+export type createBlogResponse = (createBlogResponseSuccess | createBlogResponseError)
+
+export const getCreateBlogUrl = () => {
+
+
+  
+
+  return `/api/v1/blogs`
+}
+
+export const createBlog = async (createBlogBody: Blob, options?: RequestInit): Promise<createBlogResponse> => {
+  
+  return orvalClient<createBlogResponse>(getCreateBlogUrl(),
+  {      
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json;charset=UTF-8', ...options?.headers },
+    body: JSON.stringify(
+      createBlogBody,)
+  }
+);}
+
+
+
+
+export const getCreateBlogMutationOptions = <TError = Blob,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createBlog>>, TError,{data: Blob}, TContext>, request?: SecondParameter<typeof orvalClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof createBlog>>, TError,{data: Blob}, TContext> => {
+
+const mutationKey = ['createBlog'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createBlog>>, {data: Blob}> = (props) => {
+          const {data} = props ?? {};
+
+          return  createBlog(data,requestOptions)
+        }
+
+
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateBlogMutationResult = NonNullable<Awaited<ReturnType<typeof createBlog>>>
+    export type CreateBlogMutationBody = Blob
+    export type CreateBlogMutationError = Blob
+
+    /**
+ * @summary 게시물 작성
+ */
+export const useCreateBlog = <TError = Blob,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createBlog>>, TError,{data: Blob}, TContext>, request?: SecondParameter<typeof orvalClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createBlog>>,
+        TError,
+        {data: Blob},
+        TContext
+      > => {
+      return useMutation(getCreateBlogMutationOptions(options), queryClient);
+    }
+    
+/**
  * 리프레쉬 토큰을 이용하여 토큰을 재발급합니다.  
 리프레쉬 토큰이 만료되었거나 유효하지 않은 경우 401 에러가 발생합니다.  
 재발급한 토큰은 쿠키로 저장됩니다.
  * @summary 토큰 재발급
  */
 export type reissueTokenResponse200 = {
-  data: Blob
+  data: void
   status: 200
 }
 
 export type reissueTokenResponse401 = {
-  data: Blob
+  data: void
   status: 401
 }
 
 export type reissueTokenResponse500 = {
-  data: Blob
+  data: void
   status: 500
 }
     
@@ -925,16 +1254,16 @@ export const reissueToken = async ( options?: RequestInit): Promise<reissueToken
 
 
 
-export const getReissueTokenMutationOptions = <TError = Blob,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof reissueToken>>, TError,void, TContext>, }
+export const getReissueTokenMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof reissueToken>>, TError,void, TContext>, request?: SecondParameter<typeof orvalClient>}
 ): UseMutationOptions<Awaited<ReturnType<typeof reissueToken>>, TError,void, TContext> => {
 
 const mutationKey = ['reissueToken'];
-const {mutation: mutationOptions} = options ?
+const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
       : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
+      : {mutation: { mutationKey, }, request: undefined};
 
       
 
@@ -942,7 +1271,7 @@ const {mutation: mutationOptions} = options ?
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof reissueToken>>, void> = () => {
           
 
-          return  reissueToken()
+          return  reissueToken(requestOptions)
         }
 
 
@@ -954,13 +1283,13 @@ const {mutation: mutationOptions} = options ?
 
     export type ReissueTokenMutationResult = NonNullable<Awaited<ReturnType<typeof reissueToken>>>
     
-    export type ReissueTokenMutationError = Blob
+    export type ReissueTokenMutationError = void
 
     /**
  * @summary 토큰 재발급
  */
-export const useReissueToken = <TError = Blob,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof reissueToken>>, TError,void, TContext>, }
+export const useReissueToken = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof reissueToken>>, TError,void, TContext>, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof reissueToken>>,
         TError,
@@ -977,7 +1306,7 @@ export const useReissueToken = <TError = Blob,
  * @summary 로그아웃
  */
 export type logoutResponse204 = {
-  data: Blob
+  data: void
   status: 204
 }
     
@@ -1011,15 +1340,15 @@ export const logout = async ( options?: RequestInit): Promise<logoutResponse> =>
 
 
 export const getLogoutMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof logout>>, TError,void, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof logout>>, TError,void, TContext>, request?: SecondParameter<typeof orvalClient>}
 ): UseMutationOptions<Awaited<ReturnType<typeof logout>>, TError,void, TContext> => {
 
 const mutationKey = ['logout'];
-const {mutation: mutationOptions} = options ?
+const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
       : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
+      : {mutation: { mutationKey, }, request: undefined};
 
       
 
@@ -1027,7 +1356,7 @@ const {mutation: mutationOptions} = options ?
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof logout>>, void> = () => {
           
 
-          return  logout()
+          return  logout(requestOptions)
         }
 
 
@@ -1045,7 +1374,7 @@ const {mutation: mutationOptions} = options ?
  * @summary 로그아웃
  */
 export const useLogout = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof logout>>, TError,void, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof logout>>, TError,void, TContext>, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof logout>>,
         TError,
@@ -1101,16 +1430,16 @@ export const getGetMemberInfoQueryKey = () => {
     }
 
     
-export const getGetMemberInfoQueryOptions = <TData = Awaited<ReturnType<typeof getMemberInfo>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMemberInfo>>, TError, TData>>, }
+export const getGetMemberInfoQueryOptions = <TData = Awaited<ReturnType<typeof getMemberInfo>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMemberInfo>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
 ) => {
 
-const {query: queryOptions} = options ?? {};
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetMemberInfoQueryKey();
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getMemberInfo>>> = ({ signal }) => getMemberInfo({ signal });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getMemberInfo>>> = ({ signal }) => getMemberInfo({ signal, ...requestOptions });
 
       
 
@@ -1130,7 +1459,7 @@ export function useGetMemberInfo<TData = Awaited<ReturnType<typeof getMemberInfo
           TError,
           Awaited<ReturnType<typeof getMemberInfo>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetMemberInfo<TData = Awaited<ReturnType<typeof getMemberInfo>>, TError = unknown>(
@@ -1140,11 +1469,11 @@ export function useGetMemberInfo<TData = Awaited<ReturnType<typeof getMemberInfo
           TError,
           Awaited<ReturnType<typeof getMemberInfo>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetMemberInfo<TData = Awaited<ReturnType<typeof getMemberInfo>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMemberInfo>>, TError, TData>>, }
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMemberInfo>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -1152,7 +1481,7 @@ export function useGetMemberInfo<TData = Awaited<ReturnType<typeof getMemberInfo
  */
 
 export function useGetMemberInfo<TData = Awaited<ReturnType<typeof getMemberInfo>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMemberInfo>>, TError, TData>>, }
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMemberInfo>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -1208,15 +1537,15 @@ export const updateMember = async (updateMemberBody: Blob, options?: RequestInit
 
 
 export const getUpdateMemberMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateMember>>, TError,{data: Blob}, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateMember>>, TError,{data: Blob}, TContext>, request?: SecondParameter<typeof orvalClient>}
 ): UseMutationOptions<Awaited<ReturnType<typeof updateMember>>, TError,{data: Blob}, TContext> => {
 
 const mutationKey = ['updateMember'];
-const {mutation: mutationOptions} = options ?
+const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
       : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
+      : {mutation: { mutationKey, }, request: undefined};
 
       
 
@@ -1224,7 +1553,7 @@ const {mutation: mutationOptions} = options ?
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateMember>>, {data: Blob}> = (props) => {
           const {data} = props ?? {};
 
-          return  updateMember(data,)
+          return  updateMember(data,requestOptions)
         }
 
 
@@ -1242,7 +1571,7 @@ const {mutation: mutationOptions} = options ?
  * @summary 내 정보 수정
  */
 export const useUpdateMember = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateMember>>, TError,{data: Blob}, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateMember>>, TError,{data: Blob}, TContext>, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof updateMember>>,
         TError,
@@ -1305,16 +1634,16 @@ export const getGetSpecificLedgerQueryKey = (ledgerId: number,) => {
     }
 
     
-export const getGetSpecificLedgerQueryOptions = <TData = Awaited<ReturnType<typeof getSpecificLedger>>, TError = Blob>(ledgerId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSpecificLedger>>, TError, TData>>, }
+export const getGetSpecificLedgerQueryOptions = <TData = Awaited<ReturnType<typeof getSpecificLedger>>, TError = Blob>(ledgerId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSpecificLedger>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
 ) => {
 
-const {query: queryOptions} = options ?? {};
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetSpecificLedgerQueryKey(ledgerId);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getSpecificLedger>>> = ({ signal }) => getSpecificLedger(ledgerId, { signal });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getSpecificLedger>>> = ({ signal }) => getSpecificLedger(ledgerId, { signal, ...requestOptions });
 
       
 
@@ -1334,7 +1663,7 @@ export function useGetSpecificLedger<TData = Awaited<ReturnType<typeof getSpecif
           TError,
           Awaited<ReturnType<typeof getSpecificLedger>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetSpecificLedger<TData = Awaited<ReturnType<typeof getSpecificLedger>>, TError = Blob>(
@@ -1344,11 +1673,11 @@ export function useGetSpecificLedger<TData = Awaited<ReturnType<typeof getSpecif
           TError,
           Awaited<ReturnType<typeof getSpecificLedger>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetSpecificLedger<TData = Awaited<ReturnType<typeof getSpecificLedger>>, TError = Blob>(
- ledgerId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSpecificLedger>>, TError, TData>>, }
+ ledgerId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSpecificLedger>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -1356,7 +1685,7 @@ export function useGetSpecificLedger<TData = Awaited<ReturnType<typeof getSpecif
  */
 
 export function useGetSpecificLedger<TData = Awaited<ReturnType<typeof getSpecificLedger>>, TError = Blob>(
- ledgerId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSpecificLedger>>, TError, TData>>, }
+ ledgerId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSpecificLedger>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -1376,17 +1705,17 @@ export function useGetSpecificLedger<TData = Awaited<ReturnType<typeof getSpecif
  * @summary 게시물 삭제
  */
 export type deleteLedgerResponse204 = {
-  data: Blob
+  data: void
   status: 204
 }
 
 export type deleteLedgerResponse401 = {
-  data: Blob
+  data: void
   status: 401
 }
 
 export type deleteLedgerResponse404 = {
-  data: Blob
+  data: void
   status: 404
 }
     
@@ -1421,16 +1750,16 @@ export const deleteLedger = async (ledgerId: number, options?: RequestInit): Pro
 
 
 
-export const getDeleteLedgerMutationOptions = <TError = Blob,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteLedger>>, TError,{ledgerId: number}, TContext>, }
+export const getDeleteLedgerMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteLedger>>, TError,{ledgerId: number}, TContext>, request?: SecondParameter<typeof orvalClient>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteLedger>>, TError,{ledgerId: number}, TContext> => {
 
 const mutationKey = ['deleteLedger'];
-const {mutation: mutationOptions} = options ?
+const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
       : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
+      : {mutation: { mutationKey, }, request: undefined};
 
       
 
@@ -1438,7 +1767,7 @@ const {mutation: mutationOptions} = options ?
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteLedger>>, {ledgerId: number}> = (props) => {
           const {ledgerId} = props ?? {};
 
-          return  deleteLedger(ledgerId,)
+          return  deleteLedger(ledgerId,requestOptions)
         }
 
 
@@ -1450,13 +1779,13 @@ const {mutation: mutationOptions} = options ?
 
     export type DeleteLedgerMutationResult = NonNullable<Awaited<ReturnType<typeof deleteLedger>>>
     
-    export type DeleteLedgerMutationError = Blob
+    export type DeleteLedgerMutationError = void
 
     /**
  * @summary 게시물 삭제
  */
-export const useDeleteLedger = <TError = Blob,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteLedger>>, TError,{ledgerId: number}, TContext>, }
+export const useDeleteLedger = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteLedger>>, TError,{ledgerId: number}, TContext>, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteLedger>>,
         TError,
@@ -1514,15 +1843,15 @@ export const modifyLedger = async (ledgerId: number,
 
 
 export const getModifyLedgerMutationOptions = <TError = Blob,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof modifyLedger>>, TError,{ledgerId: number;data: Blob}, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof modifyLedger>>, TError,{ledgerId: number;data: Blob}, TContext>, request?: SecondParameter<typeof orvalClient>}
 ): UseMutationOptions<Awaited<ReturnType<typeof modifyLedger>>, TError,{ledgerId: number;data: Blob}, TContext> => {
 
 const mutationKey = ['modifyLedger'];
-const {mutation: mutationOptions} = options ?
+const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
       : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
+      : {mutation: { mutationKey, }, request: undefined};
 
       
 
@@ -1530,7 +1859,7 @@ const {mutation: mutationOptions} = options ?
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof modifyLedger>>, {ledgerId: number;data: Blob}> = (props) => {
           const {ledgerId,data} = props ?? {};
 
-          return  modifyLedger(ledgerId,data,)
+          return  modifyLedger(ledgerId,data,requestOptions)
         }
 
 
@@ -1548,7 +1877,7 @@ const {mutation: mutationOptions} = options ?
  * @summary 게시물 수정
  */
 export const useModifyLedger = <TError = Blob,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof modifyLedger>>, TError,{ledgerId: number;data: Blob}, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof modifyLedger>>, TError,{ledgerId: number;data: Blob}, TContext>, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof modifyLedger>>,
         TError,
@@ -1556,6 +1885,322 @@ export const useModifyLedger = <TError = Blob,
         TContext
       > => {
       return useMutation(getModifyLedgerMutationOptions(options), queryClient);
+    }
+    
+/**
+ * 게시물 상세 내용을 조회합니다.
+ * @summary 게시물 상세 조회
+ */
+export type getBlogResponse200 = {
+  data: BlogDetailResponse
+  status: 200
+}
+
+export type getBlogResponse403 = {
+  data: Blob
+  status: 403
+}
+
+export type getBlogResponse404 = {
+  data: Blob
+  status: 404
+}
+    
+export type getBlogResponseSuccess = (getBlogResponse200) & {
+  headers: Headers;
+};
+export type getBlogResponseError = (getBlogResponse403 | getBlogResponse404) & {
+  headers: Headers;
+};
+
+export type getBlogResponse = (getBlogResponseSuccess | getBlogResponseError)
+
+export const getGetBlogUrl = (blogId: number,) => {
+
+
+  
+
+  return `/api/v1/blogs/${blogId}`
+}
+
+export const getBlog = async (blogId: number, options?: RequestInit): Promise<getBlogResponse> => {
+  
+  return orvalClient<getBlogResponse>(getGetBlogUrl(blogId),
+  {      
+    ...options,
+    method: 'GET'
+    
+    
+  }
+);}
+
+
+
+
+
+export const getGetBlogQueryKey = (blogId: number,) => {
+    return [
+    `/api/v1/blogs/${blogId}`
+    ] as const;
+    }
+
+    
+export const getGetBlogQueryOptions = <TData = Awaited<ReturnType<typeof getBlog>>, TError = Blob>(blogId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBlog>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetBlogQueryKey(blogId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getBlog>>> = ({ signal }) => getBlog(blogId, { signal, ...requestOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(blogId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getBlog>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetBlogQueryResult = NonNullable<Awaited<ReturnType<typeof getBlog>>>
+export type GetBlogQueryError = Blob
+
+
+export function useGetBlog<TData = Awaited<ReturnType<typeof getBlog>>, TError = Blob>(
+ blogId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBlog>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getBlog>>,
+          TError,
+          Awaited<ReturnType<typeof getBlog>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof orvalClient>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetBlog<TData = Awaited<ReturnType<typeof getBlog>>, TError = Blob>(
+ blogId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBlog>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getBlog>>,
+          TError,
+          Awaited<ReturnType<typeof getBlog>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof orvalClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetBlog<TData = Awaited<ReturnType<typeof getBlog>>, TError = Blob>(
+ blogId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBlog>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary 게시물 상세 조회
+ */
+
+export function useGetBlog<TData = Awaited<ReturnType<typeof getBlog>>, TError = Blob>(
+ blogId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBlog>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetBlogQueryOptions(blogId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+/**
+ * 블로그 게시물을 삭제합니다.
+ * @summary 게시물 삭제
+ */
+export type deleteBlogResponse204 = {
+  data: void
+  status: 204
+}
+
+export type deleteBlogResponse403 = {
+  data: void
+  status: 403
+}
+
+export type deleteBlogResponse404 = {
+  data: void
+  status: 404
+}
+    
+export type deleteBlogResponseSuccess = (deleteBlogResponse204) & {
+  headers: Headers;
+};
+export type deleteBlogResponseError = (deleteBlogResponse403 | deleteBlogResponse404) & {
+  headers: Headers;
+};
+
+export type deleteBlogResponse = (deleteBlogResponseSuccess | deleteBlogResponseError)
+
+export const getDeleteBlogUrl = (blogId: number,) => {
+
+
+  
+
+  return `/api/v1/blogs/${blogId}`
+}
+
+export const deleteBlog = async (blogId: number, options?: RequestInit): Promise<deleteBlogResponse> => {
+  
+  return orvalClient<deleteBlogResponse>(getDeleteBlogUrl(blogId),
+  {      
+    ...options,
+    method: 'DELETE'
+    
+    
+  }
+);}
+
+
+
+
+export const getDeleteBlogMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteBlog>>, TError,{blogId: number}, TContext>, request?: SecondParameter<typeof orvalClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteBlog>>, TError,{blogId: number}, TContext> => {
+
+const mutationKey = ['deleteBlog'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteBlog>>, {blogId: number}> = (props) => {
+          const {blogId} = props ?? {};
+
+          return  deleteBlog(blogId,requestOptions)
+        }
+
+
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteBlogMutationResult = NonNullable<Awaited<ReturnType<typeof deleteBlog>>>
+    
+    export type DeleteBlogMutationError = void
+
+    /**
+ * @summary 게시물 삭제
+ */
+export const useDeleteBlog = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteBlog>>, TError,{blogId: number}, TContext>, request?: SecondParameter<typeof orvalClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteBlog>>,
+        TError,
+        {blogId: number},
+        TContext
+      > => {
+      return useMutation(getDeleteBlogMutationOptions(options), queryClient);
+    }
+    
+/**
+ * 기존 블로그 게시물을 수정합니다.
+ * @summary 게시물 수정
+ */
+export type modifyBlogResponse200 = {
+  data: BlogResponse
+  status: 200
+}
+
+export type modifyBlogResponse403 = {
+  data: Blob
+  status: 403
+}
+
+export type modifyBlogResponse404 = {
+  data: Blob
+  status: 404
+}
+    
+export type modifyBlogResponseSuccess = (modifyBlogResponse200) & {
+  headers: Headers;
+};
+export type modifyBlogResponseError = (modifyBlogResponse403 | modifyBlogResponse404) & {
+  headers: Headers;
+};
+
+export type modifyBlogResponse = (modifyBlogResponseSuccess | modifyBlogResponseError)
+
+export const getModifyBlogUrl = (blogId: number,) => {
+
+
+  
+
+  return `/api/v1/blogs/${blogId}`
+}
+
+export const modifyBlog = async (blogId: number,
+    modifyBlogBody: Blob, options?: RequestInit): Promise<modifyBlogResponse> => {
+  
+  return orvalClient<modifyBlogResponse>(getModifyBlogUrl(blogId),
+  {      
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json;charset=UTF-8', ...options?.headers },
+    body: JSON.stringify(
+      modifyBlogBody,)
+  }
+);}
+
+
+
+
+export const getModifyBlogMutationOptions = <TError = Blob,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof modifyBlog>>, TError,{blogId: number;data: Blob}, TContext>, request?: SecondParameter<typeof orvalClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof modifyBlog>>, TError,{blogId: number;data: Blob}, TContext> => {
+
+const mutationKey = ['modifyBlog'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof modifyBlog>>, {blogId: number;data: Blob}> = (props) => {
+          const {blogId,data} = props ?? {};
+
+          return  modifyBlog(blogId,data,requestOptions)
+        }
+
+
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ModifyBlogMutationResult = NonNullable<Awaited<ReturnType<typeof modifyBlog>>>
+    export type ModifyBlogMutationBody = Blob
+    export type ModifyBlogMutationError = Blob
+
+    /**
+ * @summary 게시물 수정
+ */
+export const useModifyBlog = <TError = Blob,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof modifyBlog>>, TError,{blogId: number;data: Blob}, TContext>, request?: SecondParameter<typeof orvalClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof modifyBlog>>,
+        TError,
+        {blogId: number;data: Blob},
+        TContext
+      > => {
+      return useMutation(getModifyBlogMutationOptions(options), queryClient);
     }
     
 /**
@@ -1598,15 +2243,15 @@ export const completeRegistration = async (completeRegistrationBody: Blob, optio
 
 
 export const getCompleteRegistrationMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof completeRegistration>>, TError,{data: Blob}, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof completeRegistration>>, TError,{data: Blob}, TContext>, request?: SecondParameter<typeof orvalClient>}
 ): UseMutationOptions<Awaited<ReturnType<typeof completeRegistration>>, TError,{data: Blob}, TContext> => {
 
 const mutationKey = ['completeRegistration'];
-const {mutation: mutationOptions} = options ?
+const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
       : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
+      : {mutation: { mutationKey, }, request: undefined};
 
       
 
@@ -1614,7 +2259,7 @@ const {mutation: mutationOptions} = options ?
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof completeRegistration>>, {data: Blob}> = (props) => {
           const {data} = props ?? {};
 
-          return  completeRegistration(data,)
+          return  completeRegistration(data,requestOptions)
         }
 
 
@@ -1632,7 +2277,7 @@ const {mutation: mutationOptions} = options ?
  * @summary 회원가입 후 추가 정보 입력
  */
 export const useCompleteRegistration = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof completeRegistration>>, TError,{data: Blob}, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof completeRegistration>>, TError,{data: Blob}, TContext>, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof completeRegistration>>,
         TError,
@@ -1695,16 +2340,16 @@ export const getGetWikiQueryKey = (title: string,) => {
     }
 
     
-export const getGetWikiQueryOptions = <TData = Awaited<ReturnType<typeof getWiki>>, TError = Blob>(title: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWiki>>, TError, TData>>, }
+export const getGetWikiQueryOptions = <TData = Awaited<ReturnType<typeof getWiki>>, TError = Blob>(title: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWiki>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
 ) => {
 
-const {query: queryOptions} = options ?? {};
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetWikiQueryKey(title);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getWiki>>> = ({ signal }) => getWiki(title, { signal });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getWiki>>> = ({ signal }) => getWiki(title, { signal, ...requestOptions });
 
       
 
@@ -1724,7 +2369,7 @@ export function useGetWiki<TData = Awaited<ReturnType<typeof getWiki>>, TError =
           TError,
           Awaited<ReturnType<typeof getWiki>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetWiki<TData = Awaited<ReturnType<typeof getWiki>>, TError = Blob>(
@@ -1734,11 +2379,11 @@ export function useGetWiki<TData = Awaited<ReturnType<typeof getWiki>>, TError =
           TError,
           Awaited<ReturnType<typeof getWiki>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetWiki<TData = Awaited<ReturnType<typeof getWiki>>, TError = Blob>(
- title: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWiki>>, TError, TData>>, }
+ title: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWiki>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -1746,7 +2391,7 @@ export function useGetWiki<TData = Awaited<ReturnType<typeof getWiki>>, TError =
  */
 
 export function useGetWiki<TData = Awaited<ReturnType<typeof getWiki>>, TError = Blob>(
- title: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWiki>>, TError, TData>>, }
+ title: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWiki>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -1807,16 +2452,16 @@ export const getGetWikiHistoryQueryKey = (title: string,) => {
     }
 
     
-export const getGetWikiHistoryQueryOptions = <TData = Awaited<ReturnType<typeof getWikiHistory>>, TError = unknown>(title: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWikiHistory>>, TError, TData>>, }
+export const getGetWikiHistoryQueryOptions = <TData = Awaited<ReturnType<typeof getWikiHistory>>, TError = unknown>(title: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWikiHistory>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
 ) => {
 
-const {query: queryOptions} = options ?? {};
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetWikiHistoryQueryKey(title);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getWikiHistory>>> = ({ signal }) => getWikiHistory(title, { signal });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getWikiHistory>>> = ({ signal }) => getWikiHistory(title, { signal, ...requestOptions });
 
       
 
@@ -1836,7 +2481,7 @@ export function useGetWikiHistory<TData = Awaited<ReturnType<typeof getWikiHisto
           TError,
           Awaited<ReturnType<typeof getWikiHistory>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetWikiHistory<TData = Awaited<ReturnType<typeof getWikiHistory>>, TError = unknown>(
@@ -1846,11 +2491,11 @@ export function useGetWikiHistory<TData = Awaited<ReturnType<typeof getWikiHisto
           TError,
           Awaited<ReturnType<typeof getWikiHistory>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetWikiHistory<TData = Awaited<ReturnType<typeof getWikiHistory>>, TError = unknown>(
- title: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWikiHistory>>, TError, TData>>, }
+ title: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWikiHistory>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -1858,7 +2503,7 @@ export function useGetWikiHistory<TData = Awaited<ReturnType<typeof getWikiHisto
  */
 
 export function useGetWikiHistory<TData = Awaited<ReturnType<typeof getWikiHistory>>, TError = unknown>(
- title: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWikiHistory>>, TError, TData>>, }
+ title: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWikiHistory>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -1919,16 +2564,16 @@ export const getGetRecentWikiQueryKey = () => {
     }
 
     
-export const getGetRecentWikiQueryOptions = <TData = Awaited<ReturnType<typeof getRecentWiki>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRecentWiki>>, TError, TData>>, }
+export const getGetRecentWikiQueryOptions = <TData = Awaited<ReturnType<typeof getRecentWiki>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRecentWiki>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
 ) => {
 
-const {query: queryOptions} = options ?? {};
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetRecentWikiQueryKey();
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getRecentWiki>>> = ({ signal }) => getRecentWiki({ signal });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getRecentWiki>>> = ({ signal }) => getRecentWiki({ signal, ...requestOptions });
 
       
 
@@ -1948,7 +2593,7 @@ export function useGetRecentWiki<TData = Awaited<ReturnType<typeof getRecentWiki
           TError,
           Awaited<ReturnType<typeof getRecentWiki>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetRecentWiki<TData = Awaited<ReturnType<typeof getRecentWiki>>, TError = unknown>(
@@ -1958,11 +2603,11 @@ export function useGetRecentWiki<TData = Awaited<ReturnType<typeof getRecentWiki
           TError,
           Awaited<ReturnType<typeof getRecentWiki>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetRecentWiki<TData = Awaited<ReturnType<typeof getRecentWiki>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRecentWiki>>, TError, TData>>, }
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRecentWiki>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -1970,7 +2615,7 @@ export function useGetRecentWiki<TData = Awaited<ReturnType<typeof getRecentWiki
  */
 
 export function useGetRecentWiki<TData = Awaited<ReturnType<typeof getRecentWiki>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRecentWiki>>, TError, TData>>, }
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRecentWiki>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -2038,16 +2683,16 @@ export const getGetRandomWikiQueryKey = () => {
     }
 
     
-export const getGetRandomWikiQueryOptions = <TData = Awaited<ReturnType<typeof getRandomWiki>>, TError = Blob>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRandomWiki>>, TError, TData>>, }
+export const getGetRandomWikiQueryOptions = <TData = Awaited<ReturnType<typeof getRandomWiki>>, TError = Blob>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRandomWiki>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
 ) => {
 
-const {query: queryOptions} = options ?? {};
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetRandomWikiQueryKey();
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getRandomWiki>>> = ({ signal }) => getRandomWiki({ signal });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getRandomWiki>>> = ({ signal }) => getRandomWiki({ signal, ...requestOptions });
 
       
 
@@ -2067,7 +2712,7 @@ export function useGetRandomWiki<TData = Awaited<ReturnType<typeof getRandomWiki
           TError,
           Awaited<ReturnType<typeof getRandomWiki>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetRandomWiki<TData = Awaited<ReturnType<typeof getRandomWiki>>, TError = Blob>(
@@ -2077,11 +2722,11 @@ export function useGetRandomWiki<TData = Awaited<ReturnType<typeof getRandomWiki
           TError,
           Awaited<ReturnType<typeof getRandomWiki>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetRandomWiki<TData = Awaited<ReturnType<typeof getRandomWiki>>, TError = Blob>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRandomWiki>>, TError, TData>>, }
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRandomWiki>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -2089,7 +2734,7 @@ export function useGetRandomWiki<TData = Awaited<ReturnType<typeof getRandomWiki
  */
 
 export function useGetRandomWiki<TData = Awaited<ReturnType<typeof getRandomWiki>>, TError = Blob>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRandomWiki>>, TError, TData>>, }
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRandomWiki>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -2164,16 +2809,16 @@ export const getGetAutocompleteWikiQueryKey = (params?: GetAutocompleteWikiParam
     }
 
     
-export const getGetAutocompleteWikiQueryOptions = <TData = Awaited<ReturnType<typeof getAutocompleteWiki>>, TError = Blob>(params: GetAutocompleteWikiParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAutocompleteWiki>>, TError, TData>>, }
+export const getGetAutocompleteWikiQueryOptions = <TData = Awaited<ReturnType<typeof getAutocompleteWiki>>, TError = Blob>(params: GetAutocompleteWikiParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAutocompleteWiki>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
 ) => {
 
-const {query: queryOptions} = options ?? {};
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetAutocompleteWikiQueryKey(params);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAutocompleteWiki>>> = ({ signal }) => getAutocompleteWiki(params, { signal });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAutocompleteWiki>>> = ({ signal }) => getAutocompleteWiki(params, { signal, ...requestOptions });
 
       
 
@@ -2193,7 +2838,7 @@ export function useGetAutocompleteWiki<TData = Awaited<ReturnType<typeof getAuto
           TError,
           Awaited<ReturnType<typeof getAutocompleteWiki>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetAutocompleteWiki<TData = Awaited<ReturnType<typeof getAutocompleteWiki>>, TError = Blob>(
@@ -2203,11 +2848,11 @@ export function useGetAutocompleteWiki<TData = Awaited<ReturnType<typeof getAuto
           TError,
           Awaited<ReturnType<typeof getAutocompleteWiki>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetAutocompleteWiki<TData = Awaited<ReturnType<typeof getAutocompleteWiki>>, TError = Blob>(
- params: GetAutocompleteWikiParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAutocompleteWiki>>, TError, TData>>, }
+ params: GetAutocompleteWikiParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAutocompleteWiki>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -2215,7 +2860,7 @@ export function useGetAutocompleteWiki<TData = Awaited<ReturnType<typeof getAuto
  */
 
 export function useGetAutocompleteWiki<TData = Awaited<ReturnType<typeof getAutocompleteWiki>>, TError = Blob>(
- params: GetAutocompleteWikiParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAutocompleteWiki>>, TError, TData>>, }
+ params: GetAutocompleteWikiParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAutocompleteWiki>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -2283,16 +2928,16 @@ export const getGetOtherMemberInfoQueryKey = (memberId: number,) => {
     }
 
     
-export const getGetOtherMemberInfoQueryOptions = <TData = Awaited<ReturnType<typeof getOtherMemberInfo>>, TError = Blob>(memberId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOtherMemberInfo>>, TError, TData>>, }
+export const getGetOtherMemberInfoQueryOptions = <TData = Awaited<ReturnType<typeof getOtherMemberInfo>>, TError = Blob>(memberId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOtherMemberInfo>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
 ) => {
 
-const {query: queryOptions} = options ?? {};
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetOtherMemberInfoQueryKey(memberId);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getOtherMemberInfo>>> = ({ signal }) => getOtherMemberInfo(memberId, { signal });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getOtherMemberInfo>>> = ({ signal }) => getOtherMemberInfo(memberId, { signal, ...requestOptions });
 
       
 
@@ -2312,7 +2957,7 @@ export function useGetOtherMemberInfo<TData = Awaited<ReturnType<typeof getOther
           TError,
           Awaited<ReturnType<typeof getOtherMemberInfo>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetOtherMemberInfo<TData = Awaited<ReturnType<typeof getOtherMemberInfo>>, TError = Blob>(
@@ -2322,11 +2967,11 @@ export function useGetOtherMemberInfo<TData = Awaited<ReturnType<typeof getOther
           TError,
           Awaited<ReturnType<typeof getOtherMemberInfo>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetOtherMemberInfo<TData = Awaited<ReturnType<typeof getOtherMemberInfo>>, TError = Blob>(
- memberId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOtherMemberInfo>>, TError, TData>>, }
+ memberId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOtherMemberInfo>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -2334,11 +2979,123 @@ export function useGetOtherMemberInfo<TData = Awaited<ReturnType<typeof getOther
  */
 
 export function useGetOtherMemberInfo<TData = Awaited<ReturnType<typeof getOtherMemberInfo>>, TError = Blob>(
- memberId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOtherMemberInfo>>, TError, TData>>, }
+ memberId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOtherMemberInfo>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGetOtherMemberInfoQueryOptions(memberId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+export type getBlogPresignedDownloadUrlResponse200 = {
+  data: Blob
+  status: 200
+}
+    
+export type getBlogPresignedDownloadUrlResponseSuccess = (getBlogPresignedDownloadUrlResponse200) & {
+  headers: Headers;
+};
+;
+
+export type getBlogPresignedDownloadUrlResponse = (getBlogPresignedDownloadUrlResponseSuccess)
+
+export const getGetBlogPresignedDownloadUrlUrl = (params: GetBlogPresignedDownloadUrlParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/v1/files/blog/presigned-url?${stringifiedParams}` : `/api/v1/files/blog/presigned-url`
+}
+
+export const getBlogPresignedDownloadUrl = async (params: GetBlogPresignedDownloadUrlParams, options?: RequestInit): Promise<getBlogPresignedDownloadUrlResponse> => {
+  
+  return orvalClient<getBlogPresignedDownloadUrlResponse>(getGetBlogPresignedDownloadUrlUrl(params),
+  {      
+    ...options,
+    method: 'GET'
+    
+    
+  }
+);}
+
+
+
+
+
+export const getGetBlogPresignedDownloadUrlQueryKey = (params?: GetBlogPresignedDownloadUrlParams,) => {
+    return [
+    `/api/v1/files/blog/presigned-url`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+    
+export const getGetBlogPresignedDownloadUrlQueryOptions = <TData = Awaited<ReturnType<typeof getBlogPresignedDownloadUrl>>, TError = unknown>(params: GetBlogPresignedDownloadUrlParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBlogPresignedDownloadUrl>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetBlogPresignedDownloadUrlQueryKey(params);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getBlogPresignedDownloadUrl>>> = ({ signal }) => getBlogPresignedDownloadUrl(params, { signal, ...requestOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getBlogPresignedDownloadUrl>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetBlogPresignedDownloadUrlQueryResult = NonNullable<Awaited<ReturnType<typeof getBlogPresignedDownloadUrl>>>
+export type GetBlogPresignedDownloadUrlQueryError = unknown
+
+
+export function useGetBlogPresignedDownloadUrl<TData = Awaited<ReturnType<typeof getBlogPresignedDownloadUrl>>, TError = unknown>(
+ params: GetBlogPresignedDownloadUrlParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBlogPresignedDownloadUrl>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getBlogPresignedDownloadUrl>>,
+          TError,
+          Awaited<ReturnType<typeof getBlogPresignedDownloadUrl>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof orvalClient>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetBlogPresignedDownloadUrl<TData = Awaited<ReturnType<typeof getBlogPresignedDownloadUrl>>, TError = unknown>(
+ params: GetBlogPresignedDownloadUrlParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBlogPresignedDownloadUrl>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getBlogPresignedDownloadUrl>>,
+          TError,
+          Awaited<ReturnType<typeof getBlogPresignedDownloadUrl>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof orvalClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetBlogPresignedDownloadUrl<TData = Awaited<ReturnType<typeof getBlogPresignedDownloadUrl>>, TError = unknown>(
+ params: GetBlogPresignedDownloadUrlParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBlogPresignedDownloadUrl>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetBlogPresignedDownloadUrl<TData = Awaited<ReturnType<typeof getBlogPresignedDownloadUrl>>, TError = unknown>(
+ params: GetBlogPresignedDownloadUrlParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBlogPresignedDownloadUrl>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetBlogPresignedDownloadUrlQueryOptions(params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -2391,16 +3148,16 @@ export const getCapsServerQueryKey = () => {
     }
 
     
-export const getCapsServerQueryOptions = <TData = Awaited<ReturnType<typeof capsServer>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof capsServer>>, TError, TData>>, }
+export const getCapsServerQueryOptions = <TData = Awaited<ReturnType<typeof capsServer>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof capsServer>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
 ) => {
 
-const {query: queryOptions} = options ?? {};
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getCapsServerQueryKey();
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof capsServer>>> = ({ signal }) => capsServer({ signal });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof capsServer>>> = ({ signal }) => capsServer({ signal, ...requestOptions });
 
       
 
@@ -2420,7 +3177,7 @@ export function useCapsServer<TData = Awaited<ReturnType<typeof capsServer>>, TE
           TError,
           Awaited<ReturnType<typeof capsServer>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useCapsServer<TData = Awaited<ReturnType<typeof capsServer>>, TError = unknown>(
@@ -2430,16 +3187,16 @@ export function useCapsServer<TData = Awaited<ReturnType<typeof capsServer>>, TE
           TError,
           Awaited<ReturnType<typeof capsServer>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useCapsServer<TData = Awaited<ReturnType<typeof capsServer>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof capsServer>>, TError, TData>>, }
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof capsServer>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useCapsServer<TData = Awaited<ReturnType<typeof capsServer>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof capsServer>>, TError, TData>>, }
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof capsServer>>, TError, TData>>, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -2455,7 +3212,7 @@ export function useCapsServer<TData = Awaited<ReturnType<typeof capsServer>>, TE
 
 
 export type deleteFileResponse200 = {
-  data: Blob
+  data: void
   status: 200
 }
     
@@ -2496,15 +3253,15 @@ export const deleteFile = async (params: DeleteFileParams, options?: RequestInit
 
 
 export const getDeleteFileMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteFile>>, TError,{params: DeleteFileParams}, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteFile>>, TError,{params: DeleteFileParams}, TContext>, request?: SecondParameter<typeof orvalClient>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteFile>>, TError,{params: DeleteFileParams}, TContext> => {
 
 const mutationKey = ['deleteFile'];
-const {mutation: mutationOptions} = options ?
+const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
       : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
+      : {mutation: { mutationKey, }, request: undefined};
 
       
 
@@ -2512,7 +3269,7 @@ const {mutation: mutationOptions} = options ?
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteFile>>, {params: DeleteFileParams}> = (props) => {
           const {params} = props ?? {};
 
-          return  deleteFile(params,)
+          return  deleteFile(params,requestOptions)
         }
 
 
@@ -2527,7 +3284,7 @@ const {mutation: mutationOptions} = options ?
     export type DeleteFileMutationError = unknown
 
     export const useDeleteFile = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteFile>>, TError,{params: DeleteFileParams}, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteFile>>, TError,{params: DeleteFileParams}, TContext>, request?: SecondParameter<typeof orvalClient>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteFile>>,
         TError,

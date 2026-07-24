@@ -32,6 +32,7 @@ import CapsHistoryPage from "./pages/CapsHistoryPage.tsx";
 import FAQPage from "./pages/FAQPage.tsx";
 import BlogPage from "./pages/BlogPage.tsx";
 import BlogDetailPage from "./pages/BlogDetailPage.tsx";
+import BlogEditPage from "./pages/BlogEditPage.tsx";
 import LedgerBoardPage from "./pages/LedgerBoardPage.tsx";
 import LedgerDetailPage from "./pages/LedgerDetailPage.tsx";
 import LedgerEditPage from "./pages/LedgerEditPage.tsx";
@@ -70,8 +71,24 @@ const App: React.FC = () => {
       element: <BlogPage />,
     },
     {
+      path: "/blog/edit",
+      element: (
+        <ProtectedRoute>
+          <BlogEditPage />
+        </ProtectedRoute>
+      ),
+    },
+    {
       path: "/blog/:blogId",
       element: <BlogDetailPage />,
+    },
+    {
+      path: "/blog/:blogId/edit",
+      element: (
+        <ProtectedRoute>
+          <BlogEditPage />
+        </ProtectedRoute>
+      ),
     },
     {
       path: "/intro",

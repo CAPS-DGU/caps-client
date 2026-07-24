@@ -140,13 +140,15 @@ function Navbar({ isTransparent = false, transparentBackground = false }: Navbar
             <span className="hidden md:inline">연혁</span>
             <HistoryIcon className="inline-block md:hidden" size={20} />
           </Link>
-          <Link
-            to="/blog"
-            className={`flex items-center text-base font-semibold transition ${menuColor}`}
-          >
-            <span className="hidden md:inline">블로그</span>
-            <Newspaper className="inline-block md:hidden" size={20} />
-          </Link>
+          {isLoggedIn && (
+            <Link
+              to="/blog"
+              className={`flex items-center text-base font-semibold transition ${menuColor}`}
+            >
+              <span className="hidden md:inline">블로그</span>
+              <Newspaper className="inline-block md:hidden" size={20} />
+            </Link>
+          )}
           {isLoggedIn && user?.role !== "NEW_MEMBER" && (
             <Link
               to="/ledger"

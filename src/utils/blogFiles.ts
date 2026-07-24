@@ -19,10 +19,11 @@ function pickDownloadUrl(response: unknown, fallback: string): string {
 /**
  * 저장된 key 를 실제로 열 수 있는 URL 로 바꾼다.
  *
- * 공개 엔드포인트(GET /api/v1/files/blog/presigned-url)는 비로그인도 호출할 수 있지만
- * 서버가 blog_file(첨부파일) 키만 허용한다. 본문 이미지와 썸네일은 각각 blog_image /
- * blog_post 에 있어 403 이 나므로, 그때만 로그인 회원용 범용 엔드포인트로 다시 시도한다.
- * (즉 현재는 비로그인 사용자에게 이미지·썸네일이 보이지 않는다 — 서버 수정 필요)
+ * 블로그 전용 엔드포인트(GET /api/v1/files/blog/presigned-url)는 서버가 blog_file(첨부파일)
+ * 키만 허용한다. 본문 이미지와 썸네일은 각각 blog_image / blog_post 에 있어 403 이 나므로,
+ * 그때만 회원용 범용 엔드포인트로 다시 시도한다.
+ * 블로그 열람 자체가 로그인 전용이라 대부분 이 폴백으로 해결되지만,
+ * 범용 엔드포인트는 MEMBER 이상만 허용하므로 NEW_MEMBER 는 이미지를 볼 수 없다.
  */
 export async function resolveBlogFileUrl(value: string): Promise<string> {
   if (isAbsoluteUrl(value)) return value;

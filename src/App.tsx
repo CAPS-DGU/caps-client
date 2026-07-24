@@ -171,12 +171,9 @@ const App: React.FC = () => {
       element: <MyPage />,
     },
     {
+      // 위키 열람(조회)은 비회원까지 공개. 편집/이력은 아래 라우트에서 계속 로그인 필요.
       path: "/wiki",
-      element: (
-        <ProtectedRoute>
-          <WikiPage />
-        </ProtectedRoute>
-      ),
+      element: <WikiPage />,
       children: [
         {
           path: ":wiki_title",

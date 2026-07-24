@@ -14,7 +14,6 @@ import {
   User as UserIcon,
   FileText,
   AlertCircle,
-  Newspaper,
 } from "lucide-react";
 
 interface NavbarProps {
@@ -140,15 +139,7 @@ function Navbar({ isTransparent = false, transparentBackground = false }: Navbar
             <span className="hidden md:inline">연혁</span>
             <HistoryIcon className="inline-block md:hidden" size={20} />
           </Link>
-          {isLoggedIn && (
-            <Link
-              to="/blog"
-              className={`flex items-center text-base font-semibold transition ${menuColor}`}
-            >
-              <span className="hidden md:inline">블로그</span>
-              <Newspaper className="inline-block md:hidden" size={20} />
-            </Link>
-          )}
+          {/* 블로그 메뉴는 디자인 확정 전까지 숨김 (/blog 라우트는 그대로 동작) */}
           {isLoggedIn && user?.role !== "NEW_MEMBER" && (
             <Link
               to="/ledger"

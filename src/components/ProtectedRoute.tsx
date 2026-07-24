@@ -16,7 +16,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   }
 
   if (!isLoggedIn) {
-    alert("잘못된 접근입니다.");
+    alert("로그인이 필요한 서비스입니다.");
     return <Navigate to="/" replace state={{ from: location }} />;
   }
 

@@ -82,7 +82,7 @@ const BlogPage: React.FC = () => {
   return (
     <div className="bg-[#FAFAFA] min-h-screen">
       <Navbar />
-      <div className="pt-20 max-w-6xl mx-auto px-4 md:px-6 pb-24">
+      <div className="pt-20 max-w-3xl mx-auto px-4 md:px-6 pb-24">
         {/* 타이틀 + 작성하기 */}
         <div className="flex flex-col gap-4 pt-10 pb-8 sm:flex-row sm:items-end sm:justify-between">
           <div>
@@ -136,7 +136,7 @@ const BlogPage: React.FC = () => {
             등록된 글이 없습니다.
           </p>
         ) : (
-          <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2">
             {posts.map((post) => (
               <article
                 key={post.id}

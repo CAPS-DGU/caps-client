@@ -6,6 +6,8 @@ import { Lock, Trash2, Paperclip, ImagePlus } from "lucide-react";
 import Navbar from "../components/NavBar";
 import Footer from "../components/MainPage/Footer";
 import { BLOG_CATEGORIES, BLOG_CATEGORY_MAP } from "../components/Blog/categories";
+import MarkdownEditor from "../components/Blog/MarkdownEditor";
+import BlogImage from "../components/Blog/BlogImage";
 import { useAuth } from "../hooks/useAuth";
 import { uploadFileToS3, uploadMultipleFilesToS3 } from "../utils/s3Upload";
 import { blogFileName } from "../utils/blogFiles";
@@ -24,10 +26,25 @@ const WRITE_ROLES = ["ADMIN", "COUNCIL", "PRESIDENT"];
 const TITLE_MAX = 50;
 const SUBTITLE_MAX = 50;
 
+/** 백엔드는 상세 응답에 thumbnailUrl 을 추가했지만 생성된 타입엔 아직 없어 확장해서 읽는다. */
+type BlogDetail = BlogDetailResponse & { thumbnailUrl?: string };
+
 /** 업로드 대기 중인 파일 (선택 시점엔 올리지 않고 저장할 때 한 번에 올린다) */
 interface PendingFile {
   id: number;
   file: File;
+}
+
+/** 본문 마크다운에서 우리 S3 key 로 삽입된 이미지 키만 뽑는다 (외부 URL 은 제외). */
+function extractContentImageKeys(md: string): string[] {
+  const re = /!\[[^\]]*\]\(\s*([^)\s]+)[^)]*\)/g;
+  const out: string[] = [];
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(md)) !== null) {
+    const url = (m[1] || "").trim();
+    if (url && !/^https?:\/\//i.test(url) && !url.startsWith("data:")) out.push(url);
+  }
+  return Array.from(new Set(out));
 }
 
 const BlogEditPage: React.FC = () => {
@@ -45,10 +62,12 @@ const BlogEditPage: React.FC = () => {
   const [category, setCategory] = useState<string>(CreateOrModifyBlogRequestCategory.EVENTS);
   const [isPrivate, setIsPrivate] = useState<boolean>(false);
 
+  // 대표 이미지: 새로 고른 파일 / 기존 값(key) / 기존 값 제거 여부
   const [thumbnail, setThumbnail] = useState<File | null>(null);
-  const [images, setImages] = useState<PendingFile[]>([]);
+  const [existingThumbnailUrl, setExistingThumbnailUrl] = useState<string | null>(null);
+  const [removedThumbnail, setRemovedThumbnail] = useState<boolean>(false);
+
   const [files, setFiles] = useState<PendingFile[]>([]);
-  const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]);
   const [existingFileUrls, setExistingFileUrls] = useState<string[]>([]);
 
   const [submitting, setSubmitting] = useState<boolean>(false);
@@ -86,26 +105,37 @@ const BlogEditPage: React.FC = () => {
 
   // 수정 모드일 때만 기존 값 채우기
   useEffect(() => {
-    const post = detail?.data as BlogDetailResponse | undefined;
+    const post = detail?.data as BlogDetail | undefined;
     if (!post) return;
     setTitle(post.title ?? "");
     setSubtitle(post.subtitle ?? "");
     setContent(post.content ?? "");
     setCategory(post.category ?? CreateOrModifyBlogRequestCategory.EVENTS);
     setIsPrivate(!!post.isPrivate);
-    setExistingImageUrls(post.imageUrls ?? []);
+    setExistingThumbnailUrl(post.thumbnailUrl ?? null);
+    setRemovedThumbnail(false);
     setExistingFileUrls(post.fileUrls ?? []);
   }, [detail]);
 
-  const addPending = (
-    setter: React.Dispatch<React.SetStateAction<PendingFile[]>>,
-    selected: File[]
-  ) => {
-    setter((prev) => [
-      ...prev,
-      ...selected.map((file, index) => ({ id: Date.now() + index, file })),
-    ]);
+  const addFiles = (selected: File[]) => {
+    setFiles((prev) => [...prev, ...selected.map((file, index) => ({ id: Date.now() + index, file }))]);
   };
+
+  // 본문 인라인 이미지: 삽입 즉시 업로드하고 S3 key 를 돌려준다 (마크다운에 ![](key) 로 들어간다)
+  const handleInlineImageUpload = async (file: File): Promise<string | null> => {
+    try {
+      return await uploadFileToS3(file, `blog/${Date.now()}_0_${file.name}`);
+    } catch (e) {
+      console.error("본문 이미지 업로드 실패:", e);
+      return null;
+    }
+  };
+
+  const showThumbnailPreview = thumbnailPreview
+    ? thumbnailPreview
+    : existingThumbnailUrl && !removedThumbnail
+      ? existingThumbnailUrl
+      : null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -121,13 +151,7 @@ const BlogEditPage: React.FC = () => {
 
     setSubmitting(true);
     try {
-      // 새로 고른 파일들만 업로드하고, 기존 항목은 그대로 유지한다
-      const uploadedImages = images.length
-        ? await uploadMultipleFilesToS3(
-            images.map((item) => item.file),
-            "blog"
-          )
-        : [];
+      // 새 첨부만 업로드, 기존 첨부는 유지
       const uploadedFiles = files.length
         ? await uploadMultipleFilesToS3(
             files.map((item) => item.file),
@@ -138,19 +162,25 @@ const BlogEditPage: React.FC = () => {
         ? await uploadFileToS3(thumbnail, `blog/${Date.now()}_0_${thumbnail.name}`)
         : null;
 
+      // 썸네일: 새로 고르면 교체 / 명시적으로 지우면 null / 그대로면 기존 값 유지(항상 전송)
+      let thumbnailUrl: string | null;
+      if (uploadedThumbnail) thumbnailUrl = uploadedThumbnail;
+      else if (removedThumbnail) thumbnailUrl = null;
+      else thumbnailUrl = existingThumbnailUrl ?? null;
+
       const payload: Record<string, unknown> = {
         title: title.trim(),
         subtitle: subtitle.trim(),
         content: content.trim(),
+        thumbnailUrl,
         category,
         isPrivate,
         writerGrade: Number(user?.grade) || 0,
         writerName: user?.name ?? "",
-        imageUrls: [...existingImageUrls, ...uploadedImages],
+        // 본문에 삽입된 이미지 key 를 imageUrls 로 함께 보내 S3 수명주기(교체/삭제 정리)를 맞춘다
+        imageUrls: extractContentImageKeys(content),
         fileUrls: [...existingFileUrls, ...uploadedFiles],
       };
-      // 수정 모드에서 썸네일을 새로 고르지 않았다면 기존 값을 건드리지 않는다
-      if (uploadedThumbnail) payload.thumbnailUrl = uploadedThumbnail;
 
       if (isEdit) {
         await modifyBlog({ blogId: id, data: payload as any });
@@ -178,7 +208,6 @@ const BlogEditPage: React.FC = () => {
   };
 
   const previewCat = BLOG_CATEGORY_MAP[category];
-  const totalImages = existingImageUrls.length + images.length;
 
   return (
     <div className="flex min-h-screen flex-col bg-[#FAFAFA]">
@@ -186,7 +215,7 @@ const BlogEditPage: React.FC = () => {
       <main className="flex-1 pt-20">
         <form
           onSubmit={handleSubmit}
-          className="mx-auto max-w-5xl px-4 md:px-6 py-10 space-y-6"
+          className="mx-auto max-w-3xl px-4 md:px-6 py-10 space-y-6"
         >
           {/* 헤더: 제목 + 비공개 토글 + 취소/발행 */}
           <div className="flex flex-col gap-4 border-b border-gray-200 pb-5 sm:flex-row sm:items-center sm:justify-between">
@@ -288,30 +317,51 @@ const BlogEditPage: React.FC = () => {
             })}
           </div>
 
-          {/* 내용 */}
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="내용을 입력하세요."
-            className="min-h-[20rem] w-full resize-y rounded-xl border border-gray-200 bg-white p-4 text-[15px] leading-8 text-gray-800 placeholder-gray-400 focus:border-[#007AEB] focus:outline-none focus:ring-2 focus:ring-[#007AEB]/20"
-          />
+          {/* 내용 — 마크다운 에디터 (툴바 + Edit/Preview 토글, 이미지는 본문에 인라인 삽입) */}
+          <div>
+            <div className="mb-2 flex items-center justify-between">
+              <h2 className="text-sm font-bold text-gray-700">내용</h2>
+              <span className="text-xs text-gray-400">마크다운 문법으로 작성하고 Preview 로 확인하세요</span>
+            </div>
+            <MarkdownEditor
+              value={content}
+              onChange={setContent}
+              onImageUpload={handleInlineImageUpload}
+              placeholder="내용을 입력하세요. (마크다운 지원 · 툴바의 이미지 버튼으로 본문에 이미지를 삽입할 수 있어요)"
+            />
+          </div>
 
           <div className="grid gap-6 lg:grid-cols-2">
             <div className="space-y-6">
               {/* 대표 이미지 */}
               <section>
                 <h2 className="mb-2 text-sm font-bold text-gray-700">대표 이미지 (선택)</h2>
-                {thumbnailPreview ? (
+                {showThumbnailPreview ? (
                   <div className="relative overflow-hidden rounded-xl border border-gray-200 bg-white">
                     <div className="aspect-[16/9] w-full">
-                      <img
-                        src={thumbnailPreview}
-                        alt="대표 이미지 미리보기"
-                        className="h-full w-full object-cover"
-                      />
+                      {thumbnailPreview ? (
+                        <img
+                          src={thumbnailPreview}
+                          alt="대표 이미지 미리보기"
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <BlogImage
+                          src={showThumbnailPreview}
+                          alt="현재 대표 이미지"
+                          className="h-full w-full object-cover"
+                          fallback={
+                            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 text-2xl font-black tracking-widest text-slate-300">
+                              CAPS
+                            </div>
+                          }
+                        />
+                      )}
                     </div>
                     <div className="flex items-center justify-between gap-2 px-3 py-2">
-                      <span className="truncate text-sm text-gray-600">{thumbnail?.name}</span>
+                      <span className="truncate text-sm text-gray-600">
+                        {thumbnail ? thumbnail.name : "현재 대표 이미지"}
+                      </span>
                       <div className="flex shrink-0 items-center gap-1">
                         <label className="cursor-pointer rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-600 hover:border-[#007AEB] hover:text-[#007AEB]">
                           이미지 변경
@@ -319,12 +369,18 @@ const BlogEditPage: React.FC = () => {
                             type="file"
                             accept="image/*"
                             className="hidden"
-                            onChange={(e) => setThumbnail(e.target.files?.[0] ?? null)}
+                            onChange={(e) => {
+                              setThumbnail(e.target.files?.[0] ?? null);
+                              setRemovedThumbnail(false);
+                            }}
                           />
                         </label>
                         <button
                           type="button"
-                          onClick={() => setThumbnail(null)}
+                          onClick={() => {
+                            if (thumbnail) setThumbnail(null);
+                            else setRemovedThumbnail(true);
+                          }}
                           aria-label="대표 이미지 삭제"
                           className="rounded-lg p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-500"
                         >
@@ -336,67 +392,17 @@ const BlogEditPage: React.FC = () => {
                 ) : (
                   <label className="flex aspect-[16/9] cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-gray-300 bg-white text-gray-400 transition-colors hover:border-[#007AEB] hover:text-[#007AEB]">
                     <ImagePlus className="h-8 w-8" strokeWidth={1.6} />
-                    <span className="text-sm font-medium">
-                      {isEdit ? "변경할 대표 이미지 선택" : "대표 이미지 선택"}
-                    </span>
-                    {isEdit && (
-                      <span className="text-xs text-gray-400">선택하지 않으면 기존 이미지가 유지됩니다</span>
-                    )}
+                    <span className="text-sm font-medium">대표 이미지 선택</span>
                     <input
                       type="file"
                       accept="image/*"
                       className="hidden"
-                      onChange={(e) => setThumbnail(e.target.files?.[0] ?? null)}
+                      onChange={(e) => {
+                        setThumbnail(e.target.files?.[0] ?? null);
+                        setRemovedThumbnail(false);
+                      }}
                     />
                   </label>
-                )}
-              </section>
-
-              {/* 본문 이미지 */}
-              <section className="rounded-xl border border-gray-200 bg-white p-4">
-                <label className="flex cursor-pointer items-center justify-between">
-                  <span className="text-sm font-bold text-[#007AEB]">본문 이미지 추가</span>
-                  <span className="inline-flex items-center gap-1.5 text-xs text-gray-400">
-                    <ImagePlus className="h-4 w-4" />
-                    {totalImages > 0 ? `${totalImages}개` : "선택"}
-                  </span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    className="hidden"
-                    onChange={(e) => addPending(setImages, Array.from(e.target.files ?? []))}
-                  />
-                </label>
-                {(existingImageUrls.length > 0 || images.length > 0) && (
-                  <ul className="mt-3 space-y-1.5">
-                    {existingImageUrls.map((url, index) => (
-                      <li key={url} className="flex items-center justify-between text-sm text-gray-600">
-                        <span className="truncate">{blogFileName(url)}</span>
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setExistingImageUrls((prev) => prev.filter((_, i) => i !== index))
-                          }
-                          className="ml-3 shrink-0 text-xs text-gray-400 hover:text-red-500"
-                        >
-                          제거
-                        </button>
-                      </li>
-                    ))}
-                    {images.map((item) => (
-                      <li key={item.id} className="flex items-center justify-between text-sm text-gray-600">
-                        <span className="truncate">{item.file.name}</span>
-                        <button
-                          type="button"
-                          onClick={() => setImages((prev) => prev.filter((f) => f.id !== item.id))}
-                          className="ml-3 shrink-0 text-xs text-gray-400 hover:text-red-500"
-                        >
-                          제거
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
                 )}
               </section>
 
@@ -412,7 +418,7 @@ const BlogEditPage: React.FC = () => {
                     type="file"
                     multiple
                     className="hidden"
-                    onChange={(e) => addPending(setFiles, Array.from(e.target.files ?? []))}
+                    onChange={(e) => addFiles(Array.from(e.target.files ?? []))}
                   />
                 </label>
                 {(existingFileUrls.length > 0 || files.length > 0) && (
@@ -464,6 +470,17 @@ const BlogEditPage: React.FC = () => {
                       src={thumbnailPreview}
                       alt="카드 미리보기 썸네일"
                       className="h-full w-full object-cover"
+                    />
+                  ) : showThumbnailPreview ? (
+                    <BlogImage
+                      src={showThumbnailPreview}
+                      alt="카드 미리보기 썸네일"
+                      className="h-full w-full object-cover"
+                      fallback={
+                        <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 text-2xl font-black tracking-widest text-slate-300">
+                          CAPS
+                        </div>
+                      }
                     />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 text-2xl font-black tracking-widest text-slate-300">

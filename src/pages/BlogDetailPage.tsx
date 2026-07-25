@@ -7,6 +7,7 @@ import { ChevronLeft, Paperclip, Lock } from "lucide-react";
 import Navbar from "../components/NavBar";
 import Footer from "../components/MainPage/Footer";
 import BlogImage from "../components/Blog/BlogImage";
+import MarkdownView from "../components/Blog/MarkdownView";
 import { BLOG_CATEGORY_MAP, blogCategoryLabel } from "../components/Blog/categories";
 import { useAuth } from "../hooks/useAuth";
 import { resolveBlogFileUrl, blogFileName } from "../utils/blogFiles";
@@ -50,6 +51,10 @@ const BlogDetailPage: React.FC = () => {
 
   const post = data?.data as BlogDetailResponse | undefined;
   const cat = post?.category ? BLOG_CATEGORY_MAP[post.category] : undefined;
+  // 본문 마크다운에 이미 인라인으로 들어간 이미지는 하단 갤러리에서 제외(중복 방지)
+  const leftoverImages = (post?.imageUrls ?? []).filter(
+    (u) => !(post?.content ?? "").includes(u)
+  );
 
   // 첨부는 저장된 값이 S3 key 일 수 있어 클릭 시점에 열 수 있는 주소로 바꿔서 내려받는다
   const handleFileClick = async (fileUrl: string, e: React.MouseEvent) => {
@@ -170,9 +175,13 @@ const BlogDetailPage: React.FC = () => {
               )}
             </div>
 
-            {post.imageUrls && post.imageUrls.length > 0 && (
+            {/* 본문: 마크다운 렌더 (인라인 이미지는 삽입 위치에 그대로 표시) */}
+            <MarkdownView content={post.content ?? ""} className="mt-8" />
+
+            {/* 본문에 인라인으로 포함되지 않은 이미지(레거시 게시물 보강)만 하단에 렌더 */}
+            {leftoverImages.length > 0 && (
               <div className="mt-8 flex flex-col gap-4">
-                {post.imageUrls.map((url, i) => (
+                {leftoverImages.map((url, i) => (
                   <BlogImage
                     key={i}
                     src={url}
@@ -182,10 +191,6 @@ const BlogDetailPage: React.FC = () => {
                 ))}
               </div>
             )}
-
-            <div className="mt-8 whitespace-pre-wrap text-[15px] leading-8 text-gray-800">
-              {post.content}
-            </div>
 
             {post.fileUrls && post.fileUrls.length > 0 && (
               <div className="mt-10 border-t border-gray-200 pt-6">

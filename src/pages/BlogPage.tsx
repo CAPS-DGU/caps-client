@@ -12,6 +12,7 @@ import {
 import Navbar from "../components/NavBar";
 import Footer from "../components/MainPage/Footer";
 import BlogImage from "../components/Blog/BlogImage";
+import logoGradient from "../assets/logo-gradient.png";
 import { BLOG_CATEGORIES, blogCategoryLabel } from "../components/Blog/categories";
 import { useAuth } from "../hooks/useAuth";
 import { useGetBlogs, GetBlogsCategory, BlogListResponse } from "../api/generated/capsApi";
@@ -86,8 +87,8 @@ const BlogPage: React.FC = () => {
         {/* 타이틀 + 작성하기 */}
         <div className="flex flex-col gap-4 pt-10 pb-8 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-black">블로그</h1>
-            <p className="mt-3 text-base md:text-lg font-medium text-[#374151]">
+            <h1 className="text-2xl font-extrabold tracking-tight text-black">블로그</h1>
+            <p className="mt-3 text-sm md:text-base font-medium text-[#374151]">
               CAPS의 활동과 기술적 인사이트를 텍스트로 기록하고 공유합니다
             </p>
           </div>
@@ -104,20 +105,20 @@ const BlogPage: React.FC = () => {
         </div>
 
         {/* 카테고리 필터 */}
-        <div className="mb-10 flex flex-wrap gap-2.5">
+        <div className="mb-10 flex flex-nowrap gap-1.5 md:flex-wrap md:gap-2">
           {FILTERS.map((f) => {
             const active = category === f.key;
             return (
               <button
                 key={f.key}
                 onClick={() => handleCategory(f.key)}
-                className={`inline-flex items-center gap-2 whitespace-nowrap rounded-xl border px-4 md:px-5 py-2.5 text-sm md:text-base font-bold transition-colors ${
+                className={`inline-flex items-center gap-1 whitespace-nowrap rounded-lg border px-2.5 py-1 text-xs font-bold transition-colors md:gap-1.5 md:px-3.5 md:py-1.5 md:text-sm ${
                   active
                     ? "border-[#007AEB] bg-[#007AEB] text-white"
                     : "border-[#bcbcbc] bg-white text-[#4e4e4e] hover:border-[#007AEB] hover:text-[#007AEB]"
                 }`}
               >
-                {f.Icon && <f.Icon className="h-4 w-4 md:h-5 md:w-5" strokeWidth={2} />}
+                {f.Icon && <f.Icon className="h-3 w-3 md:h-3.5 md:w-3.5" strokeWidth={2} />}
                 {f.label}
               </button>
             );
@@ -141,16 +142,18 @@ const BlogPage: React.FC = () => {
               <article
                 key={post.id}
                 onClick={() => navigate(`/blog/${post.id}`)}
-                className="group cursor-pointer overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                className={`group flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-gray-200 p-2 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${
+                  post.isPrivate ? "bg-gray-100" : "bg-white"
+                }`}
               >
-                <div className="relative aspect-[16/9] w-full overflow-hidden bg-gray-100">
+                <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl bg-gray-100">
                   <BlogImage
                     src={post.thumbnailUrl}
                     alt={post.title}
                     className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                     fallback={
-                      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 text-2xl font-black tracking-widest text-slate-300">
-                        CAPS
+                      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
+                        <img src={logoGradient} alt="CAPS" className="h-10 w-auto opacity-70" />
                       </div>
                     }
                   />
@@ -165,12 +168,24 @@ const BlogPage: React.FC = () => {
                     </div>
                   )}
                 </div>
-                <div className="p-5">
-                  <h3 className="truncate text-lg font-bold text-black">{post.title}</h3>
-                  {post.subtitle && (
-                    <p className="mt-1.5 line-clamp-2 text-sm text-gray-500">{post.subtitle}</p>
-                  )}
-                  <div className="mt-4 flex items-center justify-between text-xs text-[#9ca3af]">
+                <div className="flex flex-1 flex-col px-2 pb-1 pt-4">
+                  <div>
+                    <h3
+                      className={`truncate text-lg font-bold ${
+                        post.isPrivate ? "text-gray-600" : "text-black"
+                      }`}
+                    >
+                      {post.title}
+                    </h3>
+                    <p className="mt-1.5 line-clamp-2 min-h-[2.5rem] text-sm text-gray-500">
+                      {post.subtitle || "\u00A0"}
+                    </p>
+                  </div>
+                  <div
+                    className={`mt-auto flex items-center justify-between pt-4 text-xs ${
+                      post.isPrivate ? "text-gray-500" : "text-[#9ca3af]"
+                    }`}
+                  >
                     <span className="truncate">
                       {post.writerGrade ? `${post.writerGrade}기 ` : ""}
                       {post.writerName}

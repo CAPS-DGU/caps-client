@@ -15,12 +15,17 @@ import MarkdownView from "./MarkdownView";
 interface MarkdownEditorProps {
   value: string;
   onChange: (v: string) => void;
-  /** 이미지를 업로드하고 S3 key(또는 URL)를 돌려준다. 실패 시 null. */
+  /** 본문에 바로 넣을 수 있는 값(로컬 blob URL 이거나 S3 key/URL)을 돌려준다. 실패 시 null. */
   onImageUpload: (file: File) => Promise<string | null>;
   placeholder?: string;
 }
 
 type Mode = "edit" | "preview";
+
+/** 파일명을 이미지 alt 텍스트(`[...]`)에 그대로 넣을 수 있도록 CommonMark 특수문자를 이스케이프한다. */
+function escapeMarkdownLabel(text: string): string {
+  return text.replace(/[\\[\]]/g, "\\$&");
+}
 
 const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
   value,
@@ -73,7 +78,7 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     setUploading(true);
     try {
       const key = await onImageUpload(file);
-      if (key) insertBlock(`![${file.name}](${key})\n`);
+      if (key) insertBlock(`![${escapeMarkdownLabel(file.name)}](${key})\n`);
       else alert("이미지 업로드에 실패했습니다.");
     } finally {
       setUploading(false);

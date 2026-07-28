@@ -9,7 +9,7 @@ import { BLOG_CATEGORIES, BLOG_CATEGORY_MAP } from "../components/Blog/categorie
 import MarkdownEditor from "../components/Blog/MarkdownEditor";
 import BlogImage from "../components/Blog/BlogImage";
 import { useAuth } from "../hooks/useAuth";
-import { uploadFileToS3, uploadMultipleFilesToS3 } from "../utils/s3Upload";
+import { uploadFileToS3, uploadMultipleFilesToS3, sanitizeFileName } from "../utils/s3Upload";
 import { blogFileName } from "../utils/blogFiles";
 import {
   useGetBlog,
@@ -35,13 +35,19 @@ interface PendingFile {
   file: File;
 }
 
-/** 본문 마크다운에서 우리 S3 key 로 삽입된 이미지 키만 뽑는다 (외부 URL 은 제외). */
+/**
+ * 본문 마크다운에서 우리 S3 key 로 삽입된 이미지 키만 뽑는다 (외부 URL 은 제외).
+ * alt 부분은 `\]`, `\[` 처럼 이스케이프된 대괄호를 포함할 수 있으므로(escapeMarkdownLabel 참고)
+ * `(?:\\.|[^\]\\])*` 로 이스케이프 시퀀스를 하나의 단위로 건너뛰어 조기 종료를 막는다.
+ * CommonMark 문법상 dest 에 공백이 있으면 `<...>` 로 감싸야 하므로 그 형태도 지원하고,
+ * `![alt](dest "title")` 처럼 title 이 붙는 경우 dest 뒤에서 정확히 멈추도록 한다.
+ */
 function extractContentImageKeys(md: string): string[] {
-  const re = /!\[[^\]]*\]\(\s*([^)\s]+)[^)]*\)/g;
+  const re = /!\[(?:\\.|[^\]\\])*\]\(\s*(?:<([^>]*)>|([^)\s]+))(?:\s+"[^"]*")?\s*\)/g;
   const out: string[] = [];
   let m: RegExpExecArray | null;
   while ((m = re.exec(md)) !== null) {
-    const url = (m[1] || "").trim();
+    const url = (m[1] ?? m[2] ?? "").trim();
     if (url && !/^https?:\/\//i.test(url) && !url.startsWith("data:")) out.push(url);
   }
   return Array.from(new Set(out));
@@ -124,7 +130,7 @@ const BlogEditPage: React.FC = () => {
   // 본문 인라인 이미지: 삽입 즉시 업로드하고 S3 key 를 돌려준다 (마크다운에 ![](key) 로 들어간다)
   const handleInlineImageUpload = async (file: File): Promise<string | null> => {
     try {
-      return await uploadFileToS3(file, `blog/${Date.now()}_0_${file.name}`);
+      return await uploadFileToS3(file, `blog/${Date.now()}_0_${sanitizeFileName(file.name)}`);
     } catch (e) {
       console.error("본문 이미지 업로드 실패:", e);
       return null;
@@ -159,7 +165,7 @@ const BlogEditPage: React.FC = () => {
           )
         : [];
       const uploadedThumbnail = thumbnail
-        ? await uploadFileToS3(thumbnail, `blog/${Date.now()}_0_${thumbnail.name}`)
+        ? await uploadFileToS3(thumbnail, `blog/${Date.now()}_0_${sanitizeFileName(thumbnail.name)}`)
         : null;
 
       // 썸네일: 새로 고르면 교체 / 명시적으로 지우면 null / 그대로면 기존 값 유지(항상 전송)

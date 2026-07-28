@@ -1,6 +1,24 @@
 import axios from 'axios';
 
 /**
+ * 파일명을 S3 key/마크다운에 안전하게 쓸 수 있도록 정제한다.
+ * 공백은 언더스코어로 치환하고,
+ * URL/마크다운에서 특수 의미를 갖는 문자(공백, 괄호, 따옴표, 백슬래시 등)는 제거한다.
+ */
+export function sanitizeFileName(fileName: string): string {
+  const dotIndex = fileName.lastIndexOf('.');
+  const hasExt = dotIndex > 0 && dotIndex < fileName.length - 1;
+  const base = hasExt ? fileName.slice(0, dotIndex) : fileName;
+  const ext = hasExt ? fileName.slice(dotIndex) : '';
+
+  const safeBase = base
+    .replace(/\s+/g, '_')
+    .replace(/[^\w.\-ㄱ-ㆎ가-힣]/g, '');
+
+  return `${safeBase || 'file'}${ext}`;
+}
+
+/**
  * S3 파일 업로드를 위한 Presigned URL 요청
  * @param fileName - 업로드할 파일명 (경로 포함 가능)
  * @param fileType - 파일 MIME 타입 (예: 'image/jpeg', 'application/pdf')
@@ -47,7 +65,7 @@ export async function uploadFileToS3(
   fileType?: string
 ): Promise<string> {
   // fileName이 제공되지 않으면 파일명 기반으로 생성
-  const finalFileName = fileName || `uploads/${Date.now()}_${file.name}`;
+  const finalFileName = fileName || `uploads/${Date.now()}_${sanitizeFileName(file.name)}`;
   const finalFileType = fileType || file.type || 'application/octet-stream';
 
   // 1. Lambda에 Presigned URL 요청
@@ -148,7 +166,7 @@ export async function uploadMultipleFilesToS3(
 ): Promise<string[]> {
   const uploadPromises = files.map((file, index) => {
     const fileName = basePath
-      ? `${basePath}/${Date.now()}_${index}_${file.name}`
+      ? `${basePath}/${Date.now()}_${index}_${sanitizeFileName(file.name)}`
       : undefined;
     return uploadFileToS3(file, fileName);
   });

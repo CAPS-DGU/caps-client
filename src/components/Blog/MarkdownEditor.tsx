@@ -22,6 +22,11 @@ interface MarkdownEditorProps {
 
 type Mode = "edit" | "preview";
 
+/** 파일명을 이미지 alt 텍스트(`[...]`)에 그대로 넣을 수 있도록 CommonMark 특수문자를 이스케이프한다. */
+function escapeMarkdownLabel(text: string): string {
+  return text.replace(/[\\[\]]/g, "\\$&");
+}
+
 const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
   value,
   onChange,
@@ -73,7 +78,7 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     setUploading(true);
     try {
       const key = await onImageUpload(file);
-      if (key) insertBlock(`![${file.name}](${key})\n`);
+      if (key) insertBlock(`![${escapeMarkdownLabel(file.name)}](${key})\n`);
       else alert("이미지 업로드에 실패했습니다.");
     } finally {
       setUploading(false);

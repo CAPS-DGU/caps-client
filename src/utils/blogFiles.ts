@@ -1,5 +1,4 @@
-import axios from "axios";
-import { getBlogPresignedDownloadUrl, getPresignedDownloadUrl } from "../api/generated/capsApi";
+import { getBlogPresignedDownloadUrl } from "../api/generated/capsApi";
 
 /**
  * 블로그의 thumbnailUrl / imageUrls / fileUrls 에는 S3 key 가 그대로 저장된다.
@@ -19,24 +18,21 @@ function pickDownloadUrl(response: unknown, fallback: string): string {
   return data?.downloadURL ?? data?.downloadUrl ?? data?.url ?? fallback;
 }
 
-/**
- * 저장된 key 를 실제로 열 수 있는 URL 로 바꾼다.
- *
- * 블로그 전용 엔드포인트(GET /api/v1/files/blog/presigned-url)는 서버가 blog_file(첨부파일)
- * 키만 허용한다. 본문 이미지와 썸네일은 각각 blog_image / blog_post 에 있어 403 이 나므로,
- * 그때만 회원용 범용 엔드포인트로 다시 시도한다.
- * 블로그 열람 자체가 로그인 전용이라 대부분 이 폴백으로 해결되지만,
- * 범용 엔드포인트는 MEMBER 이상만 허용하므로 NEW_MEMBER 는 이미지를 볼 수 없다.
- */
+// presign 요청 전에 한 번 디코딩해 S3 key 원문으로 되돌린다.
+function toStoredFileKey(value: string): string {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
+
+// 저장된 key 를 실제로 열 수 있는 URL 로 바꾼다.
 export async function resolveBlogFileUrl(value: string): Promise<string> {
   if (isAbsoluteUrl(value)) return value;
 
-  try {
-    return pickDownloadUrl(await getBlogPresignedDownloadUrl({ key: value }), value);
-  } catch (error) {
-    if (!axios.isAxiosError(error) || error.response?.status !== 403) throw error;
-    return pickDownloadUrl(await getPresignedDownloadUrl({ key: value }), value);
-  }
+  const key = toStoredFileKey(value);
+  return pickDownloadUrl(await getBlogPresignedDownloadUrl({ key }), key);
 }
 
 /** key 에서 사람이 읽을 파일명만 뽑는다. 업로드 시 붙는 `{timestamp}_{index}_` 접두사는 제거. */

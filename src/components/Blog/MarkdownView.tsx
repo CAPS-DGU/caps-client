@@ -1,11 +1,18 @@
 import React from "react";
-import ReactMarkdown from "react-markdown";
+import ReactMarkdown, { defaultUrlTransform } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import BlogImage from "./BlogImage";
 
 interface MarkdownViewProps {
   content: string;
   className?: string;
+}
+
+/**
+ * 제출 전 본문 인라인 이미지 blob: URL(로컬 미리보기)을 허용한다.
+ */
+function urlTransform(url: string): string {
+  return /^blob:/i.test(url) ? url : defaultUrlTransform(url);
 }
 
 /**
@@ -18,6 +25,7 @@ const MarkdownView: React.FC<MarkdownViewProps> = ({ content, className }) => {
     <div className={className}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
+        urlTransform={urlTransform}
         components={{
           h1: ({ children }) => (
             <h1 className="mt-8 mb-4 text-2xl md:text-3xl font-extrabold leading-snug text-black">{children}</h1>

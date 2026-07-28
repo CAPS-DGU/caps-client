@@ -15,7 +15,7 @@ import MarkdownView from "./MarkdownView";
 interface MarkdownEditorProps {
   value: string;
   onChange: (v: string) => void;
-  /** 이미지를 업로드하고 S3 key(또는 URL)를 돌려준다. 실패 시 null. */
+  /** 본문에 바로 넣을 수 있는 값(로컬 blob URL 이거나 S3 key/URL)을 돌려준다. 실패 시 null. */
   onImageUpload: (file: File) => Promise<string | null>;
   placeholder?: string;
 }

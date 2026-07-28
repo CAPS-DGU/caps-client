@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
@@ -48,7 +48,8 @@ function extractContentImageKeys(md: string): string[] {
   let m: RegExpExecArray | null;
   while ((m = re.exec(md)) !== null) {
     const url = (m[1] ?? m[2] ?? "").trim();
-    if (url && !/^https?:\/\//i.test(url) && !url.startsWith("data:")) out.push(url);
+    if (url && !/^https?:\/\//i.test(url) && !url.startsWith("data:") && !url.startsWith("blob:"))
+      out.push(url);
   }
   return Array.from(new Set(out));
 }
@@ -127,14 +128,21 @@ const BlogEditPage: React.FC = () => {
     setFiles((prev) => [...prev, ...selected.map((file, index) => ({ id: Date.now() + index, file }))]);
   };
 
-  // 본문 인라인 이미지: 삽입 즉시 업로드하고 S3 key 를 돌려준다 (마크다운에 ![](key) 로 들어간다)
+  // 본문 인라인 이미지: 삽입 시점엔 로컬 blob URL 로만 미리보기(Preview 에서도 그대로 보임)하고,
+  // 실제 S3 업로드는 저장(발행/수정) 시 한 번에 처리한다.
+  const pendingInlineImagesRef = useRef<Map<string, File>>(new Map());
+  useEffect(() => {
+    const pending = pendingInlineImagesRef.current;
+    return () => {
+      pending.forEach((_file, blobUrl) => URL.revokeObjectURL(blobUrl));
+      pending.clear();
+    };
+  }, []);
+
   const handleInlineImageUpload = async (file: File): Promise<string | null> => {
-    try {
-      return await uploadFileToS3(file, `blog/${Date.now()}_0_${sanitizeFileName(file.name)}`);
-    } catch (e) {
-      console.error("본문 이미지 업로드 실패:", e);
-      return null;
-    }
+    const blobUrl = URL.createObjectURL(file);
+    pendingInlineImagesRef.current.set(blobUrl, file);
+    return blobUrl;
   };
 
   const showThumbnailPreview = thumbnailPreview
@@ -157,6 +165,19 @@ const BlogEditPage: React.FC = () => {
 
     setSubmitting(true);
     try {
+      // 본문에 여전히 남아있는 로컬 미리보기(blob URL)만 이 시점에 S3 로 업로드하고 실제 key 로 치환한다.
+      // 제출 전에 지운 이미지는 그대로 두면 blob URL 만 사라질 뿐 S3 에는 올라가지 않는다.
+      let finalContent = content.trim();
+      let inlineIndex = 0;
+      for (const [blobUrl, file] of pendingInlineImagesRef.current) {
+        if (!finalContent.includes(blobUrl)) continue;
+        const key = await uploadFileToS3(
+          file,
+          `blog/${Date.now()}_${inlineIndex++}_${sanitizeFileName(file.name)}`
+        );
+        finalContent = finalContent.split(blobUrl).join(key);
+      }
+
       // 새 첨부만 업로드, 기존 첨부는 유지
       const uploadedFiles = files.length
         ? await uploadMultipleFilesToS3(
@@ -177,14 +198,14 @@ const BlogEditPage: React.FC = () => {
       const payload: Record<string, unknown> = {
         title: title.trim(),
         subtitle: subtitle.trim(),
-        content: content.trim(),
+        content: finalContent,
         thumbnailUrl,
         category,
         isPrivate,
         writerGrade: Number(user?.grade) || 0,
         writerName: user?.name ?? "",
         // 본문에 삽입된 이미지 key 를 imageUrls 로 함께 보내 S3 수명주기(교체/삭제 정리)를 맞춘다
-        imageUrls: extractContentImageKeys(content),
+        imageUrls: extractContentImageKeys(finalContent),
         fileUrls: [...existingFileUrls, ...uploadedFiles],
       };
 

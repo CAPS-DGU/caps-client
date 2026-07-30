@@ -12,21 +12,6 @@ export const attachFileIcon = new URL(
   import.meta.url
 ).href;
 
-export const attachFileUploadIcon = new URL(
-  "../../assets/attach_file_upload.svg",
-  import.meta.url
-).href;
-
-export const imageFileIcon = new URL(
-  "../../assets/image_file.svg",
-  import.meta.url
-).href;
-
-export const defaultFileIcon = new URL(
-  "../../assets/default_file.svg",
-  import.meta.url
-).href;
-
 /* =====================
  * 상세 페이지용 컴포넌트
  * ===================== */
@@ -322,82 +307,6 @@ export interface LedgerFileItem {
   id: number;
   file: File;
 }
-
-export interface FileSectionProps {
-  files: LedgerFileItem[];
-  onFilesChange: (files: File[]) => void;
-  onRemoveFile: (id: number) => void;
-}
-
-export const LedgerFileSection: React.FC<FileSectionProps> = ({
-  files,
-  onFilesChange,
-  onRemoveFile,
-}) => (
-  <section
-    className={`space-y-2 bg-white p-2 rounded-lg border border-gray-200 ${
-      files.length > 0 ? "w-[15rem]" : "w-[11rem]"
-    }`}
-  >
-    {/* 상단 파일 업로드 헤더 (아이콘 + 텍스트) */}
-    <label className="flex justify-between items-center px-2 py-1 cursor-pointer select-none">
-      <div className="flex items-center gap-2 text-sm font-semibold text-[#007AEB]">
-        <img src={attachFileUploadIcon} alt="파일 업로드" className="w-4 h-4" />
-        <span>파일 업로드</span>
-      </div>
-      <input
-        type="file"
-        multiple
-        className="hidden"
-        onChange={(e) => {
-          const fileList = e.target.files ? Array.from(e.target.files) : [];
-          onFilesChange(fileList);
-        }}
-      />
-    </label>
-
-    {/* 구분선 (파일이 있을 때만 표시) */}
-    {files.length > 0 && <div className="border-b border-gray-200" />}
-
-    {/* 첨부파일 목록 */}
-    {files.length > 0 && (
-      <ul className="space-y-1 text-sm text-gray-800">
-        {files.map(({ id, file }) => (
-          <li
-            key={id}
-            className="flex justify-between items-center px-2 py-1 h-8"
-          >
-            <div className="flex flex-1 gap-2 items-center min-w-0">
-              <img
-                src={
-                  file.type.startsWith("image/") ||
-                  /\.(png|jpe?g|gif|bmp|webp|svg)$/i.test(file.name)
-                    ? imageFileIcon
-                    : defaultFileIcon
-                }
-                alt="첨부"
-                className="flex-shrink-0 w-4 h-4"
-              />
-              <span
-                className="truncate max-w-[10rem] md:max-w-[14rem]"
-                title={file.name}
-              >
-                {file.name.replace(/^\d+_\d+_/, '')}
-              </span>
-            </div>
-            <button
-              type="button"
-              onClick={() => onRemoveFile(id)}
-              className="ml-2 flex-shrink-0 w-12 md:w-16 text-xs font-semibold text-[#007AEB] text-right hover:underline"
-            >
-              삭제
-            </button>
-          </li>
-        ))}
-      </ul>
-    )}
-  </section>
-);
 
 export interface ContentSectionProps {
   content: string;

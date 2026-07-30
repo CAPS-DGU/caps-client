@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { Paperclip } from "lucide-react";
 import Navbar from "../components/NavBar";
 import Footer from "../components/MainPage/Footer";
+import AttachmentList from "../components/common/AttachmentList";
 import {
   LedgerTitleInput,
   LedgerTopActions,
   LedgerBottomActions,
-  LedgerFileSection,
   LedgerContentSection,
   LedgerFileItem,
 } from "../components/Ledger/LedgerComponents";
@@ -16,11 +17,13 @@ import {
   apiPostWithToken,
 } from "../utils/Api";
 import { useAuth } from "../hooks/useAuth";
+import { useConfirmLeaveOnUnload } from "../hooks/useConfirmLeaveOnUnload";
 import {
   uploadFileToS3,
   uploadMultipleFilesToS3,
   deleteFileFromS3,
 } from "../utils/s3Upload";
+import { confirmLeave } from "../utils/confirmLeave";
 
 interface LedgerEditResponse {
   status: number;
@@ -38,6 +41,8 @@ const LedgerEditPage: React.FC = () => {
   const { ledgerId } = useParams<{ ledgerId?: string }>();
   const navigate = useNavigate();
   const { isLoggedIn, isLoading } = useAuth();
+
+  useConfirmLeaveOnUnload();
 
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
@@ -104,8 +109,14 @@ const LedgerEditPage: React.FC = () => {
   };
 
   const handleListClick = () => {
-    if (window.confirm("이 페이지를 떠나겠습니까?")) {
+    if (confirmLeave()) {
       navigate("/ledger");
+    }
+  };
+
+  const handleCancelClick = () => {
+    if (confirmLeave()) {
+      navigate(-1);
     }
   };
 
@@ -209,7 +220,7 @@ const LedgerEditPage: React.FC = () => {
             <LedgerTopActions
               isPinned={isPinned}
               onTogglePin={() => setIsPinned((prev) => !prev)}
-              onCancel={() => navigate(-1)}
+              onCancel={handleCancelClick}
               submitLabel={ledgerId ? "수정" : "등록"}
             />
           </div>
@@ -219,41 +230,38 @@ const LedgerEditPage: React.FC = () => {
 
           {/* 내용 입력 */}
           <LedgerContentSection content={content} onChange={setContent} />
-          {/* 파일 업로드 */}
-          <div className="space-y-2">
-            <LedgerFileSection
-              files={files}
-              onFilesChange={handleFilesChange}
-              onRemoveFile={handleRemoveFile}
+          {/* 파일 업로드 (블로그 작성/수정 페이지의 파일 업로드 리스트와 가로 길이를 맞춘다) */}
+          <section className="w-full rounded-xl border border-gray-200 bg-white p-4 lg:max-w-[348px]">
+            <label className="flex cursor-pointer items-center justify-between">
+              <span className="text-sm font-bold text-[#007AEB]">파일 업로드</span>
+              <span className="inline-flex items-center gap-1.5 text-xs text-gray-400">
+                <Paperclip className="h-4 w-4" />
+                추가
+              </span>
+              <input
+                type="file"
+                multiple
+                className="hidden"
+                onChange={(e) => handleFilesChange(Array.from(e.target.files ?? []))}
+              />
+            </label>
+            <AttachmentList
+              className="mt-3"
+              items={[
+                ...existingFileUrls.map((url) => ({
+                  id: `existing-${url}`,
+                  name: url.split("/").pop()?.replace(/^\d+_\d+_/, "") || "첨부파일",
+                  onRemove: () => handleRemoveExistingFile(url),
+                })),
+                ...files.map((item) => ({
+                  id: item.id,
+                  name: item.file.name,
+                  onRemove: () => handleRemoveFile(item.id),
+                })),
+              ]}
             />
-            {/* 기존 파일 표시 및 삭제 */}
-            {existingFileUrls.length > 0 && (
-              <div className="space-y-2">
-                {existingFileUrls.map((fileUrl, index) => (
-                  <div
-                    key={index}
-                    className="flex gap-2 items-center px-4 py-2 bg-gray-50 rounded-lg border border-gray-200"
-                  >
-                    <span className="text-sm text-gray-700">
-                      기존 파일: {fileUrl.split("/").pop()?.replace(/^\d+_\d+_/, '') || "첨부파일"}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveExistingFile(fileUrl)}
-                      className="px-3 py-1 text-xs font-semibold text-red-600 bg-red-50 rounded transition-colors hover:bg-red-100"
-                    >
-                      삭제
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-            {uploading && (
-              <div className="px-4 py-2 text-sm text-blue-600 bg-blue-50 rounded-lg">
-                업로드 중...
-              </div>
-            )}
-          </div>
+            {uploading && <p className="mt-3 text-sm font-medium text-[#007AEB]">업로드 중...</p>}
+          </section>
           {/* 하단 목록 버튼 */}
           <LedgerBottomActions onCancel={handleListClick} />
         </form>

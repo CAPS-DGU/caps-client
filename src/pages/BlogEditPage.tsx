@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { message } from "antd";
 import { Lock, Trash2, Paperclip, ImagePlus } from "lucide-react";
 import Navbar from "../components/NavBar";
 import Footer from "../components/MainPage/Footer";
@@ -10,8 +11,10 @@ import MarkdownEditor from "../components/Blog/MarkdownEditor";
 import BlogImage from "../components/Blog/BlogImage";
 import AttachmentList from "../components/common/AttachmentList";
 import { useAuth } from "../hooks/useAuth";
+import { useConfirmLeaveOnUnload } from "../hooks/useConfirmLeaveOnUnload";
 import { uploadFileToS3, uploadMultipleFilesToS3, sanitizeFileName } from "../utils/s3Upload";
 import { blogFileName } from "../utils/blogFiles";
+import { confirmLeave } from "../utils/confirmLeave";
 import {
   useGetBlog,
   useCreateBlog,
@@ -25,7 +28,7 @@ import {
 const WRITE_ROLES = ["ADMIN", "COUNCIL", "PRESIDENT"];
 
 const TITLE_MAX = 50;
-const SUBTITLE_MAX = 50;
+const SUBTITLE_MAX = 100;
 
 /** 백엔드는 상세 응답에 thumbnailUrl 을 추가했지만 생성된 타입엔 아직 없어 확장해서 읽는다. */
 type BlogDetail = BlogDetailResponse & { thumbnailUrl?: string };
@@ -85,6 +88,8 @@ const BlogEditPage: React.FC = () => {
   const { mutateAsync: modifyBlog } = useModifyBlog();
 
   const canWrite = WRITE_ROLES.includes(user?.role ?? "");
+
+  useConfirmLeaveOnUnload();
 
   // 새로 고른 썸네일 미리보기 (URL 은 언마운트/교체 시 해제한다)
   const thumbnailPreview = useMemo(
@@ -214,12 +219,12 @@ const BlogEditPage: React.FC = () => {
         await modifyBlog({ blogId: id, data: payload as any });
         await queryClient.invalidateQueries({ queryKey: getGetBlogQueryKey(id) });
         await queryClient.invalidateQueries({ queryKey: getGetBlogsQueryKey() });
-        alert("게시물이 수정되었습니다.");
+        message.success("게시물이 수정되었습니다.");
         navigate(`/blog/${id}`);
       } else {
         const created = (await createBlog({ data: payload as any })) as any;
         await queryClient.invalidateQueries({ queryKey: getGetBlogsQueryKey() });
-        alert("게시물이 등록되었습니다.");
+        message.success("게시물이 등록되었습니다.");
         const newId = created?.data?.id;
         navigate(newId ? `/blog/${newId}` : "/blog");
       }
@@ -248,7 +253,7 @@ const BlogEditPage: React.FC = () => {
           {/* 헤더: 제목 + 비공개 토글 + 취소/발행 */}
           <div className="flex flex-col gap-4 border-b border-gray-200 pb-5 sm:flex-row sm:items-center sm:justify-between">
             <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-black">블로그</h1>
-            <div className="flex flex-wrap items-center gap-2.5">
+            <div className="flex flex-wrap items-center justify-end gap-2.5">
               <button
                 type="button"
                 onClick={() => setIsPrivate((v) => !v)}
@@ -275,7 +280,9 @@ const BlogEditPage: React.FC = () => {
               </button>
               <button
                 type="button"
-                onClick={() => navigate(isEdit ? `/blog/${id}` : "/blog")}
+                onClick={() => {
+                  if (confirmLeave()) navigate(isEdit ? `/blog/${id}` : "/blog");
+                }}
                 className="rounded-full border border-gray-300 px-6 py-2.5 text-sm font-bold text-gray-600 transition-colors hover:text-gray-900"
               >
                 취소
@@ -285,7 +292,7 @@ const BlogEditPage: React.FC = () => {
                 disabled={submitting}
                 className="rounded-full bg-[#007AEB] px-7 py-2.5 text-sm font-bold text-white transition-colors hover:bg-[#0069cc] disabled:bg-gray-300"
               >
-                {submitting ? "저장 중..." : isEdit ? "수정" : "발행"}
+                {submitting ? "저장 중..." : isEdit ? "수정" : "작성"}
               </button>
             </div>
           </div>
@@ -321,7 +328,7 @@ const BlogEditPage: React.FC = () => {
           </div>
 
           {/* 카테고리 선택 */}
-          <div className="flex flex-wrap gap-2.5">
+          <div className="flex flex-wrap gap-1.5">
             {BLOG_CATEGORIES.map((c) => {
               const active = category === c.key;
               return (
@@ -329,7 +336,7 @@ const BlogEditPage: React.FC = () => {
                   key={c.key}
                   type="button"
                   onClick={() => setCategory(c.key)}
-                  className={`inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-bold transition-colors ${
+                  className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg border px-3 py-1.5 text-sm font-bold transition-colors ${
                     active
                       ? "border-[#007AEB] bg-[#007AEB] text-white"
                       : "border-[#bcbcbc] bg-white text-[#4e4e4e] hover:border-[#007AEB] hover:text-[#007AEB]"
@@ -337,9 +344,6 @@ const BlogEditPage: React.FC = () => {
                 >
                   <c.Icon className="h-4 w-4" strokeWidth={2} />
                   {c.label}
-                  <span className={`text-xs font-medium ${active ? "text-white/80" : "text-gray-400"}`}>
-                    ({c.hint})
-                  </span>
                 </button>
               );
             })}

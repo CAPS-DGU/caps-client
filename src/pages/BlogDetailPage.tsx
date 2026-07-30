@@ -194,8 +194,8 @@ const BlogDetailPage: React.FC = () => {
               </div>
             )}
 
-            {post.fileUrls && post.fileUrls.length > 0 && (
-              <div className="mt-10 border-t border-gray-200 pt-6">
+            <div className="mt-10 border-t border-gray-200 pt-6">
+              {post.fileUrls && post.fileUrls.length > 0 && (
                 <section className="w-full rounded-xl border border-gray-200 bg-white p-4 lg:max-w-[348px]">
                   <p className="text-sm font-bold text-gray-700">첨부파일</p>
                   <AttachmentList
@@ -208,8 +208,8 @@ const BlogDetailPage: React.FC = () => {
                     }))}
                   />
                 </section>
-              </div>
-            )}
+              )}
+            </div>
           </article>
         ) : null}
       </div>

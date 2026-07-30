@@ -17,11 +17,13 @@ import {
   apiPostWithToken,
 } from "../utils/Api";
 import { useAuth } from "../hooks/useAuth";
+import { useConfirmLeaveOnUnload } from "../hooks/useConfirmLeaveOnUnload";
 import {
   uploadFileToS3,
   uploadMultipleFilesToS3,
   deleteFileFromS3,
 } from "../utils/s3Upload";
+import { confirmLeave } from "../utils/confirmLeave";
 
 interface LedgerEditResponse {
   status: number;
@@ -39,6 +41,8 @@ const LedgerEditPage: React.FC = () => {
   const { ledgerId } = useParams<{ ledgerId?: string }>();
   const navigate = useNavigate();
   const { isLoggedIn, isLoading } = useAuth();
+
+  useConfirmLeaveOnUnload();
 
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
@@ -105,8 +109,14 @@ const LedgerEditPage: React.FC = () => {
   };
 
   const handleListClick = () => {
-    if (window.confirm("이 페이지를 떠나겠습니까?")) {
+    if (confirmLeave()) {
       navigate("/ledger");
+    }
+  };
+
+  const handleCancelClick = () => {
+    if (confirmLeave()) {
+      navigate(-1);
     }
   };
 
@@ -210,7 +220,7 @@ const LedgerEditPage: React.FC = () => {
             <LedgerTopActions
               isPinned={isPinned}
               onTogglePin={() => setIsPinned((prev) => !prev)}
-              onCancel={() => navigate(-1)}
+              onCancel={handleCancelClick}
               submitLabel={ledgerId ? "수정" : "등록"}
             />
           </div>

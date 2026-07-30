@@ -105,20 +105,20 @@ const BlogPage: React.FC = () => {
         </div>
 
         {/* 카테고리 필터 */}
-        <div className="mb-10 flex flex-nowrap gap-1.5 md:flex-wrap md:gap-2">
+        <div className="mb-10 flex flex-wrap gap-1.5">
           {FILTERS.map((f) => {
             const active = category === f.key;
             return (
               <button
                 key={f.key}
                 onClick={() => handleCategory(f.key)}
-                className={`inline-flex items-center gap-1 whitespace-nowrap rounded-lg border px-2.5 py-1 text-xs font-bold transition-colors md:gap-1.5 md:px-3.5 md:py-1.5 md:text-sm ${
+                className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg border px-4 py-[7px] text-sm font-bold transition-colors ${
                   active
                     ? "border-[#007AEB] bg-[#007AEB] text-white"
                     : "border-[#bcbcbc] bg-white text-[#4e4e4e] hover:border-[#007AEB] hover:text-[#007AEB]"
                 }`}
               >
-                {f.Icon && <f.Icon className="h-3 w-3 md:h-3.5 md:w-3.5" strokeWidth={2} />}
+                {f.Icon && <f.Icon className="h-[15px] w-[15px]" strokeWidth={2} />}
                 {f.label}
               </button>
             );

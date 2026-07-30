@@ -17,6 +17,7 @@ import KakaoLogin from "./pages/KakaoLogin";
 
 // Components
 import NavBar from "./components/NavBar.tsx";
+import ScrollToTop from "./components/common/ScrollToTop.tsx";
 
 // Wiki Components
 import { WikiContent } from "./components/WIKI/WikiContent";
@@ -207,6 +208,7 @@ const App: React.FC = () => {
     <QueryClientProvider client={queryClient}>
       <ConfigProvider locale={koKR}>
         <BrowserRouter>
+          <ScrollToTop />
           <UserProvider>
             <div className="min-h-screen bg-gray-50">
               {/* <NavBar /> */}

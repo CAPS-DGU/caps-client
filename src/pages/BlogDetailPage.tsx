@@ -3,11 +3,13 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { match } from "ts-pattern";
 import axios from "axios";
-import { ChevronLeft, Paperclip, Lock } from "lucide-react";
+import { ChevronLeft, Lock } from "lucide-react";
 import Navbar from "../components/NavBar";
 import Footer from "../components/MainPage/Footer";
 import BlogImage from "../components/Blog/BlogImage";
 import MarkdownView from "../components/Blog/MarkdownView";
+import AttachmentList from "../components/common/AttachmentList";
+import ScrollToTopButton from "../components/common/ScrollToTopButton";
 import { BLOG_CATEGORY_MAP, blogCategoryLabel } from "../components/Blog/categories";
 import { useAuth } from "../hooks/useAuth";
 import { resolveBlogFileUrl, blogFileName } from "../utils/blogFiles";
@@ -123,12 +125,12 @@ const BlogDetailPage: React.FC = () => {
             {/* 카테고리 + 수정/삭제 */}
             <div className="mb-5 flex items-center justify-between gap-4">
               {cat ? (
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-[#007AEB] px-3.5 py-1 text-sm font-bold text-white">
+                <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#007AEB]/10 px-3.5 py-1.5 text-sm font-bold text-[#007AEB]">
                   <cat.Icon className="h-4 w-4" strokeWidth={2} />
                   {cat.label}
                 </span>
               ) : (
-                <span className="inline-block rounded-full bg-[#007AEB] px-3.5 py-1 text-sm font-bold text-white">
+                <span className="inline-block rounded-lg bg-[#007AEB]/10 px-3.5 py-1.5 text-sm font-bold text-[#007AEB]">
                   {blogCategoryLabel(post.category)}
                 </span>
               )}
@@ -194,40 +196,25 @@ const BlogDetailPage: React.FC = () => {
 
             {post.fileUrls && post.fileUrls.length > 0 && (
               <div className="mt-10 border-t border-gray-200 pt-6">
-                <p className="mb-3 text-sm font-bold text-gray-700">첨부파일</p>
-                <ul className="flex flex-col gap-2">
-                  {post.fileUrls.map((url, i) => (
-                    <li key={i}>
-                      <a
-                        href="#"
-                        onClick={(e) => handleFileClick(url, e)}
-                        className="inline-flex max-w-full items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 transition-colors hover:border-[#007AEB] hover:text-[#007AEB]"
-                      >
-                        <Paperclip className="h-4 w-4 shrink-0" strokeWidth={2} />
-                        <span className="truncate">
-                          {loadingFile === url
-                            ? "불러오는 중..."
-                            : blogFileName(url) || `첨부파일 ${i + 1}`}
-                        </span>
-                      </a>
-                    </li>
-                  ))}
-                </ul>
+                <section className="w-full rounded-xl border border-gray-200 bg-white p-4 lg:max-w-[348px]">
+                  <p className="text-sm font-bold text-gray-700">첨부파일</p>
+                  <AttachmentList
+                    className="mt-3"
+                    items={post.fileUrls.map((url, i) => ({
+                      id: `${url}-${i}`,
+                      name: blogFileName(url) || `첨부파일 ${i + 1}`,
+                      loading: loadingFile === url,
+                      onClick: (e) => handleFileClick(url, e),
+                    }))}
+                  />
+                </section>
               </div>
             )}
-
-            <div className="mt-12 flex justify-center">
-              <button
-                onClick={() => navigate("/blog")}
-                className="rounded-full bg-[#007AEB] px-8 py-3 text-sm font-bold text-white transition-colors hover:bg-[#0069cc]"
-              >
-                목록
-              </button>
-            </div>
           </article>
         ) : null}
       </div>
       <Footer />
+      <ScrollToTopButton />
     </div>
   );
 };

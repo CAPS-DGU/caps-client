@@ -8,6 +8,7 @@ import Footer from "../components/MainPage/Footer";
 import { BLOG_CATEGORIES, BLOG_CATEGORY_MAP } from "../components/Blog/categories";
 import MarkdownEditor from "../components/Blog/MarkdownEditor";
 import BlogImage from "../components/Blog/BlogImage";
+import AttachmentList from "../components/common/AttachmentList";
 import { useAuth } from "../hooks/useAuth";
 import { uploadFileToS3, uploadMultipleFilesToS3, sanitizeFileName } from "../utils/s3Upload";
 import { blogFileName } from "../utils/blogFiles";
@@ -358,137 +359,115 @@ const BlogEditPage: React.FC = () => {
             />
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-2">
-            <div className="space-y-6">
-              {/* 대표 이미지 */}
-              <section>
-                <h2 className="mb-2 text-sm font-bold text-gray-700">대표 이미지 (선택)</h2>
-                {showThumbnailPreview ? (
-                  <div className="relative overflow-hidden rounded-xl border border-gray-200 bg-white">
-                    <div className="aspect-[16/9] w-full">
-                      {thumbnailPreview ? (
-                        <img
-                          src={thumbnailPreview}
-                          alt="대표 이미지 미리보기"
-                          className="h-full w-full object-cover"
-                        />
-                      ) : (
-                        <BlogImage
-                          src={showThumbnailPreview}
-                          alt="현재 대표 이미지"
-                          className="h-full w-full object-cover"
-                          fallback={
-                            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 text-2xl font-black tracking-widest text-slate-300">
-                              CAPS
-                            </div>
-                          }
-                        />
-                      )}
-                    </div>
-                    <div className="flex items-center justify-between gap-2 px-3 py-2">
-                      <span className="truncate text-sm text-gray-600">
-                        {thumbnail ? thumbnail.name : "현재 대표 이미지"}
-                      </span>
-                      <div className="flex shrink-0 items-center gap-1">
-                        <label className="cursor-pointer rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-600 hover:border-[#007AEB] hover:text-[#007AEB]">
-                          이미지 변경
-                          <input
-                            type="file"
-                            accept="image/*"
-                            className="hidden"
-                            onChange={(e) => {
-                              setThumbnail(e.target.files?.[0] ?? null);
-                              setRemovedThumbnail(false);
-                            }}
-                          />
-                        </label>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            if (thumbnail) setThumbnail(null);
-                            else setRemovedThumbnail(true);
+          <div className="grid grid-cols-1 gap-6 [grid-template-areas:'thumb'_'preview'_'files'] lg:grid-cols-2 lg:[grid-template-areas:'thumb_preview'_'files_preview']">
+            {/* 대표 이미지 */}
+            <section className="[grid-area:thumb]">
+              <h2 className="mb-2 text-sm font-bold text-gray-700">대표 이미지 (선택)</h2>
+              {showThumbnailPreview ? (
+                <div className="relative overflow-hidden rounded-xl border border-gray-200 bg-white">
+                  <div className="aspect-[16/9] w-full">
+                    {thumbnailPreview ? (
+                      <img
+                        src={thumbnailPreview}
+                        alt="대표 이미지 미리보기"
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <BlogImage
+                        src={showThumbnailPreview}
+                        alt="현재 대표 이미지"
+                        className="h-full w-full object-cover"
+                        fallback={
+                          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 text-2xl font-black tracking-widest text-slate-300">
+                            CAPS
+                          </div>
+                        }
+                      />
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between gap-2 px-3 py-2">
+                    <span className="truncate text-sm text-gray-600">
+                      {thumbnail ? thumbnail.name : "현재 대표 이미지"}
+                    </span>
+                    <div className="flex shrink-0 items-center gap-1">
+                      <label className="cursor-pointer rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-600 hover:border-[#007AEB] hover:text-[#007AEB]">
+                        이미지 변경
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            setThumbnail(e.target.files?.[0] ?? null);
+                            setRemovedThumbnail(false);
                           }}
-                          aria-label="대표 이미지 삭제"
-                          className="rounded-lg p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-500"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
+                        />
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (thumbnail) setThumbnail(null);
+                          else setRemovedThumbnail(true);
+                        }}
+                        aria-label="대표 이미지 삭제"
+                        className="rounded-lg p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-500"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
                     </div>
                   </div>
-                ) : (
-                  <label className="flex aspect-[16/9] cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-gray-300 bg-white text-gray-400 transition-colors hover:border-[#007AEB] hover:text-[#007AEB]">
-                    <ImagePlus className="h-8 w-8" strokeWidth={1.6} />
-                    <span className="text-sm font-medium">대표 이미지 선택</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => {
-                        setThumbnail(e.target.files?.[0] ?? null);
-                        setRemovedThumbnail(false);
-                      }}
-                    />
-                  </label>
-                )}
-              </section>
-
-              {/* 파일 업로드 */}
-              <section className="rounded-xl border border-gray-200 bg-white p-4">
-                <label className="flex cursor-pointer items-center justify-between">
-                  <span className="text-sm font-bold text-[#007AEB]">파일 업로드</span>
-                  <span className="inline-flex items-center gap-1.5 text-xs text-gray-400">
-                    <Paperclip className="h-4 w-4" />
-                    추가
-                  </span>
+                </div>
+              ) : (
+                <label className="flex aspect-[16/9] cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-gray-300 bg-white text-gray-400 transition-colors hover:border-[#007AEB] hover:text-[#007AEB]">
+                  <ImagePlus className="h-8 w-8" strokeWidth={1.6} />
+                  <span className="text-sm font-medium">대표 이미지 선택</span>
                   <input
                     type="file"
-                    multiple
+                    accept="image/*"
                     className="hidden"
-                    onChange={(e) => addFiles(Array.from(e.target.files ?? []))}
+                    onChange={(e) => {
+                      setThumbnail(e.target.files?.[0] ?? null);
+                      setRemovedThumbnail(false);
+                    }}
                   />
                 </label>
-                {(existingFileUrls.length > 0 || files.length > 0) && (
-                  <ul className="mt-3 space-y-1.5">
-                    {existingFileUrls.map((url, index) => (
-                      <li key={url} className="flex items-center justify-between text-sm text-gray-600">
-                        <span className="flex min-w-0 items-center gap-1.5">
-                          <Paperclip className="h-3.5 w-3.5 shrink-0 text-gray-400" />
-                          <span className="truncate">{blogFileName(url)}</span>
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setExistingFileUrls((prev) => prev.filter((_, i) => i !== index))
-                          }
-                          className="ml-3 shrink-0 text-xs text-gray-400 hover:text-red-500"
-                        >
-                          삭제
-                        </button>
-                      </li>
-                    ))}
-                    {files.map((item) => (
-                      <li key={item.id} className="flex items-center justify-between text-sm text-gray-600">
-                        <span className="flex min-w-0 items-center gap-1.5">
-                          <Paperclip className="h-3.5 w-3.5 shrink-0 text-gray-400" />
-                          <span className="truncate">{item.file.name}</span>
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => setFiles((prev) => prev.filter((f) => f.id !== item.id))}
-                          className="ml-3 shrink-0 text-xs text-gray-400 hover:text-red-500"
-                        >
-                          삭제
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </section>
-            </div>
+              )}
+            </section>
+
+            {/* 파일 업로드 */}
+            <section className="[grid-area:files] rounded-xl border border-gray-200 bg-white p-4">
+              <label className="flex cursor-pointer items-center justify-between">
+                <span className="text-sm font-bold text-[#007AEB]">파일 업로드</span>
+                <span className="inline-flex items-center gap-1.5 text-xs text-gray-400">
+                  <Paperclip className="h-4 w-4" />
+                  추가
+                </span>
+                <input
+                  type="file"
+                  multiple
+                  className="hidden"
+                  onChange={(e) => addFiles(Array.from(e.target.files ?? []))}
+                />
+              </label>
+              <AttachmentList
+                className="mt-3"
+                items={[
+                  ...existingFileUrls.map((url, index) => ({
+                    id: `existing-${url}`,
+                    name: blogFileName(url),
+                    onRemove: () =>
+                      setExistingFileUrls((prev) => prev.filter((_, i) => i !== index)),
+                  })),
+                  ...files.map((item) => ({
+                    id: item.id,
+                    name: item.file.name,
+                    onRemove: () => setFiles((prev) => prev.filter((f) => f.id !== item.id)),
+                  })),
+                ]}
+              />
+            </section>
 
             {/* 블로그 카드 미리보기 */}
-            <section>
+            <section className="[grid-area:preview]">
               <h2 className="mb-2 text-sm font-bold text-gray-700">블로그 카드 미리보기</h2>
               <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
                 <div className="relative aspect-[16/9] w-full overflow-hidden bg-gray-100">

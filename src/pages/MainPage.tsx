@@ -409,19 +409,15 @@ const MainPage = () => {
           className="flex flex-col justify-center items-center px-4 py-16 w-full min-h-screen text-center md:py-24 snap-start"
         >
           {/* 메인 메시지 */}
-          <div className="mb-4 text-xl font-extrabold text-center text-gray-800 md:text-3xl">
+          <div className="mb-10 text-xl font-extrabold text-center text-gray-800 md:text-3xl">
             캡스의 프로그래밍 꿈나무가 되어 1987년의 역사를 이어가주세요.
           </div>
-          {/* 서브 메시지 */}
-          <div className="mb-10 text-base font-semibold text-center text-gray-500 md:text-xl">
-            아직은 지원기간이 아니에요!
-          </div>
           {/* 버튼 */}
-          <button className="flex gap-2 items-center px-8 py-4 text-lg font-extrabold text-white bg-blue-600 rounded-full shadow-lg transition md:px-12 md:py-5 md:text-xl hover:bg-blue-500 active:bg-blue-700">
-            모집 알림 신청하기
-            <svg className="ml-2 w-7 h-7" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
-              <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+          <button
+            disabled
+            className="flex items-center px-8 py-4 text-lg font-extrabold text-white bg-blue-600 rounded-full shadow-lg transition cursor-not-allowed opacity-60 md:px-12 md:py-5 md:text-xl disabled:hover:bg-blue-600"
+          >
+            아직은 지원기간이 아니에요!
           </button>
         </motion.section>
         <motion.div

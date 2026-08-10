@@ -8,7 +8,7 @@ import Navbar from "../components/NavBar";
 import Footer from "../components/MainPage/Footer";
 import BlogImage from "../components/Blog/BlogImage";
 import MarkdownView from "../components/Blog/MarkdownView";
-import AttachmentList from "../components/common/AttachmentList";
+import DetailAttachments from "../components/common/DetailAttachments";
 import ScrollToTopButton from "../components/common/ScrollToTopButton";
 import { BLOG_CATEGORY_MAP, blogCategoryLabel } from "../components/Blog/categories";
 import { useAuth } from "../hooks/useAuth";
@@ -49,36 +49,14 @@ const BlogDetailPage: React.FC = () => {
     query: { enabled: Number.isFinite(id) },
   });
   const { mutateAsync: removeBlog, isPending: isDeleting } = useDeleteBlog();
-  const [loadingFile, setLoadingFile] = useState<string | null>(null);
 
   const post = data?.data as BlogDetailResponse | undefined;
   const cat = post?.category ? BLOG_CATEGORY_MAP[post.category] : undefined;
-  // 본문 마크다운에 이미 인라인으로 들어간 이미지는 하단 갤러리에서 제외(중복 방지)
   const leftoverImages = (post?.imageUrls ?? []).filter(
     (u) => !(post?.content ?? "").includes(u)
   );
-
-  // 첨부는 저장된 값이 S3 key 일 수 있어 클릭 시점에 열 수 있는 주소로 바꿔서 내려받는다
-  const handleFileClick = async (fileUrl: string, e: React.MouseEvent) => {
-    e.preventDefault();
-    if (loadingFile === fileUrl) return;
-    try {
-      setLoadingFile(fileUrl);
-      const url = await resolveBlogFileUrl(fileUrl);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = blogFileName(fileUrl);
-      link.target = "_blank";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } catch (error) {
-      console.error("파일 다운로드 실패:", error);
-      alert("파일 다운로드에 실패했습니다.");
-    } finally {
-      setLoadingFile(null);
-    }
-  };
+  const fileUrls = post?.fileUrls ?? [];
+  const hasFiles = fileUrls.length > 0;
 
   const handleDelete = async () => {
     if (!window.confirm("이 게시물을 삭제할까요? 되돌릴 수 없습니다.")) return;
@@ -122,7 +100,6 @@ const BlogDetailPage: React.FC = () => {
           </div>
         ) : post ? (
           <article>
-            {/* 카테고리 + 수정/삭제 */}
             <div className="mb-5 flex items-center justify-between gap-4">
               {cat ? (
                 <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#007AEB]/10 px-3.5 py-1.5 text-sm font-bold text-[#007AEB]">
@@ -162,7 +139,11 @@ const BlogDetailPage: React.FC = () => {
               <p className="mt-3 text-lg font-medium text-[#374151]">{post.subtitle}</p>
             )}
 
-            <div className="mt-6 flex flex-wrap items-center gap-2 border-b border-gray-200 pb-6 text-sm text-gray-400">
+            <div
+              className={`mt-6 flex flex-wrap items-center gap-2 text-sm text-gray-400 ${
+                hasFiles ? "" : "border-b border-gray-200 pb-6"
+              }`}
+            >
               <span className="font-medium text-gray-500">
                 {post.writerGrade ? `${post.writerGrade}기 ` : ""}
                 {post.writerName}
@@ -177,10 +158,20 @@ const BlogDetailPage: React.FC = () => {
               )}
             </div>
 
-            {/* 본문: 마크다운 렌더 (인라인 이미지는 삽입 위치에 그대로 표시) */}
+            {hasFiles && (
+              <div className="mt-4 border-b border-gray-200 pb-6">
+                <DetailAttachments
+                  files={fileUrls.map((url) => ({
+                    url,
+                    name: blogFileName(url) || "첨부파일",
+                  }))}
+                  onResolveUrl={(file) => resolveBlogFileUrl(file.url)}
+                />
+              </div>
+            )}
+
             <MarkdownView content={post.content ?? ""} className="mt-8" />
 
-            {/* 본문에 인라인으로 포함되지 않은 이미지(레거시 게시물 보강)만 하단에 렌더 */}
             {leftoverImages.length > 0 && (
               <div className="mt-8 flex flex-col gap-4">
                 {leftoverImages.map((url, i) => (
@@ -193,23 +184,6 @@ const BlogDetailPage: React.FC = () => {
                 ))}
               </div>
             )}
-
-            <div className="mt-10 border-t border-gray-200 pt-6">
-              {post.fileUrls && post.fileUrls.length > 0 && (
-                <section className="w-full rounded-xl border border-gray-200 bg-white p-4 lg:max-w-[348px]">
-                  <p className="text-sm font-bold text-gray-700">첨부파일</p>
-                  <AttachmentList
-                    className="mt-3"
-                    items={post.fileUrls.map((url, i) => ({
-                      id: `${url}-${i}`,
-                      name: blogFileName(url) || `첨부파일 ${i + 1}`,
-                      loading: loadingFile === url,
-                      onClick: (e) => handleFileClick(url, e),
-                    }))}
-                  />
-                </section>
-              )}
-            </div>
           </article>
         ) : null}
       </div>

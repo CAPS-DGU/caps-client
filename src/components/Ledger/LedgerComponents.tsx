@@ -27,19 +27,19 @@ export const LedgerDetailHeader: React.FC<LedgerDetailHeaderProps> = ({
   onEdit,
   onDelete,
 }) => (
-  <header className="pb-6 mb-8 border-b border-gray-200">
+  <header className="mb-6">
     <div className="flex gap-4 justify-between items-start">
       <div className="flex-1 min-w-0">
-        <h1 className="text-2xl font-extrabold text-black tracking-[1.9px] break-words">
+        <h1 className="text-xl md:text-2xl font-extrabold leading-snug text-black break-words">
           {title}
         </h1>
       </div>
       {(onEdit || onDelete) && (
-        <div className="flex flex-shrink-0 gap-3 items-center">
+        <div className="flex flex-shrink-0 gap-2 items-center">
           {onEdit && (
             <button
               type="button"
-              className="px-7 py-3 text-sm font-semibold text-white bg-[#007AEB] rounded-full hover:bg-[#0066c7] transition-colors whitespace-nowrap"
+              className="rounded-full bg-[#007AEB] px-5 py-2 text-sm font-bold text-white transition-colors hover:bg-[#0069cc] whitespace-nowrap"
               onClick={onEdit}
             >
               수정
@@ -48,7 +48,7 @@ export const LedgerDetailHeader: React.FC<LedgerDetailHeaderProps> = ({
           {onDelete && (
             <button
               type="button"
-              className="px-7 py-3 text-sm font-semibold text-white bg-[#007AEB] rounded-full hover:bg-[#0066c7] transition-colors whitespace-nowrap"
+              className="rounded-full border border-gray-300 px-5 py-2 text-sm font-bold text-gray-600 transition-colors hover:border-red-400 hover:text-red-500 whitespace-nowrap"
               onClick={onDelete}
             >
               삭제
@@ -64,13 +64,32 @@ export interface LedgerDetailMetaProps {
   author: string;
   term: string;
   date: string;
-  fileUrls?: string[];
 }
 
 export const LedgerDetailMeta: React.FC<LedgerDetailMetaProps> = ({
   author,
   term,
   date,
+}) => (
+  <div className="mt-6 flex flex-wrap items-center gap-2 border-b border-gray-200 pb-6 text-sm text-gray-400">
+    <span className="font-medium text-gray-500">
+      {term ? `${term} ` : ""}
+      {author}
+    </span>
+    {date && (
+      <>
+        <span>·</span>
+        <span>{date}</span>
+      </>
+    )}
+  </div>
+);
+
+export interface LedgerDetailFilesProps {
+  fileUrls?: string[];
+}
+
+export const LedgerDetailFiles: React.FC<LedgerDetailFilesProps> = ({
   fileUrls = [],
 }) => {
   const [loadingFile, setLoadingFile] = useState<string | null>(null);
@@ -78,17 +97,14 @@ export const LedgerDetailMeta: React.FC<LedgerDetailMetaProps> = ({
   const handleFileClick = async (
     fileUrl: string,
     fileName: string,
-    e: React.MouseEvent<HTMLAnchorElement>
+    e: React.MouseEvent
   ) => {
     e.preventDefault();
-
-    if (loadingFile === fileUrl) return; // 이미 로딩 중이면 무시
+    if (loadingFile === fileUrl) return;
 
     try {
       setLoadingFile(fileUrl);
       const presignedUrl = await getPresignedDownloadURL(fileUrl);
-
-      // 새 창에서 다운로드
       const link = document.createElement("a");
       link.href = presignedUrl;
       link.download = fileName;
@@ -104,50 +120,32 @@ export const LedgerDetailMeta: React.FC<LedgerDetailMetaProps> = ({
     }
   };
 
-  return (
-    <div className="px-4 py-4 space-y-2 bg-white border border-gray-200 rounded-[15px] shadow-md md:px-6 md:py-5">
-      <div className="flex flex-wrap justify-between items-center text-sm text-gray-700 md:text-base">
-        <div>
-          <span className="font-semibold">작성자</span>{" "}
-          <span>
-            {author} [{term}]
-          </span>
-        </div>
-        <div>
-          <span className="font-semibold">작성일자</span> <span>{date}</span>
-        </div>
-      </div>
+  if (fileUrls.length === 0) return null;
 
-      {fileUrls.length > 0 && (
-        <div className="pt-2 space-y-2">
-          {fileUrls.map((fileUrl, index) => {
-            const fullFileName = fileUrl.split("/").pop() || "첨부파일";
-            const fileName = fullFileName.replace(/^\d+_\d+_/, '');
-            const isLoading = loadingFile === fileUrl;
-            return (
-              <div
-                key={index}
-                className="flex gap-2 items-center text-sm text-gray-700 md:text-base"
+  return (
+    <div className="mt-10 border-t border-gray-200 pt-6">
+      <ul className="space-y-2">
+        {fileUrls.map((fileUrl, index) => {
+          const fullFileName = fileUrl.split("/").pop() || "첨부파일";
+          const fileName = fullFileName.replace(/^\d+_\d+_/, "");
+          const isLoading = loadingFile === fileUrl;
+          return (
+            <li key={index} className="flex items-center gap-2 text-sm text-gray-600">
+              <img src={attachFileIcon} alt="" className="w-4 h-4 shrink-0" />
+              <button
+                type="button"
+                onClick={(e) => handleFileClick(fileUrl, fileName, e)}
+                disabled={isLoading}
+                className={`text-left font-medium text-[#007AEB] hover:underline disabled:opacity-50 disabled:cursor-wait ${
+                  isLoading ? "" : "cursor-pointer"
+                }`}
               >
-                <img
-                  src={attachFileIcon}
-                  alt="첨부파일"
-                  className="w-5 h-5 md:w-6 md:h-6"
-                />
-                <a
-                  href="#"
-                  onClick={(e) => handleFileClick(fileUrl, fileName, e)}
-                  className={`font-semibold text-[#007AEB] hover:underline ${
-                    isLoading ? "opacity-50 cursor-wait" : "cursor-pointer"
-                  }`}
-                >
-                  {isLoading ? "다운로드 중..." : fileName}
-                </a>
-              </div>
-            );
-          })}
-        </div>
-      )}
+                {isLoading ? "다운로드 중..." : fileName}
+              </button>
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 };
@@ -159,8 +157,8 @@ export interface LedgerDetailContentProps {
 export const LedgerDetailContent: React.FC<LedgerDetailContentProps> = ({
   content,
 }) => (
-  <div className="p-6 mt-4 bg-white border border-gray-200 rounded-[15px] shadow-md">
-    <p className="text-sm leading-relaxed text-gray-700 whitespace-pre-wrap">
+  <div className="mt-8">
+    <p className="text-base leading-relaxed text-gray-800 whitespace-pre-wrap break-words">
       {content}
     </p>
   </div>

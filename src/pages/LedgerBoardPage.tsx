@@ -16,12 +16,11 @@ const LedgerBoardPage: React.FC = () => {
     }
   }, [isLoading, isLoggedIn, navigate]);
 
-  // 로딩 중이거나 로그인하지 않은 경우 아무것도 렌더링하지 않음
   if (isLoading || !isLoggedIn) {
     return (
-      <div className="flex flex-col min-h-screen">
+      <div className="flex flex-col min-h-screen bg-[#FAFAFA]">
         <Navbar />
-        <main className="flex-1 mt-20 bg-transparent">
+        <main className="flex-1 pt-20">
           <div className="flex justify-center items-center min-h-[60vh]">
             <p className="text-gray-500">로딩 중...</p>
           </div>
@@ -32,9 +31,9 @@ const LedgerBoardPage: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-[#FAFAFA]">
       <Navbar />
-      <main className="flex-1 mt-20">
+      <main className="flex-1 pt-20">
         <LedgerBoard />
       </main>
       <Footer />

@@ -16,6 +16,7 @@ import {
   apiPatchWithToken,
   apiPostWithToken,
 } from "../utils/Api";
+import { toastSuccess } from "../utils/toast";
 import { useAuth } from "../hooks/useAuth";
 import { useConfirmLeaveOnUnload } from "../hooks/useConfirmLeaveOnUnload";
 import {
@@ -168,7 +169,7 @@ const LedgerEditPage: React.FC = () => {
           navigate
         );
         const body = res.data as LedgerEditResponse;
-        alert("장부가 수정되었습니다.");
+        toastSuccess("게시물이 수정되었습니다.");
         navigate(`/ledger/${body.data.id}`);
       } else {
         // 신규 등록(POST) 요청: /api/v1/ledgers
@@ -178,7 +179,7 @@ const LedgerEditPage: React.FC = () => {
           navigate
         );
         const body = res.data as LedgerEditResponse;
-        alert("장부가 등록되었습니다.");
+        toastSuccess("게시물이 등록되었습니다.");
         navigate(`/ledger/${body.data.id}`);
       }
     } catch (error) {

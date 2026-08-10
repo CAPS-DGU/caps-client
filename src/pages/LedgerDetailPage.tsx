@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { match } from "ts-pattern";
 import Navbar from "../components/NavBar";
 import Footer from "../components/MainPage/Footer";
 import {
   LedgerDetailHeader,
   LedgerDetailMeta,
   LedgerDetailContent,
+  LedgerDetailFiles,
   LedgerDeleteModal,
 } from "../components/Ledger/LedgerComponents";
 import { apiDeleteWithToken, apiGetWithToken } from "../utils/Api";
@@ -48,7 +48,7 @@ const LedgerDetailPage: React.FC = () => {
   const isAdmin = userRole === "ADMIN";
   const isAuthor =
     user?.id && ledger?.member.id && user.id === ledger.member.id;
-  const canManage = isAdmin || isAuthor;
+  const canManage = isAdmin || !!isAuthor;
 
   const formatDateTime = (isoString: string) => {
     const date = new Date(isoString);
@@ -113,12 +113,11 @@ const LedgerDetailPage: React.FC = () => {
     }
   };
 
-  // 로딩 중이거나 로그인하지 않은 경우 아무것도 렌더링하지 않음
   if (isLoading || !isLoggedIn) {
     return (
-      <div className="flex flex-col min-h-screen">
+      <div className="flex flex-col min-h-screen bg-[#FAFAFA]">
         <Navbar />
-        <main className="flex-1 mt-20 bg-transparent">
+        <main className="flex-1 pt-20">
           <div className="flex justify-center items-center min-h-[60vh]">
             <p className="text-gray-500">로딩 중...</p>
           </div>
@@ -129,34 +128,33 @@ const LedgerDetailPage: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-[#FAFAFA]">
       <Navbar />
-      <main className="flex-1 mt-20 bg-transparent">
-        <div className="px-4 py-10 mx-auto max-w-4xl">
-          <LedgerDetailHeader
-            title={ledger?.title ?? "장부 제목"}
-            onEdit={
-              canManage ? () => navigate(`/ledger/${ledgerId}/edit`) : undefined
-            }
-            onDelete={canManage ? () => setIsDeleteOpen(true) : undefined}
-          />
+      <main className="flex-1 pt-20">
+        <div className="px-4 py-10 mx-auto max-w-3xl md:px-6 pb-24">
+          <article>
+            <LedgerDetailHeader
+              title={ledger?.title ?? "장부 제목"}
+              onEdit={
+                canManage ? () => navigate(`/ledger/${ledgerId}/edit`) : undefined
+              }
+              onDelete={canManage ? () => setIsDeleteOpen(true) : undefined}
+            />
 
-          {/* 본문 영역 */}
-          <section className="space-y-4">
             <LedgerDetailMeta
               author={ledger?.member.name ?? ""}
               term={ledger?.member.grade ? `${ledger.member.grade}기` : ""}
               date={ledger ? formatDateTime(ledger.createdAt) : ""}
-              fileUrls={ledger?.fileUrls ?? []}
             />
             <LedgerDetailContent content={ledger?.content ?? ""} />
-          </section>
+            <LedgerDetailFiles fileUrls={ledger?.fileUrls ?? []} />
+          </article>
 
           {/* 하단 목록 버튼 */}
-          <div className="flex justify-start mt-8">
+          <div className="flex justify-start mt-12">
             <button
               type="button"
-              className="px-7 py-3 text-sm font-semibold text-white bg-[#007AEB] rounded-full hover:bg-[#0066c7] transition-colors"
+              className="rounded-full bg-[#007AEB] px-7 py-2.5 text-sm font-bold text-white transition-colors hover:bg-[#0069cc]"
               onClick={() => navigate("/ledger")}
             >
               목록
@@ -186,7 +184,7 @@ const LedgerDetailPage: React.FC = () => {
                 setIsDeleteSuccessOpen(false);
                 navigate("/ledger");
               }}
-              className="px-7 py-3 text-sm font-semibold text-white bg-[#007AEB] rounded-full hover:bg-[#0066c7] transition-colors"
+              className="rounded-full bg-[#007AEB] px-7 py-2.5 text-sm font-bold text-white transition-colors hover:bg-[#0069cc]"
             >
               확인
             </button>

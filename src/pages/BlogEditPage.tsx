@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { message } from "antd";
+import { toastSuccess } from "../utils/toast";
 import { Lock, Trash2, Paperclip, ImagePlus } from "lucide-react";
 import Navbar from "../components/NavBar";
 import Footer from "../components/MainPage/Footer";
@@ -72,6 +72,9 @@ const BlogEditPage: React.FC = () => {
   const [content, setContent] = useState<string>("");
   const [category, setCategory] = useState<string>(CreateOrModifyBlogRequestCategory.EVENTS);
   const [isPrivate, setIsPrivate] = useState<boolean>(false);
+  /** 게시물에 표시할 작성자 (로그인 유저와 별개로 직접 입력) */
+  const [writerName, setWriterName] = useState<string>("");
+  const [writerGrade, setWriterGrade] = useState<string>("");
 
   // 대표 이미지: 새로 고른 파일 / 기존 값(key) / 기존 값 제거 여부
   const [thumbnail, setThumbnail] = useState<File | null>(null);
@@ -125,6 +128,10 @@ const BlogEditPage: React.FC = () => {
     setContent(post.content ?? "");
     setCategory(post.category ?? CreateOrModifyBlogRequestCategory.EVENTS);
     setIsPrivate(!!post.isPrivate);
+    setWriterName(post.writerName ?? "");
+    setWriterGrade(
+      post.writerGrade != null && post.writerGrade !== 0 ? String(post.writerGrade) : ""
+    );
     setExistingThumbnailUrl(post.thumbnailUrl ?? null);
     setRemovedThumbnail(false);
     setExistingFileUrls(post.fileUrls ?? []);
@@ -168,6 +175,15 @@ const BlogEditPage: React.FC = () => {
       alert("내용을 입력하세요.");
       return;
     }
+    if (!writerName.trim()) {
+      alert("작성자 이름을 입력하세요.");
+      return;
+    }
+    const parsedGrade = Number(writerGrade);
+    if (!writerGrade.trim() || !Number.isFinite(parsedGrade) || parsedGrade < 0) {
+      alert("작성자 기수를 올바르게 입력하세요.");
+      return;
+    }
 
     setSubmitting(true);
     try {
@@ -208,8 +224,8 @@ const BlogEditPage: React.FC = () => {
         thumbnailUrl,
         category,
         isPrivate,
-        writerGrade: Number(user?.grade) || 0,
-        writerName: user?.name ?? "",
+        writerGrade: parsedGrade,
+        writerName: writerName.trim(),
         // 본문에 삽입된 이미지 key 를 imageUrls 로 함께 보내 S3 수명주기(교체/삭제 정리)를 맞춘다
         imageUrls: extractContentImageKeys(finalContent),
         fileUrls: [...existingFileUrls, ...uploadedFiles],
@@ -219,12 +235,12 @@ const BlogEditPage: React.FC = () => {
         await modifyBlog({ blogId: id, data: payload as any });
         await queryClient.invalidateQueries({ queryKey: getGetBlogQueryKey(id) });
         await queryClient.invalidateQueries({ queryKey: getGetBlogsQueryKey() });
-        message.success("게시물이 수정되었습니다.");
+        toastSuccess("게시물이 수정되었습니다.");
         navigate(`/blog/${id}`);
       } else {
         const created = (await createBlog({ data: payload as any })) as any;
         await queryClient.invalidateQueries({ queryKey: getGetBlogsQueryKey() });
-        message.success("게시물이 등록되었습니다.");
+        toastSuccess("게시물이 등록되었습니다.");
         const newId = created?.data?.id;
         navigate(newId ? `/blog/${newId}` : "/blog");
       }
@@ -305,9 +321,9 @@ const BlogEditPage: React.FC = () => {
               maxLength={TITLE_MAX}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="제목을 입력하세요."
-              className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3.5 pr-16 text-lg font-bold text-black placeholder-gray-400 focus:border-[#007AEB] focus:outline-none focus:ring-2 focus:ring-[#007AEB]/20"
+              className="w-full border-0 border-b border-gray-300 bg-transparent px-0 py-3 pr-14 text-2xl font-bold text-black placeholder-gray-300 outline-none transition-colors focus:border-[#007AEB] md:text-3xl"
             />
-            <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-400">
+            <span className="pointer-events-none absolute right-0 bottom-3 text-xs text-gray-400">
               {title.length}/{TITLE_MAX}
             </span>
           </div>
@@ -320,11 +336,34 @@ const BlogEditPage: React.FC = () => {
               maxLength={SUBTITLE_MAX}
               onChange={(e) => setSubtitle(e.target.value)}
               placeholder="부제목을 입력하세요. (선택)"
-              className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 pr-16 text-sm text-gray-800 placeholder-gray-400 focus:border-[#007AEB] focus:outline-none focus:ring-2 focus:ring-[#007AEB]/20"
+              className="w-full border-0 border-b border-gray-300 bg-transparent px-0 py-2.5 pr-14 text-base text-gray-700 placeholder-gray-300 outline-none transition-colors focus:border-[#007AEB] md:text-lg"
             />
-            <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-400">
+            <span className="pointer-events-none absolute right-0 bottom-3 text-xs text-gray-400">
               {subtitle.length}/{SUBTITLE_MAX}
             </span>
+          </div>
+
+          {/* 작성자 (게시물에 표시할 값 — 로그인 유저와 무관) */}
+          <div className="grid grid-cols-[6.5rem_1fr] items-end gap-4 sm:grid-cols-[7.5rem_1fr]">
+            <div className="relative flex items-end gap-1">
+              <input
+                type="text"
+                inputMode="decimal"
+                value={writerGrade}
+                onChange={(e) => setWriterGrade(e.target.value)}
+                placeholder="기수"
+                className="w-full border-0 border-b border-gray-300 bg-transparent px-0 py-2 text-sm text-gray-700 placeholder-gray-300 outline-none transition-colors focus:border-[#007AEB]"
+              />
+              <span className="shrink-0 pb-2 text-sm text-gray-400">기</span>
+            </div>
+            <input
+              type="text"
+              value={writerName}
+              maxLength={50}
+              onChange={(e) => setWriterName(e.target.value)}
+              placeholder="작성자 이름"
+              className="w-full border-0 border-b border-gray-300 bg-transparent px-0 py-2 text-sm text-gray-700 placeholder-gray-300 outline-none transition-colors focus:border-[#007AEB]"
+            />
           </div>
 
           {/* 카테고리 선택 */}
@@ -515,8 +554,8 @@ const BlogEditPage: React.FC = () => {
                   {subtitle && <p className="mt-1.5 line-clamp-2 text-sm text-gray-500">{subtitle}</p>}
                   <div className="mt-4 flex items-center justify-between text-xs text-[#9ca3af]">
                     <span className="truncate">
-                      {user?.grade ? `${user.grade}기 ` : ""}
-                      {user?.name ?? ""}
+                      {writerGrade.trim() ? `${writerGrade.trim()}기 ` : ""}
+                      {writerName.trim() || "작성자"}
                     </span>
                     <span className="shrink-0">
                       {new Date().toLocaleDateString("ko-KR").replace(/\.$/, "")}

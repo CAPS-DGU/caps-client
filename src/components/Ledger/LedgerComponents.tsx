@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import { getPresignedDownloadURL } from "../../utils/s3Upload";
+import DetailAttachments from "../common/DetailAttachments";
 
 // 공통 아이콘 리소스
 export const pushPinIcon = new URL(
@@ -64,14 +65,21 @@ export interface LedgerDetailMetaProps {
   author: string;
   term: string;
   date: string;
+  /** 첨부 없을 때 본문과 구분할 하단 선 */
+  showBottomBorder?: boolean;
 }
 
 export const LedgerDetailMeta: React.FC<LedgerDetailMetaProps> = ({
   author,
   term,
   date,
+  showBottomBorder = false,
 }) => (
-  <div className="mt-6 flex flex-wrap items-center gap-2 border-b border-gray-200 pb-6 text-sm text-gray-400">
+  <div
+    className={`mt-6 flex flex-wrap items-center gap-2 text-sm text-gray-400 ${
+      showBottomBorder ? "border-b border-gray-200 pb-6" : ""
+    }`}
+  >
     <span className="font-medium text-gray-500">
       {term ? `${term} ` : ""}
       {author}
@@ -92,60 +100,20 @@ export interface LedgerDetailFilesProps {
 export const LedgerDetailFiles: React.FC<LedgerDetailFilesProps> = ({
   fileUrls = [],
 }) => {
-  const [loadingFile, setLoadingFile] = useState<string | null>(null);
-
-  const handleFileClick = async (
-    fileUrl: string,
-    fileName: string,
-    e: React.MouseEvent
-  ) => {
-    e.preventDefault();
-    if (loadingFile === fileUrl) return;
-
-    try {
-      setLoadingFile(fileUrl);
-      const presignedUrl = await getPresignedDownloadURL(fileUrl);
-      const link = document.createElement("a");
-      link.href = presignedUrl;
-      link.download = fileName;
-      link.target = "_blank";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } catch (error) {
-      console.error("파일 다운로드 실패:", error);
-      alert("파일 다운로드에 실패했습니다.");
-    } finally {
-      setLoadingFile(null);
-    }
-  };
-
   if (fileUrls.length === 0) return null;
 
+  const files = fileUrls.map((url) => {
+    const fullFileName = url.split("/").pop() || "첨부파일";
+    const name = fullFileName.replace(/^\d+_\d+_/, "");
+    return { url, name };
+  });
+
   return (
-    <div className="mt-10 border-t border-gray-200 pt-6">
-      <ul className="space-y-2">
-        {fileUrls.map((fileUrl, index) => {
-          const fullFileName = fileUrl.split("/").pop() || "첨부파일";
-          const fileName = fullFileName.replace(/^\d+_\d+_/, "");
-          const isLoading = loadingFile === fileUrl;
-          return (
-            <li key={index} className="flex items-center gap-2 text-sm text-gray-600">
-              <img src={attachFileIcon} alt="" className="w-4 h-4 shrink-0" />
-              <button
-                type="button"
-                onClick={(e) => handleFileClick(fileUrl, fileName, e)}
-                disabled={isLoading}
-                className={`text-left font-medium text-[#007AEB] hover:underline disabled:opacity-50 disabled:cursor-wait ${
-                  isLoading ? "" : "cursor-pointer"
-                }`}
-              >
-                {isLoading ? "다운로드 중..." : fileName}
-              </button>
-            </li>
-          );
-        })}
-      </ul>
+    <div className="mt-4 border-b border-gray-200 pb-6">
+      <DetailAttachments
+        files={files}
+        onResolveUrl={async (file) => getPresignedDownloadURL(file.url)}
+      />
     </div>
   );
 };

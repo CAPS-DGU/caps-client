@@ -61,7 +61,6 @@ const LedgerDetailPage: React.FC = () => {
     return `${year}. ${month}. ${day} ${hours}:${minutes}`;
   };
 
-  // 회원이 아니면 접근 차단
   useEffect(() => {
     if (!isLoading && !isLoggedIn) {
       navigate("/");
@@ -90,10 +89,8 @@ const LedgerDetailPage: React.FC = () => {
     if (!ledgerId) return;
 
     try {
-      // 1. DB에서 장부 삭제
       await apiDeleteWithToken(`/api/v1/ledgers/${ledgerId}`, navigate);
 
-      // 2. S3에서 파일 삭제 (파일이 있는 경우)
       if (ledger?.fileUrls && ledger.fileUrls.length > 0) {
         try {
           await Promise.all(
@@ -101,7 +98,6 @@ const LedgerDetailPage: React.FC = () => {
           );
         } catch (s3Error) {
           console.error("S3 파일 삭제 실패:", s3Error);
-          // 파일 삭제 실패해도 DB 삭제는 완료되었으므로 계속 진행
         }
       }
 
@@ -127,6 +123,9 @@ const LedgerDetailPage: React.FC = () => {
     );
   }
 
+  const fileUrls = ledger?.fileUrls ?? [];
+  const hasFiles = fileUrls.length > 0;
+
   return (
     <div className="flex flex-col min-h-screen bg-[#FAFAFA]">
       <Navbar />
@@ -145,12 +144,12 @@ const LedgerDetailPage: React.FC = () => {
               author={ledger?.member.name ?? ""}
               term={ledger?.member.grade ? `${ledger.member.grade}기` : ""}
               date={ledger ? formatDateTime(ledger.createdAt) : ""}
+              showBottomBorder={!hasFiles}
             />
+            <LedgerDetailFiles fileUrls={fileUrls} />
             <LedgerDetailContent content={ledger?.content ?? ""} />
-            <LedgerDetailFiles fileUrls={ledger?.fileUrls ?? []} />
           </article>
 
-          {/* 하단 목록 버튼 */}
           <div className="flex justify-start mt-12">
             <button
               type="button"

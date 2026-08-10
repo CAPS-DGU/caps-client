@@ -9,6 +9,7 @@ import {
   Code,
   Link2,
   ImagePlus,
+  Table as TableIcon,
 } from "lucide-react";
 import MarkdownView from "./MarkdownView";
 
@@ -26,6 +27,8 @@ type Mode = "edit" | "preview";
 function escapeMarkdownLabel(text: string): string {
   return text.replace(/[\\[\]]/g, "\\$&");
 }
+
+const TABLE_TEMPLATE = "| 헤더1 | 헤더2 | 헤더3 |\n| --- | --- | --- |\n| 내용 | 내용 | 내용 |\n";
 
 const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
   value,
@@ -95,6 +98,7 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     { key: "quote", Icon: Quote, label: "인용", run: () => wrap("> ", "", "인용", true) },
     { key: "code", Icon: Code, label: "코드", run: () => wrap("`", "`", "코드") },
     { key: "link", Icon: Link2, label: "링크", run: () => wrap("[", "](https://)", "링크 텍스트") },
+    { key: "table", Icon: TableIcon, label: "표", run: () => insertBlock(TABLE_TEMPLATE) },
   ];
 
   return (
@@ -164,10 +168,10 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className="block min-h-[24rem] w-full resize-y bg-white p-4 font-mono text-[14px] leading-7 text-gray-800 placeholder-gray-400 focus:outline-none"
+          className="block min-h-[36rem] w-full resize-y bg-white p-4 font-mono text-[14px] leading-7 text-gray-800 placeholder-gray-400 focus:outline-none"
         />
       ) : (
-        <div className="min-h-[24rem] p-4">
+        <div className="min-h-[36rem] p-4">
           {value.trim() ? (
             <MarkdownView content={value} />
           ) : (

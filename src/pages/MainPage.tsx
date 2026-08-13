@@ -317,7 +317,7 @@ const MainPage = () => {
               캡스는 어떤 활동을 하나요?
             </div>
             <div className="text-base font-bold leading-tight text-center text-gray-700 md:text-xl break-keep md:break-normal">
-              프로그래밍 스터디 · 세미나 · 알고리즘 대회 · MT · 게임대회까지<br />
+              스터디 · 세미나 · 알고리즘 대회 · 컨퍼런스 · 게임대회까지<br />
               다양한 활동을 즐길 수 있습니다.
             </div>
           </div>

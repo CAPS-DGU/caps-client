@@ -28,11 +28,6 @@ const department: Department = {
       position: "컴퓨터AI학부",
       img: "심지용.jpg",
     },
-    {
-      name: "40기 조민철",
-      position: "컴퓨터AI학부",
-      img: "조민철.jpg",
-    },
   ],
 };
 

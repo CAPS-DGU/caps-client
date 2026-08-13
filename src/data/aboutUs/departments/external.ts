@@ -9,16 +9,6 @@ const department: Department = {
       img: "강주영.jpeg",
     },
     {
-      name: "39.5기 이태경",
-      position: "경영정보학과",
-      img: "이태경.jpeg",
-    },
-    {
-      name: "39.5기 이민혁",
-      position: "컴퓨터AI학부",
-      img: "이민혁.jpeg",
-    },
-    {
       name: "40기 유승웅",
       position: "컴퓨터공학전공",
       img: "유승웅.jpg",

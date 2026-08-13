@@ -122,7 +122,7 @@ const MainPage = () => {
   const LEARN_CARDS = [
     {
       title: "스터디",
-      description: "강의형/관리형/프로젝트형 세 가지 유형이 있고, 원하는 분야를 선택하여 참여할 수 있습니다.",
+      description: "커리큘럼형, 자유형 스터디가 있어 원하는 분야를 선택하여 참여할 수 있습니다.",
       image: intro1,
     },
     {
@@ -136,8 +136,8 @@ const MainPage = () => {
       image: intro3,
     },
     {
-      title: "졸업생 초청강연",
-      description: "CAPS를 졸업하신 선배님들의 학업과 취직에 대한 경험담과 조언을 들을 수 있는 시간입니다.",
+      title: "CS 연합 컨퍼런스",
+      description: "타대학 학생들과 함께 컴퓨터와 직·간접적으로 연관된 주제를 자유롭게 발표하는 자리입니다.",
       image: intro4,
     },
   ];  // 예시 데이터
@@ -147,7 +147,7 @@ const MainPage = () => {
     image: intro5,
   },
   {
-    title: "세미나",
+    title: "신입부원 세미나",
     description: "자유로운 주제로 발표를 준비해 이야기를 들려주며 서로를 알아가는 자리입니다.",
     image: intro6,
   },
@@ -317,7 +317,7 @@ const MainPage = () => {
               캡스는 어떤 활동을 하나요?
             </div>
             <div className="text-base font-bold leading-tight text-center text-gray-700 md:text-xl break-keep md:break-normal">
-              프로그래밍 스터디 · 세미나 · 알고리즘 대회 · MT · 게임대회까지<br />
+              스터디 · 세미나 · 알고리즘 대회 · 컨퍼런스 · 게임대회까지<br />
               다양한 활동을 즐길 수 있습니다.
             </div>
           </div>

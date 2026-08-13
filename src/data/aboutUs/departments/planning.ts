@@ -19,11 +19,6 @@ const department: Department = {
       img: "김동원.jpeg",
     },
     {
-      name: "39기 박승우", 
-      position: "컴퓨터AI학부", 
-      img: "박승우.jpeg" 
-    },
-    {
       name: "39기 정형균",
       position: "컴퓨터AI학부",
       img: "정형균.jpg",

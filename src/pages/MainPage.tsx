@@ -409,21 +409,17 @@ const MainPage = () => {
           className="flex flex-col justify-center items-center px-4 py-16 w-full min-h-screen text-center md:py-24 snap-start"
         >
           {/* 메인 메시지 */}
-          <div className="mb-3 text-xl font-extrabold text-center text-gray-800 md:text-3xl">
+          <div className="mb-8 text-xl font-extrabold text-center text-gray-800 md:mb-10 md:text-3xl">
             캡스의 프로그래밍 꿈나무가 되어 1987년의 역사를 이어가주세요.
           </div>
-          <div className="mb-4 text-sm font-semibold text-gray-500 md:text-base">
-            모집 기한: 8월 20일 ~ 9월 2일 23:59
-          </div>
           {/* 버튼 */}
-          <a
-            href="https://docs.google.com/forms/d/e/1FAIpQLScKtJH3FQGKAB9uf910VUuIGG6Du-m9fizI9Ml4ag4c8-_6_w/viewform"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center px-8 py-4 text-lg font-extrabold text-white bg-blue-600 rounded-full shadow-lg transition hover:bg-blue-700 md:px-12 md:py-5 md:text-xl"
+          <button
+            type="button"
+            disabled
+            className="flex items-center px-8 py-4 text-lg font-extrabold text-white bg-blue-600 rounded-full shadow-lg transition cursor-not-allowed opacity-60 md:px-12 md:py-5 md:text-xl disabled:hover:bg-blue-600"
           >
-            지원서 작성하기 →
-          </a>
+            지금은 모집 기간이 아니에요!
+          </button>
         </motion.section>
         <motion.div
           initial={{ opacity: 0, y: 40 }}

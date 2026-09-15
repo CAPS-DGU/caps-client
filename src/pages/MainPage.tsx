@@ -265,11 +265,11 @@ const MainPage = () => {
             <div className="flex flex-col items-center mx-auto max-w-6xl">
 
               <div className=" text-sm md:text-xl font-[Pretendard] font-semibold text-gray-500 mb-4 text-center">
-                1988년부터 시작 되어 40년의 역사를 가진 캡스는 현재
+                1988년부터 시작 되어 39년의 역사를 가진 캡스는 현재
               </div>
               <div className="text-2xl md:text-3xl font-[Pretendard] font-bold text-gray-800 mb-10 text-center">
-                <span className="text-blue-500">{departments.length}</span> 개의 학과, 총 <span className="text-blue-600">228</span> 명의 학우와 <br />함께하고 있습니다.
-                <div className="text-xs font-medium text-gray-400">2026년 1학기 기준</div>
+                <span className="text-blue-500">{departments.length}</span> 개의 학과, 총 <span className="text-blue-600">180</span> 명의 학우와 <br />함께하고 있습니다.
+                <div className="text-xs font-medium text-gray-400">2026년 2학기 기준</div>
               </div>
 
 
@@ -410,7 +410,7 @@ const MainPage = () => {
         >
           {/* 메인 메시지 */}
           <div className="mb-8 text-xl font-extrabold text-center text-gray-800 md:mb-10 md:text-3xl">
-            캡스의 프로그래밍 꿈나무가 되어 1987년의 역사를 이어가주세요.
+            캡스의 프로그래밍 꿈나무가 되어 1988년의 역사를 이어가주세요.
           </div>
           {/* 버튼 */}
           <button

@@ -45,10 +45,10 @@ const LedgerDetailPage: React.FC = () => {
   const [isDeleteSuccessOpen, setIsDeleteSuccessOpen] = useState(false);
 
   const userRole = user?.role || null;
-  const isAdmin = userRole === "ADMIN";
-  const isAuthor =
-    user?.id && ledger?.member.id && user.id === ledger.member.id;
-  const canManage = isAdmin || !!isAuthor;
+  const canManage =
+    userRole === "ADMIN" ||
+    userRole === "COUNCIL" ||
+    userRole === "PRESIDENT";
 
   const formatDateTime = (isoString: string) => {
     const date = new Date(isoString);

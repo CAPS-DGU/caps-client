@@ -28,6 +28,16 @@ const department: Department = {
       position: "전자전기공학부",
       img: "장동성.jpg",
     },
+    {
+      name: "40기 박예찬",
+      position: "컴퓨터AI학부",
+      img: "박예찬.jpg",
+    },
+    {
+      name: "40.5기 이다원",
+      position: "전자전기공학부",
+      img: "이다원.jpg",
+    },
   ],
 };
 

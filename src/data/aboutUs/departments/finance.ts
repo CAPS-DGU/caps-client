@@ -18,6 +18,11 @@ const department: Department = {
       position: "열린전공학부",
       img: "강유민.jpeg",
     },
+    {
+      name: "40.5기 임지안",
+      position: "의료인공지능공학과",
+      img: "임지안.jpg",
+    },
   ],
 };
 

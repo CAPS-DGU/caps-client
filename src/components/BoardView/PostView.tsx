@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { FaHeart } from 'react-icons/fa';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { FaHeart } from "react-icons/fa";
 
 const PostView = ({ post, onCommentSubmit }) => {
   const {
@@ -17,7 +17,7 @@ const PostView = ({ post, onCommentSubmit }) => {
     files,
   } = post;
 
-  const [newComment, setNewComment] = useState('');
+  const [newComment, setNewComment] = useState("");
   const [likes, setLikes] = useState(like);
   const [isLiked, setIsLiked] = useState(false);
   const navigate = useNavigate();
@@ -28,10 +28,10 @@ const PostView = ({ post, onCommentSubmit }) => {
 
   const handleCommentSubmit = (e) => {
     e.preventDefault();
-    if (newComment.trim() === '') return;
+    if (newComment.trim() === "") return;
 
     onCommentSubmit(newComment);
-    setNewComment('');
+    setNewComment("");
   };
 
   const handleLikeClick = () => {
@@ -49,7 +49,10 @@ const PostView = ({ post, onCommentSubmit }) => {
       <div className="mb-4">
         <h1 className="text-2xl font-bold">{title}</h1>
         <div className="text-sm text-gray-500">
-          <span>작성자: {writer.grade}기 {writer.name} </span> | <span>{time}</span> | <span>조회수: {hit}</span>
+          <span>
+            작성자: {writer.grade}기 {writer.name}{" "}
+          </span>{" "}
+          | <span>{time}</span> | <span>조회수: {hit}</span>
         </div>
         {isModified ? (
           <div className="text-xs text-gray-400">(수정됨)</div>
@@ -72,7 +75,10 @@ const PostView = ({ post, onCommentSubmit }) => {
           <ul className="list-disc pl-5">
             {files.map((file) => (
               <li key={file.fileId}>
-                <a href={`/api/${file.url}`} className="text-blue-500 underline">
+                <a
+                  href={`/api/${file.url}`}
+                  className="text-blue-500 underline"
+                >
                   {file.title}
                 </a>
               </li>
@@ -85,7 +91,7 @@ const PostView = ({ post, onCommentSubmit }) => {
       <div className="mt-6 flex justify-center">
         <button
           onClick={handleLikeClick}
-          className={`flex items-center space-x-2 p-2 rounded-md ${isLiked ? 'text-red-500' : 'text-gray-500'} hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-gray-300`}
+          className={`flex items-center space-x-2 p-2 rounded-md ${isLiked ? "text-red-500" : "text-gray-500"} hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-gray-300`}
         >
           <FaHeart className="text-lg" />
           <span>{likes}</span>
@@ -106,9 +112,7 @@ const PostView = ({ post, onCommentSubmit }) => {
                     <p>{c.content}</p>
                   )}
                 </div>
-                <div className="text-xs text-gray-400">
-                  {c.time}
-                </div>
+                <div className="text-xs text-gray-400">{c.time}</div>
               </li>
             ))}
           </ul>
@@ -117,7 +121,10 @@ const PostView = ({ post, onCommentSubmit }) => {
 
       {/* 댓글 작성 */}
       <div className="mt-6">
-        <form onSubmit={handleCommentSubmit} className="flex flex-col space-y-4">
+        <form
+          onSubmit={handleCommentSubmit}
+          className="flex flex-col space-y-4"
+        >
           <textarea
             value={newComment}
             onChange={handleCommentChange}
@@ -129,7 +136,9 @@ const PostView = ({ post, onCommentSubmit }) => {
             <button
               type="button"
               className="p-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300"
-              onClick={() => { navigate(-1) }}
+              onClick={() => {
+                navigate(-1);
+              }}
             >
               목록
             </button>

@@ -27,4 +27,3 @@ const department: Department = {
 };
 
 export default department;
-

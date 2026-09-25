@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import WikiDocument from "./WikiDocument";
 
 const WikiEditor = ({ initialContent, onSave }) => {
   const [content, setContent] = useState(initialContent.content);
@@ -20,7 +21,9 @@ const WikiEditor = ({ initialContent, onSave }) => {
     const hasForbidden = forbiddenPatterns.some((re) => re.test(content));
 
     if (hasForbidden) {
-      alert('보안상의 이유로 iframe / onerror 등의 태그 또는 속성은 사용할 수 없습니다.\n해당 내용을 제거한 뒤 다시 시도해 주세요.');
+      alert(
+        "보안상의 이유로 iframe / onerror 등의 태그 또는 속성은 사용할 수 없습니다.\n해당 내용을 제거한 뒤 다시 시도해 주세요.",
+      );
       return;
     }
 
@@ -28,17 +31,34 @@ const WikiEditor = ({ initialContent, onSave }) => {
   };
 
   return (
-    <div className="max-w-4xl p-6 mx-auto bg-white rounded-md shadow-md">
-      {/* 에디터 영역 */}
-      <div className="mb-6">
-        <h2 className="mb-4 text-2xl font-semibold text-gray-700">위키 수정</h2>
-        <textarea
-          className="w-full h-96 p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          value={content}
-          onChange={handleChange}
-        />
-      </div>
+    <div className="max-w-7xl p-4 md:p-6 mx-auto bg-white rounded-md shadow-md">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* 에디터 영역 */}
+        <div className="mb-6">
+          <h2 className="mb-4 text-2xl font-semibold text-gray-700">
+            위키 수정
+          </h2>
+          <textarea
+            aria-label="위키 내용"
+            className="w-full h-96 p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={content}
+            onChange={handleChange}
+          />
+        </div>
 
+        <section
+          aria-labelledby="wiki-preview-title"
+          className="min-w-0 break-words overflow-x-auto"
+        >
+          <h2
+            id="wiki-preview-title"
+            className="mb-4 text-2xl font-semibold text-gray-700"
+          >
+            미리보기
+          </h2>
+          <WikiDocument content={content} idPrefix="preview-" />
+        </section>
+      </div>
       <div className="flex justify-end space-x-4">
         {/* 도움말 링크 */}
         <a
@@ -56,8 +76,6 @@ const WikiEditor = ({ initialContent, onSave }) => {
         >
           수정
         </button>
-
-
       </div>
     </div>
   );

@@ -10,7 +10,10 @@ import BlogImage from "../components/Blog/BlogImage";
 import MarkdownView from "../components/Blog/MarkdownView";
 import DetailAttachments from "../components/common/DetailAttachments";
 import ScrollToTopButton from "../components/common/ScrollToTopButton";
-import { BLOG_CATEGORY_MAP, blogCategoryLabel } from "../components/Blog/categories";
+import {
+  BLOG_CATEGORY_MAP,
+  blogCategoryLabel,
+} from "../components/Blog/categories";
 import { useAuth } from "../hooks/useAuth";
 import { resolveBlogFileUrl, blogFileName } from "../utils/blogFiles";
 import {
@@ -53,7 +56,7 @@ const BlogDetailPage: React.FC = () => {
   const post = data?.data as BlogDetailResponse | undefined;
   const cat = post?.category ? BLOG_CATEGORY_MAP[post.category] : undefined;
   const leftoverImages = (post?.imageUrls ?? []).filter(
-    (u) => !(post?.content ?? "").includes(u)
+    (u) => !(post?.content ?? "").includes(u),
   );
   const fileUrls = post?.fileUrls ?? [];
   const hasFiles = fileUrls.length > 0;
@@ -69,7 +72,7 @@ const BlogDetailPage: React.FC = () => {
       alert(
         axios.isAxiosError(e) && e.response?.status === 403
           ? "게시물을 삭제할 권한이 없습니다."
-          : "게시물 삭제에 실패했습니다."
+          : "게시물 삭제에 실패했습니다.",
       );
     }
   };
@@ -136,7 +139,9 @@ const BlogDetailPage: React.FC = () => {
               {post.title}
             </h1>
             {post.subtitle && (
-              <p className="mt-3 text-lg font-medium text-[#374151]">{post.subtitle}</p>
+              <p className="mt-3 text-lg font-medium text-[#374151]">
+                {post.subtitle}
+              </p>
             )}
 
             <div

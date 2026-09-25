@@ -34,7 +34,7 @@ const BoardPage: React.FC = () => {
               "Content-Type": "application/json",
               Accept: "*/*",
             },
-          }
+          },
         );
         console.log(response.data);
         setPosts(response.data.data);

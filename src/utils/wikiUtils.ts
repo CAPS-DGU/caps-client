@@ -27,7 +27,7 @@ export const wikiUtils = {
         return `<h${level} id="${id}" class="text-${
           level + 1
         }xl font-bold mt-4 mb-2">${title.trim()}</h${level}>`;
-      }
+      },
     );
 
     // Parse links
@@ -51,8 +51,8 @@ export const wikiUtils = {
       commentIndex++;
       return `<sup class="comment-ref text-blue-500 hover:underline cursor-pointer relative" id="${refId}">
         <a href="#${commentId}" class="text-blue-500 hover:underline cursor-pointer">[${
-        commentIndex - 1
-      }]</a>
+          commentIndex - 1
+        }]</a>
         <span class="comment-box absolute left-1/2 transform top-6 bg-gray-800 text-white text-sm p-1 rounded-md shadow-md hidden z-10">
           ${commentText.trim()}
         </span>
@@ -64,13 +64,13 @@ export const wikiUtils = {
       .replace(/^\* (.+)$/gm, '<li class="text-lg text-gray-600">$1</li>')
       .replace(
         /(<li>.*<\/li>)(?!.*<\/ul>)/g,
-        '<ul class="list-disc pl-6">$1</ul>'
+        '<ul class="list-disc pl-6">$1</ul>',
       );
 
     // Parse paragraphs
     htmlContent = htmlContent.replace(
       /\n/g,
-      '</p><p class="text-lg text-gray-700 leading-relaxed mb-4">'
+      '</p><p class="text-lg text-gray-700 leading-relaxed mb-4">',
     );
 
     return {

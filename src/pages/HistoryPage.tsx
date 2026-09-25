@@ -32,7 +32,7 @@ const IntroducePage: React.FC = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get<{ data: WikiData }>(
-          `/api/wiki?title=caps 연혁`
+          `/api/wiki?title=caps 연혁`,
         );
         if (response.status === 200) {
           setWikiData(response.data.data); // Set the fetched data

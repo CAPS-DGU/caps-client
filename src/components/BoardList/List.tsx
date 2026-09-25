@@ -1,23 +1,27 @@
-import React from 'react';
-import { toRelativeTime } from '../../utils/Time.ts';
+import React from "react";
+import { toRelativeTime } from "../../utils/Time.ts";
 
 function PostItem({ id, title, author, time, hit, comments }) {
-
   return (
     <li className="grid grid-cols-7 items-center border-b border-gray-200 py-2 text-sm">
       <div className="text-center text-gray-500">{"자유"}</div>
       <div className="col-span-3">
-        <a href={`/view/${id}`} className="text-gray-800 hover:text-blue-500 hover:underline">
+        <a
+          href={`/view/${id}`}
+          className="text-gray-800 hover:text-blue-500 hover:underline"
+        >
           {title}
         </a>
         {comments > 0 && (
           <span className="ml-2 text-xs text-red-500">[{comments}]</span>
         )}
       </div>
-      <div className="text-center text-gray-500">{author.grade}기 {author.name}</div>
+      <div className="text-center text-gray-500">
+        {author.grade}기 {author.name}
+      </div>
       <div className="text-center text-gray-500">{toRelativeTime(time)}</div>
       <div className="text-center text-gray-500">{hit}</div>
-    </li >
+    </li>
   );
 }
 

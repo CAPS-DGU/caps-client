@@ -5,12 +5,12 @@ import DetailAttachments from "../common/DetailAttachments";
 // 공통 아이콘 리소스
 export const pushPinIcon = new URL(
   "../../assets/push_pin_rotate.svg",
-  import.meta.url
+  import.meta.url,
 ).href;
 
 export const attachFileIcon = new URL(
   "../../assets/attach_file.svg",
-  import.meta.url
+  import.meta.url,
 ).href;
 
 /* =====================
@@ -201,7 +201,8 @@ export const PinToggle: React.FC<PinToggleProps> = ({ isPinned, onToggle }) => (
     >
       <div
         className={`w-3 h-3 bg-white rounded-full transform transition-transform ${
-          isPinned ? "translate-x-3" : ""}`}
+          isPinned ? "translate-x-3" : ""
+        }`}
       />
     </div>
   </button>

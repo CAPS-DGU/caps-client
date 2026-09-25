@@ -1,23 +1,26 @@
-import React, { useState } from 'react';
-import { board_categories } from '../../constants/Board';
+import React, { useState } from "react";
+import { board_categories } from "../../constants/Board";
 
 const TextEditor = ({ onSubmit }) => {
   const [category, setCategory] = useState(2);
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData();
-    formData.append('category', category);
-    formData.append('title', title);
-    formData.append('content', content);
+    formData.append("category", category);
+    formData.append("title", title);
+    formData.append("content", content);
 
     onSubmit(formData);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-2xl justify-center flex flex-col space-y-4 p-4 bg-gray-100 rounded-md shadow-md">
+    <form
+      onSubmit={handleSubmit}
+      className="max-w-2xl justify-center flex flex-col space-y-4 p-4 bg-gray-100 rounded-md shadow-md"
+    >
       {/* 카테고리 선택 */}
       <div>
         <label className="block text-sm font-medium text-gray-700">분류</label>
@@ -27,7 +30,10 @@ const TextEditor = ({ onSubmit }) => {
           className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300"
         >
           {Object.entries(board_categories).map(([key, value]) => (
-            <option key={key} value={key}> {value}</option>
+            <option key={key} value={key}>
+              {" "}
+              {value}
+            </option>
           ))}
           {/* <option value="general">자유게시판</option> */}
           {/* <option value="news">공모전 및 대회</option> */}
@@ -59,7 +65,6 @@ const TextEditor = ({ onSubmit }) => {
           placeholder="내용을 입력하세요"
         />
       </div>
-
 
       {/* 등록 버튼 */}
       <button

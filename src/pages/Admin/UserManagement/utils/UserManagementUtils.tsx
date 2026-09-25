@@ -4,10 +4,10 @@ import { Space, Button, Tag } from "antd";
 
 export const UserManagementUtils = {
   async fetchUsers(
-    params: UserManagementTypes.SearchParams
+    params: UserManagementTypes.SearchParams,
   ): Promise<UserManagementTypes.PaginatedResponse<UserManagementTypes.User>> {
     const response = await fetch(
-      `/api/users?${new URLSearchParams(params as any).toString()}`
+      `/api/users?${new URLSearchParams(params as any).toString()}`,
     );
     if (!response.ok) {
       throw new Error("Failed to fetch users");
@@ -16,7 +16,7 @@ export const UserManagementUtils = {
   },
 
   async createUser(
-    data: UserManagementTypes.UserFormData
+    data: UserManagementTypes.UserFormData,
   ): Promise<UserManagementTypes.User> {
     const response = await fetch("/api/users", {
       method: "POST",
@@ -33,7 +33,7 @@ export const UserManagementUtils = {
 
   async updateUser(
     id: string,
-    data: UserManagementTypes.UserFormData
+    data: UserManagementTypes.UserFormData,
   ): Promise<UserManagementTypes.User> {
     const response = await fetch(`/api/users/${id}`, {
       method: "PUT",
@@ -59,7 +59,7 @@ export const UserManagementUtils = {
 
   getTableColumns(
     onEdit: (user: UserManagementTypes.User) => void,
-    onDelete: (id: string) => void
+    onDelete: (id: string) => void,
   ) {
     return [
       {
@@ -96,8 +96,8 @@ export const UserManagementUtils = {
               status === "active"
                 ? "green"
                 : status === "inactive"
-                ? "red"
-                : "orange"
+                  ? "red"
+                  : "orange"
             }
           >
             {status}

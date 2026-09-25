@@ -1,7 +1,7 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import LoadingSpinner from '../LoadingSpinner';
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import LoadingSpinner from "../LoadingSpinner";
 
 const EventItem = ({ event }) => {
   const { title, startDate, maxParticipants, description, type } = event;
@@ -16,17 +16,19 @@ const EventItem = ({ event }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`/api/event/${event.id}/participants`, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': '*/*',
-            'Authorization': 'Bearer ' + accessToken
-          }
-        });
+        const response = await axios.get(
+          `/api/event/${event.id}/participants`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "*/*",
+              Authorization: "Bearer " + accessToken,
+            },
+          },
+        );
         setPlayer(response.data.data.length);
         setLoading(false); // 로딩 완료
-      }
-      catch (error) {
+      } catch (error) {
         setLoading(false); // 에러 발생 시에도 로딩 상태 해제
         throw error;
       }
@@ -43,13 +45,12 @@ const EventItem = ({ event }) => {
         return "❓"; // 퀴즈 관련 이모지
       default:
         return "📅"; // 기본 이모지
-    };
+    }
   };
 
   // 로딩중일 때 화면에 표시
   if (loading) {
     return <LoadingSpinner />;
-
   }
 
   return (

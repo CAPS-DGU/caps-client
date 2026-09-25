@@ -1,4 +1,3 @@
-
 export const board_categories = {
   0: "전체 게시판",
   1: "공지사항",
@@ -8,6 +7,5 @@ export const board_categories = {
   5: "공모전 및 대회",
   10: "회의록",
   11: "장부",
-  12: "전시회 회의록"
-}
-
+  12: "전시회 회의록",
+};

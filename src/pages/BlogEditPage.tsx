@@ -6,13 +6,20 @@ import { toastSuccess } from "../utils/toast";
 import { Lock, Trash2, Paperclip, ImagePlus } from "lucide-react";
 import Navbar from "../components/NavBar";
 import Footer from "../components/MainPage/Footer";
-import { BLOG_CATEGORIES, BLOG_CATEGORY_MAP } from "../components/Blog/categories";
+import {
+  BLOG_CATEGORIES,
+  BLOG_CATEGORY_MAP,
+} from "../components/Blog/categories";
 import MarkdownEditor from "../components/Blog/MarkdownEditor";
 import BlogImage from "../components/Blog/BlogImage";
 import AttachmentList from "../components/common/AttachmentList";
 import { useAuth } from "../hooks/useAuth";
 import { useConfirmLeaveOnUnload } from "../hooks/useConfirmLeaveOnUnload";
-import { uploadFileToS3, uploadMultipleFilesToS3, sanitizeFileName } from "../utils/s3Upload";
+import {
+  uploadFileToS3,
+  uploadMultipleFilesToS3,
+  sanitizeFileName,
+} from "../utils/s3Upload";
 import { blogFileName } from "../utils/blogFiles";
 import { confirmLeave } from "../utils/confirmLeave";
 import {
@@ -47,12 +54,18 @@ interface PendingFile {
  * `![alt](dest "title")` 처럼 title 이 붙는 경우 dest 뒤에서 정확히 멈추도록 한다.
  */
 function extractContentImageKeys(md: string): string[] {
-  const re = /!\[(?:\\.|[^\]\\])*\]\(\s*(?:<([^>]*)>|([^)\s]+))(?:\s+"[^"]*")?\s*\)/g;
+  const re =
+    /!\[(?:\\.|[^\]\\])*\]\(\s*(?:<([^>]*)>|([^)\s]+))(?:\s+"[^"]*")?\s*\)/g;
   const out: string[] = [];
   let m: RegExpExecArray | null;
   while ((m = re.exec(md)) !== null) {
     const url = (m[1] ?? m[2] ?? "").trim();
-    if (url && !/^https?:\/\//i.test(url) && !url.startsWith("data:") && !url.startsWith("blob:"))
+    if (
+      url &&
+      !/^https?:\/\//i.test(url) &&
+      !url.startsWith("data:") &&
+      !url.startsWith("blob:")
+    )
       out.push(url);
   }
   return Array.from(new Set(out));
@@ -70,7 +83,9 @@ const BlogEditPage: React.FC = () => {
   const [title, setTitle] = useState<string>("");
   const [subtitle, setSubtitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
-  const [category, setCategory] = useState<string>(CreateOrModifyBlogRequestCategory.EVENTS);
+  const [category, setCategory] = useState<string>(
+    CreateOrModifyBlogRequestCategory.EVENTS,
+  );
   const [isPrivate, setIsPrivate] = useState<boolean>(false);
   /** 게시물에 표시할 작성자 (로그인 유저와 별개로 직접 입력) */
   const [writerName, setWriterName] = useState<string>("");
@@ -78,7 +93,9 @@ const BlogEditPage: React.FC = () => {
 
   // 대표 이미지: 새로 고른 파일 / 기존 값(key) / 기존 값 제거 여부
   const [thumbnail, setThumbnail] = useState<File | null>(null);
-  const [existingThumbnailUrl, setExistingThumbnailUrl] = useState<string | null>(null);
+  const [existingThumbnailUrl, setExistingThumbnailUrl] = useState<
+    string | null
+  >(null);
   const [removedThumbnail, setRemovedThumbnail] = useState<boolean>(false);
 
   const [files, setFiles] = useState<PendingFile[]>([]);
@@ -86,7 +103,9 @@ const BlogEditPage: React.FC = () => {
 
   const [submitting, setSubmitting] = useState<boolean>(false);
 
-  const { data: detail } = useGetBlog(id, { query: { enabled: isEdit && Number.isFinite(id) } });
+  const { data: detail } = useGetBlog(id, {
+    query: { enabled: isEdit && Number.isFinite(id) },
+  });
   const { mutateAsync: createBlog } = useCreateBlog();
   const { mutateAsync: modifyBlog } = useModifyBlog();
 
@@ -97,13 +116,13 @@ const BlogEditPage: React.FC = () => {
   // 새로 고른 썸네일 미리보기 (URL 은 언마운트/교체 시 해제한다)
   const thumbnailPreview = useMemo(
     () => (thumbnail ? URL.createObjectURL(thumbnail) : null),
-    [thumbnail]
+    [thumbnail],
   );
   useEffect(
     () => () => {
       if (thumbnailPreview) URL.revokeObjectURL(thumbnailPreview);
     },
-    [thumbnailPreview]
+    [thumbnailPreview],
   );
 
   // 로그인/권한이 없으면 되돌려보낸다
@@ -130,7 +149,9 @@ const BlogEditPage: React.FC = () => {
     setIsPrivate(!!post.isPrivate);
     setWriterName(post.writerName ?? "");
     setWriterGrade(
-      post.writerGrade != null && post.writerGrade !== 0 ? String(post.writerGrade) : ""
+      post.writerGrade != null && post.writerGrade !== 0
+        ? String(post.writerGrade)
+        : "",
     );
     setExistingThumbnailUrl(post.thumbnailUrl ?? null);
     setRemovedThumbnail(false);
@@ -138,7 +159,10 @@ const BlogEditPage: React.FC = () => {
   }, [detail]);
 
   const addFiles = (selected: File[]) => {
-    setFiles((prev) => [...prev, ...selected.map((file, index) => ({ id: Date.now() + index, file }))]);
+    setFiles((prev) => [
+      ...prev,
+      ...selected.map((file, index) => ({ id: Date.now() + index, file })),
+    ]);
   };
 
   // 본문 인라인 이미지: 삽입 시점엔 로컬 blob URL 로만 미리보기(Preview 에서도 그대로 보임)하고,
@@ -152,7 +176,9 @@ const BlogEditPage: React.FC = () => {
     };
   }, []);
 
-  const handleInlineImageUpload = async (file: File): Promise<string | null> => {
+  const handleInlineImageUpload = async (
+    file: File,
+  ): Promise<string | null> => {
     const blobUrl = URL.createObjectURL(file);
     pendingInlineImagesRef.current.set(blobUrl, file);
     return blobUrl;
@@ -180,7 +206,11 @@ const BlogEditPage: React.FC = () => {
       return;
     }
     const parsedGrade = Number(writerGrade);
-    if (!writerGrade.trim() || !Number.isFinite(parsedGrade) || parsedGrade < 0) {
+    if (
+      !writerGrade.trim() ||
+      !Number.isFinite(parsedGrade) ||
+      parsedGrade < 0
+    ) {
       alert("작성자 기수를 올바르게 입력하세요.");
       return;
     }
@@ -195,7 +225,7 @@ const BlogEditPage: React.FC = () => {
         if (!finalContent.includes(blobUrl)) continue;
         const key = await uploadFileToS3(
           file,
-          `blog/${Date.now()}_${inlineIndex++}_${sanitizeFileName(file.name)}`
+          `blog/${Date.now()}_${inlineIndex++}_${sanitizeFileName(file.name)}`,
         );
         finalContent = finalContent.split(blobUrl).join(key);
       }
@@ -204,11 +234,14 @@ const BlogEditPage: React.FC = () => {
       const uploadedFiles = files.length
         ? await uploadMultipleFilesToS3(
             files.map((item) => item.file),
-            "blog"
+            "blog",
           )
         : [];
       const uploadedThumbnail = thumbnail
-        ? await uploadFileToS3(thumbnail, `blog/${Date.now()}_0_${sanitizeFileName(thumbnail.name)}`)
+        ? await uploadFileToS3(
+            thumbnail,
+            `blog/${Date.now()}_0_${sanitizeFileName(thumbnail.name)}`,
+          )
         : null;
 
       // 썸네일: 새로 고르면 교체 / 명시적으로 지우면 null / 그대로면 기존 값 유지(항상 전송)
@@ -233,13 +266,19 @@ const BlogEditPage: React.FC = () => {
 
       if (isEdit) {
         await modifyBlog({ blogId: id, data: payload as any });
-        await queryClient.invalidateQueries({ queryKey: getGetBlogQueryKey(id) });
-        await queryClient.invalidateQueries({ queryKey: getGetBlogsQueryKey() });
+        await queryClient.invalidateQueries({
+          queryKey: getGetBlogQueryKey(id),
+        });
+        await queryClient.invalidateQueries({
+          queryKey: getGetBlogsQueryKey(),
+        });
         toastSuccess("게시물이 수정되었습니다.");
         navigate(`/blog/${id}`);
       } else {
         const created = (await createBlog({ data: payload as any })) as any;
-        await queryClient.invalidateQueries({ queryKey: getGetBlogsQueryKey() });
+        await queryClient.invalidateQueries({
+          queryKey: getGetBlogsQueryKey(),
+        });
         toastSuccess("게시물이 등록되었습니다.");
         const newId = created?.data?.id;
         navigate(newId ? `/blog/${newId}` : "/blog");
@@ -249,7 +288,7 @@ const BlogEditPage: React.FC = () => {
       alert(
         axios.isAxiosError(error) && error.response?.status === 403
           ? "게시물을 저장할 권한이 없습니다."
-          : "게시물 저장에 실패했습니다."
+          : "게시물 저장에 실패했습니다.",
       );
     } finally {
       setSubmitting(false);
@@ -268,7 +307,9 @@ const BlogEditPage: React.FC = () => {
         >
           {/* 헤더: 제목 + 비공개 토글 + 취소/발행 */}
           <div className="flex flex-col gap-4 border-b border-gray-200 pb-5 sm:flex-row sm:items-center sm:justify-between">
-            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-black">블로그</h1>
+            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-black">
+              블로그
+            </h1>
             <div className="flex flex-wrap items-center justify-end gap-2.5">
               <button
                 type="button"
@@ -297,7 +338,8 @@ const BlogEditPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => {
-                  if (confirmLeave()) navigate(isEdit ? `/blog/${id}` : "/blog");
+                  if (confirmLeave())
+                    navigate(isEdit ? `/blog/${id}` : "/blog");
                 }}
                 className="rounded-full border border-gray-300 px-6 py-2.5 text-sm font-bold text-gray-600 transition-colors hover:text-gray-900"
               >
@@ -392,7 +434,9 @@ const BlogEditPage: React.FC = () => {
           <div>
             <div className="mb-2 flex items-center justify-between">
               <h2 className="text-sm font-bold text-gray-700">내용</h2>
-              <span className="text-xs text-gray-400">마크다운 문법으로 작성하고 Preview 로 확인하세요</span>
+              <span className="text-xs text-gray-400">
+                마크다운 문법으로 작성하고 Preview 로 확인하세요
+              </span>
             </div>
             <MarkdownEditor
               value={content}
@@ -405,7 +449,9 @@ const BlogEditPage: React.FC = () => {
           <div className="grid grid-cols-1 gap-6 [grid-template-areas:'thumb'_'preview'_'files'] lg:grid-cols-2 lg:[grid-template-areas:'thumb_preview'_'files_preview']">
             {/* 대표 이미지 */}
             <section className="[grid-area:thumb]">
-              <h2 className="mb-2 text-sm font-bold text-gray-700">대표 이미지 (선택)</h2>
+              <h2 className="mb-2 text-sm font-bold text-gray-700">
+                대표 이미지 (선택)
+              </h2>
               {showThumbnailPreview ? (
                 <div className="relative overflow-hidden rounded-xl border border-gray-200 bg-white">
                   <div className="aspect-[16/9] w-full">
@@ -479,7 +525,9 @@ const BlogEditPage: React.FC = () => {
             {/* 파일 업로드 */}
             <section className="[grid-area:files] rounded-xl border border-gray-200 bg-white p-4">
               <label className="flex cursor-pointer items-center justify-between">
-                <span className="text-sm font-bold text-[#007AEB]">파일 업로드</span>
+                <span className="text-sm font-bold text-[#007AEB]">
+                  파일 업로드
+                </span>
                 <span className="inline-flex items-center gap-1.5 text-xs text-gray-400">
                   <Paperclip className="h-4 w-4" />
                   추가
@@ -498,12 +546,15 @@ const BlogEditPage: React.FC = () => {
                     id: `existing-${url}`,
                     name: blogFileName(url),
                     onRemove: () =>
-                      setExistingFileUrls((prev) => prev.filter((_, i) => i !== index)),
+                      setExistingFileUrls((prev) =>
+                        prev.filter((_, i) => i !== index),
+                      ),
                   })),
                   ...files.map((item) => ({
                     id: item.id,
                     name: item.file.name,
-                    onRemove: () => setFiles((prev) => prev.filter((f) => f.id !== item.id)),
+                    onRemove: () =>
+                      setFiles((prev) => prev.filter((f) => f.id !== item.id)),
                   })),
                 ]}
               />
@@ -511,7 +562,9 @@ const BlogEditPage: React.FC = () => {
 
             {/* 블로그 카드 미리보기 */}
             <section className="[grid-area:preview]">
-              <h2 className="mb-2 text-sm font-bold text-gray-700">블로그 카드 미리보기</h2>
+              <h2 className="mb-2 text-sm font-bold text-gray-700">
+                블로그 카드 미리보기
+              </h2>
               <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
                 <div className="relative aspect-[16/9] w-full overflow-hidden bg-gray-100">
                   {thumbnailPreview ? (
@@ -551,14 +604,20 @@ const BlogEditPage: React.FC = () => {
                   <h3 className="truncate text-lg font-bold text-black">
                     {title || "제목을 입력하세요."}
                   </h3>
-                  {subtitle && <p className="mt-1.5 line-clamp-2 text-sm text-gray-500">{subtitle}</p>}
+                  {subtitle && (
+                    <p className="mt-1.5 line-clamp-2 text-sm text-gray-500">
+                      {subtitle}
+                    </p>
+                  )}
                   <div className="mt-4 flex items-center justify-between text-xs text-[#9ca3af]">
                     <span className="truncate">
                       {writerGrade.trim() ? `${writerGrade.trim()}기 ` : ""}
                       {writerName.trim() || "작성자"}
                     </span>
                     <span className="shrink-0">
-                      {new Date().toLocaleDateString("ko-KR").replace(/\.$/, "")}
+                      {new Date()
+                        .toLocaleDateString("ko-KR")
+                        .replace(/\.$/, "")}
                     </span>
                   </div>
                 </div>

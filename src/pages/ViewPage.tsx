@@ -28,7 +28,7 @@ const ViewPage: React.FC = () => {
       } catch (err) {
         if (axios.isAxiosError(err) && err.response) {
           setError(
-            err.response.data.message || "게시글을 불러오는데 실패했습니다."
+            err.response.data.message || "게시글을 불러오는데 실패했습니다.",
           );
         } else {
           setError("알 수 없는 오류가 발생했습니다.");

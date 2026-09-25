@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 const BookTable = ({ books }) => {
   return (
@@ -17,10 +17,16 @@ const BookTable = ({ books }) => {
 
         {/* 도서 리스트 */}
         {books.map((book, index) => (
-          <li key={index} className="grid grid-cols-8 items-center py-2 text-sm">
+          <li
+            key={index}
+            className="grid grid-cols-8 items-center py-2 text-sm"
+          >
             <div className="text-center text-gray-500">{index + 1}</div>
             <div className="col-span-2">
-              <a href="#" className="text-gray-800 hover:text-blue-500 hover:underline">
+              <a
+                href="#"
+                className="text-gray-800 hover:text-blue-500 hover:underline"
+              >
                 {book.title}
               </a>
             </div>

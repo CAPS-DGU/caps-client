@@ -11,5 +11,3 @@ if (!res.ok) {
 const text = await res.text();
 await fs.writeFile(out, text.endsWith("\n") ? text : text + "\n", "utf8");
 console.log(`OpenAPI fetched from ${url} -> ${out}`);
-
-

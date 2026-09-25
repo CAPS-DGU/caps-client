@@ -1,24 +1,27 @@
-import axios from 'axios';
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import * as Hangul from 'hangul-js';
-import { apiGetWithToken } from '../../utils/Api';
+import axios from "axios";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import * as Hangul from "hangul-js";
+import { apiGetWithToken } from "../../utils/Api";
 
 const WikiSearch = () => {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const navigate = useNavigate();
   const [autocompleteResults, setAutocompleteResults] = useState([]);
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (query.trim()) {
-      navigate(`/wiki/${query.trim().replace(/ /g, '+')}`);
+      navigate(`/wiki/${query.trim().replace(/ /g, "+")}`);
     }
   };
 
   const handleRandom = async () => {
-    const response = await axios.get(import.meta.env.VITE_API_HOST + '/api/v1/wikis/random', { withCredentials: true })
-    const randomTitle = (response.data.data.title);
+    const response = await axios.get(
+      import.meta.env.VITE_API_HOST + "/api/v1/wikis/random",
+      { withCredentials: true },
+    );
+    const randomTitle = response.data.data.title;
     navigate(`/wiki/${randomTitle}`); // 랜덤 페이지로 이동
   };
 
@@ -28,22 +31,23 @@ const WikiSearch = () => {
 
       if (searchQuery.length > 1) {
         try {
-          const response = await apiGetWithToken(`/api/v1/wikis/autocomplete?input=${searchQuery}`, {
-            params: { query: searchQuery }
-          });
+          const response = await apiGetWithToken(
+            `/api/v1/wikis/autocomplete?input=${searchQuery}`,
+            {
+              params: { query: searchQuery },
+            },
+          );
           setAutocompleteResults(response.data.data);
         } catch (error) {
-          console.error('Autocomplete error:', error);
+          console.error("Autocomplete error:", error);
           setAutocompleteResults([]);
         }
       } else {
         setAutocompleteResults([]);
       }
-    }
+    };
     handleAutocomplete();
   }, [query]);
-
-
 
   return (
     <div className="relative mb-6">

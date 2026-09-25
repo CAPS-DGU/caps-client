@@ -13,9 +13,16 @@ import Navbar from "../components/NavBar";
 import Footer from "../components/MainPage/Footer";
 import BlogImage from "../components/Blog/BlogImage";
 import logoGradient from "../assets/logo-gradient.png";
-import { BLOG_CATEGORIES, blogCategoryLabel } from "../components/Blog/categories";
+import {
+  BLOG_CATEGORIES,
+  blogCategoryLabel,
+} from "../components/Blog/categories";
 import { useAuth } from "../hooks/useAuth";
-import { useGetBlogs, GetBlogsCategory, BlogListResponse } from "../api/generated/capsApi";
+import {
+  useGetBlogs,
+  GetBlogsCategory,
+  BlogListResponse,
+} from "../api/generated/capsApi";
 
 /**
  * 백엔드 OpenAPI 스펙이 목록 응답의 공통 엔벨로프/페이지네이션을 기술하지 않아
@@ -29,7 +36,11 @@ interface BlogListPage {
   totalElements?: number;
 }
 
-const FILTERS: { key: "ALL" | GetBlogsCategory; label: string; Icon?: React.ElementType }[] = [
+const FILTERS: {
+  key: "ALL" | GetBlogsCategory;
+  label: string;
+  Icon?: React.ElementType;
+}[] = [
   { key: "ALL", label: "전체" },
   ...BLOG_CATEGORIES.map((c) => ({
     key: c.key as GetBlogsCategory,
@@ -64,12 +75,13 @@ const BlogPage: React.FC = () => {
   const [page, setPage] = useState<number>(1);
 
   const { data, isLoading, isError } = useGetBlogs(
-    category === "ALL" ? { page } : { page, category }
+    category === "ALL" ? { page } : { page, category },
   );
 
   const pageData = data?.data as unknown as BlogListPage | undefined;
   const posts = pageData?.content ?? [];
-  const totalPages = pageData?.totalPages && pageData.totalPages > 0 ? pageData.totalPages : 1;
+  const totalPages =
+    pageData?.totalPages && pageData.totalPages > 0 ? pageData.totalPages : 1;
 
   const canWrite = match(user?.role)
     .with("ADMIN", "COUNCIL", "PRESIDENT", () => true)
@@ -87,7 +99,9 @@ const BlogPage: React.FC = () => {
         {/* 타이틀 + 작성하기 */}
         <div className="flex flex-col gap-4 pt-10 pb-8 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h1 className="text-2xl font-extrabold tracking-tight text-black">블로그</h1>
+            <h1 className="text-2xl font-extrabold tracking-tight text-black">
+              블로그
+            </h1>
             <p className="mt-3 text-sm md:text-base font-medium text-[#374151]">
               CAPS의 활동과 기술적 인사이트를 텍스트로 기록하고 공유합니다
             </p>
@@ -118,7 +132,9 @@ const BlogPage: React.FC = () => {
                     : "border-[#bcbcbc] bg-white text-[#4e4e4e] hover:border-[#007AEB] hover:text-[#007AEB]"
                 }`}
               >
-                {f.Icon && <f.Icon className="h-[15px] w-[15px]" strokeWidth={2} />}
+                {f.Icon && (
+                  <f.Icon className="h-[15px] w-[15px]" strokeWidth={2} />
+                )}
                 {f.label}
               </button>
             );
@@ -153,7 +169,11 @@ const BlogPage: React.FC = () => {
                     className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                     fallback={
                       <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
-                        <img src={logoGradient} alt="CAPS" className="h-10 w-auto opacity-70" />
+                        <img
+                          src={logoGradient}
+                          alt="CAPS"
+                          className="h-10 w-auto opacity-70"
+                        />
                       </div>
                     }
                   />
@@ -190,7 +210,9 @@ const BlogPage: React.FC = () => {
                       {post.writerGrade ? `${post.writerGrade}기 ` : ""}
                       {post.writerName}
                     </span>
-                    <span className="shrink-0">{formatDate(post.createdAt)}</span>
+                    <span className="shrink-0">
+                      {formatDate(post.createdAt)}
+                    </span>
                   </div>
                 </div>
               </article>

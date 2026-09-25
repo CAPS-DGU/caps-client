@@ -37,7 +37,7 @@ export async function apiWithToken(
   method,
   path,
   data,
-  navigate
+  navigate,
 ): Promise<AxiosResponse> {
   try {
     const response = await axios({
@@ -70,7 +70,7 @@ export async function apiWithToken(
 export async function apiWithoutToken(
   method,
   path,
-  data
+  data,
 ): Promise<AxiosResponse> {
   try {
     const response = await axios({

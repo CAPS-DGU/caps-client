@@ -1,4 +1,8 @@
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import {
+  S3Client,
+  PutObjectCommand,
+  DeleteObjectCommand,
+} from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 // 1. 프론트엔드 코드(getS3FileURL)에 명시된 버킷명과 리전 사용
@@ -13,7 +17,7 @@ export const handler = async (event) => {
     "Access-Control-Allow-Origin": "https://dgucaps.kr",
     "Access-Control-Allow-Methods": "OPTIONS, POST, DELETE",
     "Access-Control-Allow-Headers": "Content-Type",
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
   };
 
   // HTTP 메서드 감지
@@ -34,7 +38,11 @@ export const handler = async (event) => {
 
       // 유효성 검사
       if (!fileName) {
-        return { statusCode: 400, headers, body: JSON.stringify({ error: "fileName is required" }) };
+        return {
+          statusCode: 400,
+          headers,
+          body: JSON.stringify({ error: "fileName is required" }),
+        };
       }
 
       // S3 명령 생성
@@ -46,13 +54,15 @@ export const handler = async (event) => {
       });
 
       // 5분(300초) 유효 URL 생성
-      const uploadURL = await getSignedUrl(s3Client, command, { expiresIn: 300 });
+      const uploadURL = await getSignedUrl(s3Client, command, {
+        expiresIn: 300,
+      });
 
       // 프론트엔드가 기대하는 응답 형식: { uploadURL, fileName }
       return {
         statusCode: 200,
         headers,
-        body: JSON.stringify({ uploadURL, fileName })
+        body: JSON.stringify({ uploadURL, fileName }),
       };
     }
 
@@ -63,7 +73,11 @@ export const handler = async (event) => {
       const key = queryString.key;
 
       if (!key) {
-        return { statusCode: 400, headers, body: JSON.stringify({ error: "Key parameter is required" }) };
+        return {
+          statusCode: 400,
+          headers,
+          body: JSON.stringify({ error: "Key parameter is required" }),
+        };
       }
 
       // URL 디코딩 (한글 파일명 등 특수문자 처리)
@@ -71,7 +85,7 @@ export const handler = async (event) => {
 
       const command = new DeleteObjectCommand({
         Bucket: BUCKET_NAME,
-        Key: decodedKey
+        Key: decodedKey,
       });
 
       await s3Client.send(command);
@@ -79,19 +93,25 @@ export const handler = async (event) => {
       return {
         statusCode: 200,
         headers,
-        body: JSON.stringify({ message: "File deleted successfully", deletedKey: decodedKey })
+        body: JSON.stringify({
+          message: "File deleted successfully",
+          deletedKey: decodedKey,
+        }),
       };
     }
 
     // 지원하지 않는 메서드
-    return { statusCode: 405, headers, body: JSON.stringify({ error: "Method Not Allowed" }) };
-
+    return {
+      statusCode: 405,
+      headers,
+      body: JSON.stringify({ error: "Method Not Allowed" }),
+    };
   } catch (error) {
     console.error("Internal Error:", error);
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ error: error.message })
+      body: JSON.stringify({ error: error.message }),
     };
   }
 };

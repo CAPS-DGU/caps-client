@@ -18,12 +18,12 @@ const normalizeHeaders = (headers: HeadersInit): Record<string, string> => {
 // Orval mutator (generated code calls: orvalClient(url, requestInit))
 export const orvalClient = async <T = unknown>(
   url: string,
-  init?: RequestInit
+  init?: RequestInit,
 ): Promise<T> => {
   // body가 Blob이 아닌 경우 JSON.stringify 처리
   let body = init?.body;
   const headers = normalizeHeaders(init?.headers);
-  
+
   // Content-Type이 application/json이고 body가 Blob이 아닌 경우
   if (
     headers["Content-Type"]?.includes("application/json") &&
@@ -50,6 +50,3 @@ export const orvalClient = async <T = unknown>(
 
   return response.data as T;
 };
-
-
-    

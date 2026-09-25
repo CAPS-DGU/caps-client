@@ -41,7 +41,7 @@ const VotePage: React.FC = () => {
       } catch (err) {
         if (axios.isAxiosError(err) && err.response) {
           setError(
-            err.response.data.message || "투표 목록을 불러오는데 실패했습니다."
+            err.response.data.message || "투표 목록을 불러오는데 실패했습니다.",
           );
         } else {
           setError("알 수 없는 오류가 발생했습니다.");
@@ -71,7 +71,7 @@ const VotePage: React.FC = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       if (response.status === 200) {

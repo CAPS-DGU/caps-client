@@ -42,7 +42,7 @@ const ParticipantList: React.FC = () => {
         const sortedData = normalizedData.sort(
           (a: Participant, b: Participant) => {
             return new Date(a.date).getTime() - new Date(b.date).getTime();
-          }
+          },
         );
         setParticipants(sortedData);
       } else {
@@ -83,7 +83,7 @@ const ParticipantList: React.FC = () => {
         "참여 날짜": formatDateWithMilliseconds(participant.date),
         전화번호: participant.snack ? participant.snack.phone : "N/A",
         "퀴즈 정답": participant.quiz ? participant.quiz.answer : "N/A",
-      }))
+      })),
     );
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Participants");

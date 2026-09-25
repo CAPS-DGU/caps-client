@@ -21,6 +21,11 @@ const department: Department = {
       position: "의료인공지능공학과",
       img: "어경은.jpg",
     },
+    {
+      name: "40.5기 임소현",
+      position: "식품바이오융합공학과",
+      img: "임소현.jpg",
+    },
   ],
 };
 

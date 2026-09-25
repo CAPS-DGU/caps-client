@@ -18,6 +18,11 @@ const department: Department = {
       position: "컴퓨터공학전공",
       img: "장준혁.jpeg",
     },
+    {
+      name: "40기 김현서",
+      position: "정보통신공학과",
+      img: "김현서.jpg",
+    },
   ],
 };
 

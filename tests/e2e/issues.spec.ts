@@ -30,6 +30,60 @@ test.beforeEach(async ({ page }) => {
   });
 });
 
+test("wiki actions fit a long title and are hidden from guests", async ({
+  page,
+  isMobile,
+}, testInfo) => {
+  if (isMobile) await page.setViewportSize({ width: 320, height: 740 });
+  const title = "공백없이아주길게이어지는위키문서제목".repeat(4);
+  await page.route("**/api/v1/wikis/**", (route) =>
+    route.fulfill({
+      json: {
+        data: {
+          title,
+          content: "문서 본문입니다.",
+        },
+      },
+    }),
+  );
+  await page.goto(`/wiki/${encodeURIComponent(title)}`);
+  const heading = page.getByRole("heading", { name: title, exact: true });
+  const edit = page.getByRole("link", { name: "수정", exact: true });
+  const history = page.getByRole("link", { name: "수정 내역", exact: true });
+  await expect(heading).toBeVisible();
+  await expect(edit).toBeVisible();
+  await expect(history).toBeVisible();
+  const titleBox = (await heading.boundingBox())!;
+  const editBox = (await edit.boundingBox())!;
+  const historyBox = (await history.boundingBox())!;
+  expect(editBox.height).toBeLessThan(50);
+  expect(historyBox.height).toBeLessThan(50);
+  expect(historyBox.x).toBeGreaterThanOrEqual(editBox.x + editBox.width);
+  if (isMobile)
+    expect(editBox.y).toBeGreaterThanOrEqual(titleBox.y + titleBox.height);
+  else expect(editBox.x).toBeGreaterThanOrEqual(titleBox.x + titleBox.width);
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.screenshot({
+    path: testInfo.outputPath("wiki-long-title.png"),
+    fullPage: true,
+  });
+  await page.route("**/api/v1/members/me", (route) =>
+    route.fulfill({ status: 401, json: { message: "로그인 필요" } }),
+  );
+  await page.reload();
+  await expect(
+    page.locator("nav button").filter({ hasText: "로그인" }),
+  ).toBeAttached();
+  await expect(heading).toBeVisible();
+  await expect(edit).toHaveCount(0);
+  await expect(history).toHaveCount(0);
+});
+
 test("introduction includes latest-first history and preserves the old history URL", async ({
   page,
 }, testInfo) => {

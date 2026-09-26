@@ -60,31 +60,31 @@ const WikiEngine: React.FC<WikiEngineProps> = ({
     document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const editButton = (
-    <div className="flex space-x-4">
-      <>
-        {isLoggedIn && (
-          <Link
-            to={`/wiki/edit/${DocTitle}`}
-            className="px-4 py-2 text-white bg-gray-600 rounded-md shadow-md hover:bg-gray-700"
-          >
-            수정
-          </Link>
-        )}
+  const editButton =
+    isLoggedIn && !notFoundFlag ? (
+      <div
+        className="flex shrink-0 flex-wrap gap-2"
+        aria-label="위키 문서 관리"
+      >
+        <Link
+          to={`/wiki/edit/${DocTitle}`}
+          className="whitespace-nowrap px-4 py-2 text-white bg-gray-600 rounded-md shadow-md hover:bg-gray-700"
+        >
+          수정
+        </Link>
         <Link
           to={`/wiki/history/${DocTitle}`}
-          className="px-4 py-2 text-white bg-gray-600 rounded-md shadow-md hover:bg-gray-700"
+          className="whitespace-nowrap px-4 py-2 text-white bg-gray-600 rounded-md shadow-md hover:bg-gray-700"
         >
           수정 내역
         </Link>
-      </>
-    </div>
-  );
+      </div>
+    ) : null;
 
   return (
-    <div className="max-w-3xl p-6 mx-auto bg-white rounded-md shadow-md">
-      <div className="flex items-center justify-between mb-5">
-        <h1 className="text-4xl font-semibold text-gray-700">
+    <div className="min-w-0 max-w-3xl p-4 sm:p-6 mx-auto bg-white rounded-md shadow-md">
+      <div className="flex flex-col items-start gap-4 mb-5 sm:flex-row sm:justify-between">
+        <h1 className="min-w-0 w-full sm:flex-1 text-3xl sm:text-4xl font-semibold text-gray-700 [overflow-wrap:anywhere]">
           {DocTitle}{" "}
           {history ? (
             <span className="inline text-xl text-gray-400">
@@ -93,7 +93,7 @@ const WikiEngine: React.FC<WikiEngineProps> = ({
             </span>
           ) : null}
         </h1>
-        {notFoundFlag ? null : editButton}
+        {editButton}
       </div>
 
       {tocList.length > 0 && (!history || isContentVisible) && (

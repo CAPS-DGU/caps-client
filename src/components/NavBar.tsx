@@ -11,7 +11,7 @@ import {
   LogIn,
   User as UserIcon,
   FileText,
-  Newspaper,
+  Bold,
   AlertCircle,
 } from "lucide-react";
 
@@ -116,7 +116,7 @@ function Navbar({
           {[
             { to: "/aboutus", label: "소개", Icon: Users },
             { to: "/wiki", label: "캡스위키", Icon: BookOpen },
-            { to: "/blog", label: "블로그", Icon: Newspaper },
+            { to: "/blog", label: "블로그", Icon: Bold },
           ].map(({ to, label, Icon }) => (
             <Link
               key={to}

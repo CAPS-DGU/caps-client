@@ -10,8 +10,15 @@ interface BlogImageProps {
 }
 
 /** 저장된 값이 S3 key 든 완전한 URL 이든 동일하게 이미지를 그려준다. */
-const BlogImage: React.FC<BlogImageProps> = ({ src, alt, className, fallback = null }) => {
-  const [resolved, setResolved] = useState<string | null>(isAbsoluteUrl(src) ? src! : null);
+const BlogImage: React.FC<BlogImageProps> = ({
+  src,
+  alt,
+  className,
+  fallback = null,
+}) => {
+  const [resolved, setResolved] = useState<string | null>(
+    isAbsoluteUrl(src) ? src! : null,
+  );
   const [failed, setFailed] = useState<boolean>(false);
 
   useEffect(() => {
@@ -43,10 +50,16 @@ const BlogImage: React.FC<BlogImageProps> = ({ src, alt, className, fallback = n
   }, [src]);
 
   if (!src || failed) return <>{fallback}</>;
-  if (!resolved) return <div className={`${className ?? ""} animate-pulse bg-gray-100`} />;
+  if (!resolved)
+    return <div className={`${className ?? ""} animate-pulse bg-gray-100`} />;
 
   return (
-    <img src={resolved} alt={alt} className={className} onError={() => setFailed(true)} />
+    <img
+      src={resolved}
+      alt={alt}
+      className={className}
+      onError={() => setFailed(true)}
+    />
   );
 };
 

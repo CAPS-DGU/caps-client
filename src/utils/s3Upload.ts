@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 
 /**
  * 파일명을 S3 key/마크다운에 안전하게 쓸 수 있도록 정제한다.
@@ -6,16 +6,14 @@ import axios from 'axios';
  * URL/마크다운에서 특수 의미를 갖는 문자(공백, 괄호, 따옴표, 백슬래시 등)는 제거한다.
  */
 export function sanitizeFileName(fileName: string): string {
-  const dotIndex = fileName.lastIndexOf('.');
+  const dotIndex = fileName.lastIndexOf(".");
   const hasExt = dotIndex > 0 && dotIndex < fileName.length - 1;
   const base = hasExt ? fileName.slice(0, dotIndex) : fileName;
-  const ext = hasExt ? fileName.slice(dotIndex) : '';
+  const ext = hasExt ? fileName.slice(dotIndex) : "";
 
-  const safeBase = base
-    .replace(/\s+/g, '_')
-    .replace(/[^\w.\-ㄱ-ㆎ가-힣]/g, '');
+  const safeBase = base.replace(/\s+/g, "_").replace(/[^\w.\-ㄱ-ㆎ가-힣]/g, "");
 
-  return `${safeBase || 'file'}${ext}`;
+  return `${safeBase || "file"}${ext}`;
 }
 
 /**
@@ -26,12 +24,14 @@ export function sanitizeFileName(fileName: string): string {
  */
 export async function getPresignedUploadURL(
   fileName: string,
-  fileType: string = 'image/jpeg'
+  fileType: string = "image/jpeg",
 ): Promise<{ uploadURL: string; fileName: string }> {
   const apiHost = (import.meta as any).env.VITE_API_HOST as string;
-  
+
   if (!apiHost) {
-    throw new Error('API 호스트가 설정되지 않았습니다. VITE_API_HOST 환경변수를 확인하세요.');
+    throw new Error(
+      "API 호스트가 설정되지 않았습니다. VITE_API_HOST 환경변수를 확인하세요.",
+    );
   }
 
   // Spring Boot API에 요청 (인증 토큰 포함)
@@ -43,10 +43,10 @@ export async function getPresignedUploadURL(
     },
     {
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       withCredentials: true, // 쿠키(인증 토큰) 포함
-    }
+    },
   );
 
   return response.data.data; // SuccessResponse 래핑 제거
@@ -62,21 +62,25 @@ export async function getPresignedUploadURL(
 export async function uploadFileToS3(
   file: File,
   fileName?: string,
-  fileType?: string
+  fileType?: string,
 ): Promise<string> {
   // fileName이 제공되지 않으면 파일명 기반으로 생성
-  const finalFileName = fileName || `uploads/${Date.now()}_${sanitizeFileName(file.name)}`;
-  const finalFileType = fileType || file.type || 'application/octet-stream';
+  const finalFileName =
+    fileName || `uploads/${Date.now()}_${sanitizeFileName(file.name)}`;
+  const finalFileType = fileType || file.type || "application/octet-stream";
 
   // 1. Lambda에 Presigned URL 요청
-  const { uploadURL } = await getPresignedUploadURL(finalFileName, finalFileType);
+  const { uploadURL } = await getPresignedUploadURL(
+    finalFileName,
+    finalFileType,
+  );
 
   // 2. Presigned URL로 파일 업로드
   const uploadResponse = await fetch(uploadURL, {
-    method: 'PUT',
+    method: "PUT",
     body: file,
     headers: {
-      'Content-Type': finalFileType,
+      "Content-Type": finalFileType,
     },
   });
 
@@ -93,18 +97,20 @@ export async function uploadFileToS3(
  */
 export async function deleteFileFromS3(fileKey: string): Promise<void> {
   const apiHost = (import.meta as any).env.VITE_API_HOST as string;
-  
+
   if (!apiHost) {
-    throw new Error('API 호스트가 설정되지 않았습니다. VITE_API_HOST 환경변수를 확인하세요.');
+    throw new Error(
+      "API 호스트가 설정되지 않았습니다. VITE_API_HOST 환경변수를 확인하세요.",
+    );
   }
 
   // Spring Boot API에 DELETE 요청 (query parameter로 key 전달)
   const url = new URL(`${apiHost}/api/v1/files`);
-  url.searchParams.append('key', fileKey);
+  url.searchParams.append("key", fileKey);
 
   const response = await axios.delete(url.toString(), {
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     withCredentials: true, // 쿠키(인증 토큰) 포함
   });
@@ -119,20 +125,24 @@ export async function deleteFileFromS3(fileKey: string): Promise<void> {
  * @param fileKey - S3에 저장된 파일의 키 (경로)
  * @returns Presigned URL
  */
-export async function getPresignedDownloadURL(fileKey: string): Promise<string> {
+export async function getPresignedDownloadURL(
+  fileKey: string,
+): Promise<string> {
   const apiHost = (import.meta as any).env.VITE_API_HOST as string;
-  
+
   if (!apiHost) {
-    throw new Error('API 호스트가 설정되지 않았습니다. VITE_API_HOST 환경변수를 확인하세요.');
+    throw new Error(
+      "API 호스트가 설정되지 않았습니다. VITE_API_HOST 환경변수를 확인하세요.",
+    );
   }
 
   // Spring Boot API에 요청 (인증 토큰 포함)
   const url = new URL(`${apiHost}/api/v1/files/presigned-url`);
-  url.searchParams.append('key', fileKey);
+  url.searchParams.append("key", fileKey);
 
   const response = await axios.get(url.toString(), {
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     withCredentials: true, // 쿠키(인증 토큰) 포함
   });
@@ -147,9 +157,9 @@ export async function getPresignedDownloadURL(fileKey: string): Promise<string> 
  * @deprecated getPresignedDownloadURL 사용 권장
  */
 export function getS3FileURL(fileKey: string): string {
-  const bucketName = 'www.dgucaps.kr';
-  const region = 'ap-northeast-2';
-  
+  const bucketName = "www.dgucaps.kr";
+  const region = "ap-northeast-2";
+
   // S3 공개 URL 형식: https://{bucket}.s3.{region}.amazonaws.com/{key}
   return `https://${bucketName}.s3.${region}.amazonaws.com/${fileKey}`;
 }
@@ -162,7 +172,7 @@ export function getS3FileURL(fileKey: string): string {
  */
 export async function uploadMultipleFilesToS3(
   files: File[],
-  basePath?: string
+  basePath?: string,
 ): Promise<string[]> {
   const uploadPromises = files.map((file, index) => {
     const fileName = basePath
@@ -173,4 +183,3 @@ export async function uploadMultipleFilesToS3(
 
   return Promise.all(uploadPromises);
 }
-

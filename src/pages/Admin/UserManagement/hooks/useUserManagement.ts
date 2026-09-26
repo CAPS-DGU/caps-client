@@ -55,7 +55,7 @@ export const useUserManagement = () => {
     (id: string) => {
       deleteMutation.mutate(id);
     },
-    [deleteMutation]
+    [deleteMutation],
   );
 
   const handleEdit = useCallback(
@@ -64,7 +64,7 @@ export const useUserManagement = () => {
       form.setFieldsValue(user);
       setIsModalVisible(true);
     },
-    [form]
+    [form],
   );
 
   const handleAdd = useCallback(() => {
@@ -97,7 +97,7 @@ export const useUserManagement = () => {
 
   const columns = useMemo(
     () => UserManagementUtils.getTableColumns(handleEdit, handleDelete),
-    [handleEdit, handleDelete]
+    [handleEdit, handleDelete],
   );
 
   const tableData = useMemo(() => data?.items || [], [data]);
@@ -107,7 +107,7 @@ export const useUserManagement = () => {
       current: searchParams.page || 1,
       pageSize: searchParams.pageSize || 10,
     }),
-    [data, searchParams]
+    [data, searchParams],
   );
 
   return {

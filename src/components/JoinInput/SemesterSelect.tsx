@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 const SemesterSelect = ({ semester, setSemester, error }) => {
   return (
@@ -13,7 +13,7 @@ const SemesterSelect = ({ semester, setSemester, error }) => {
         <option value="">비회원</option>
         {[...Array(38).keys()].reverse().map((_, index) => (
           <option key={index + 1} value={`${38 - index}`}>
-            {38 - index}기 {index === 0 ? '(신입생)' : ''}
+            {38 - index}기 {index === 0 ? "(신입생)" : ""}
           </option>
         ))}
       </select>

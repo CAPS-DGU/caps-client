@@ -46,9 +46,7 @@ const LedgerDetailPage: React.FC = () => {
 
   const userRole = user?.role || null;
   const canManage =
-    userRole === "ADMIN" ||
-    userRole === "COUNCIL" ||
-    userRole === "PRESIDENT";
+    userRole === "ADMIN" || userRole === "COUNCIL" || userRole === "PRESIDENT";
 
   const formatDateTime = (isoString: string) => {
     const date = new Date(isoString);
@@ -73,7 +71,7 @@ const LedgerDetailPage: React.FC = () => {
       try {
         const res = await apiGetWithToken(
           `/api/v1/ledgers/${ledgerId}`,
-          navigate
+          navigate,
         );
         const body = res.data as LedgerDetailResponse;
         setLedger(body.data);
@@ -94,7 +92,7 @@ const LedgerDetailPage: React.FC = () => {
       if (ledger?.fileUrls && ledger.fileUrls.length > 0) {
         try {
           await Promise.all(
-            ledger.fileUrls.map((fileUrl) => deleteFileFromS3(fileUrl))
+            ledger.fileUrls.map((fileUrl) => deleteFileFromS3(fileUrl)),
           );
         } catch (s3Error) {
           console.error("S3 파일 삭제 실패:", s3Error);
@@ -135,7 +133,9 @@ const LedgerDetailPage: React.FC = () => {
             <LedgerDetailHeader
               title={ledger?.title ?? "장부 제목"}
               onEdit={
-                canManage ? () => navigate(`/ledger/${ledgerId}/edit`) : undefined
+                canManage
+                  ? () => navigate(`/ledger/${ledgerId}/edit`)
+                  : undefined
               }
               onDelete={canManage ? () => setIsDeleteOpen(true) : undefined}
             />

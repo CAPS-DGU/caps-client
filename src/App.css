@@ -9,7 +9,9 @@
   transform: translateX(-50%);
   top: 1.5rem;
   z-index: 50;
-  transition: visibility 0s, opacity 0.2s;
+  transition:
+    visibility 0s,
+    opacity 0.2s;
 }
 
 .comment-ref:hover .comment-box-wrapper {

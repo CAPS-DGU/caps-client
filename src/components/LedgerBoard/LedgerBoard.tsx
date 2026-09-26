@@ -69,7 +69,7 @@ const LedgerBoard: React.FC = () => {
       try {
         const res = await apiGetWithToken(
           `/api/v1/ledgers?page=${currentPage}`,
-          navigate
+          navigate,
         );
         const body = res.data as LedgerListResponse;
 
@@ -108,8 +108,8 @@ const LedgerBoard: React.FC = () => {
       entries.map((entry) =>
         entry.id === id
           ? { ...entry, isBookmarked: !entry.isBookmarked }
-          : entry
-      )
+          : entry,
+      ),
     );
   };
 
@@ -227,7 +227,7 @@ const LedgerBoard: React.FC = () => {
           <div className="flex gap-1 items-center">
             {Array.from(
               { length: endPage - startPage + 1 },
-              (_, i) => startPage + i
+              (_, i) => startPage + i,
             ).map((page) => (
               <button
                 key={page}

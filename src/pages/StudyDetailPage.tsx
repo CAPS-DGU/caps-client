@@ -30,7 +30,7 @@ const StudyDetailPage: React.FC = () => {
         if (axios.isAxiosError(err) && err.response) {
           setError(
             err.response.data.message ||
-              "스터디 정보를 불러오는데 실패했습니다."
+              "스터디 정보를 불러오는데 실패했습니다.",
           );
         } else {
           setError("알 수 없는 오류가 발생했습니다.");
@@ -57,7 +57,7 @@ const StudyDetailPage: React.FC = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       if (response.status === 200) {

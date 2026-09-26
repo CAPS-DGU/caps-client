@@ -16,4 +16,3 @@ const executives: Executive[] = [
 ];
 
 export default executives;
-

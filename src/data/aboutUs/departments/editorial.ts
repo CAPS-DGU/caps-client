@@ -13,9 +13,7 @@ const department: Department = {
       position: "컴퓨터AI학부",
       img: "김예은.jpeg",
     },
-    { name: "39.5기 허윤", 
-      position: "컴퓨터AI학부", 
-      img: "허윤.jpeg" },
+    { name: "39.5기 허윤", position: "컴퓨터AI학부", img: "허윤.jpeg" },
     {
       name: "40기 어경은",
       position: "의료인공지능공학과",
@@ -30,4 +28,3 @@ const department: Department = {
 };
 
 export default department;
-

@@ -28,7 +28,8 @@ function escapeMarkdownLabel(text: string): string {
   return text.replace(/[\\[\]]/g, "\\$&");
 }
 
-const TABLE_TEMPLATE = "| 헤더1 | 헤더2 | 헤더3 |\n| --- | --- | --- |\n| 내용 | 내용 | 내용 |\n";
+const TABLE_TEMPLATE =
+  "| 헤더1 | 헤더2 | 헤더3 |\n| --- | --- | --- |\n| 내용 | 내용 | 내용 |\n";
 
 const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
   value,
@@ -90,15 +91,60 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
   };
 
   const tools = [
-    { key: "h1", Icon: Heading1, label: "제목 1", run: () => wrap("# ", "", "제목", true) },
-    { key: "h2", Icon: Heading2, label: "제목 2", run: () => wrap("## ", "", "제목", true) },
-    { key: "b", Icon: Bold, label: "굵게", run: () => wrap("**", "**", "굵게") },
-    { key: "i", Icon: Italic, label: "기울임", run: () => wrap("*", "*", "기울임") },
-    { key: "ul", Icon: List, label: "목록", run: () => wrap("- ", "", "항목", true) },
-    { key: "quote", Icon: Quote, label: "인용", run: () => wrap("> ", "", "인용", true) },
-    { key: "code", Icon: Code, label: "코드", run: () => wrap("`", "`", "코드") },
-    { key: "link", Icon: Link2, label: "링크", run: () => wrap("[", "](https://)", "링크 텍스트") },
-    { key: "table", Icon: TableIcon, label: "표", run: () => insertBlock(TABLE_TEMPLATE) },
+    {
+      key: "h1",
+      Icon: Heading1,
+      label: "제목 1",
+      run: () => wrap("# ", "", "제목", true),
+    },
+    {
+      key: "h2",
+      Icon: Heading2,
+      label: "제목 2",
+      run: () => wrap("## ", "", "제목", true),
+    },
+    {
+      key: "b",
+      Icon: Bold,
+      label: "굵게",
+      run: () => wrap("**", "**", "굵게"),
+    },
+    {
+      key: "i",
+      Icon: Italic,
+      label: "기울임",
+      run: () => wrap("*", "*", "기울임"),
+    },
+    {
+      key: "ul",
+      Icon: List,
+      label: "목록",
+      run: () => wrap("- ", "", "항목", true),
+    },
+    {
+      key: "quote",
+      Icon: Quote,
+      label: "인용",
+      run: () => wrap("> ", "", "인용", true),
+    },
+    {
+      key: "code",
+      Icon: Code,
+      label: "코드",
+      run: () => wrap("`", "`", "코드"),
+    },
+    {
+      key: "link",
+      Icon: Link2,
+      label: "링크",
+      run: () => wrap("[", "](https://)", "링크 텍스트"),
+    },
+    {
+      key: "table",
+      Icon: TableIcon,
+      label: "표",
+      run: () => insertBlock(TABLE_TEMPLATE),
+    },
   ];
 
   return (
@@ -136,7 +182,9 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
             className="hidden"
             onChange={(e) => handleImageFile(e.target.files?.[0])}
           />
-          {uploading && <span className="ml-1 text-xs text-gray-400">업로드 중…</span>}
+          {uploading && (
+            <span className="ml-1 text-xs text-gray-400">업로드 중…</span>
+          )}
         </div>
 
         {/* Edit / Preview 토글 */}
@@ -145,7 +193,9 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
             type="button"
             onClick={() => setMode("edit")}
             className={`rounded-md px-3 py-1 transition-colors ${
-              mode === "edit" ? "bg-[#007AEB] text-white" : "text-gray-500 hover:text-gray-800"
+              mode === "edit"
+                ? "bg-[#007AEB] text-white"
+                : "text-gray-500 hover:text-gray-800"
             }`}
           >
             Edit
@@ -154,7 +204,9 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
             type="button"
             onClick={() => setMode("preview")}
             className={`rounded-md px-3 py-1 transition-colors ${
-              mode === "preview" ? "bg-[#007AEB] text-white" : "text-gray-500 hover:text-gray-800"
+              mode === "preview"
+                ? "bg-[#007AEB] text-white"
+                : "text-gray-500 hover:text-gray-800"
             }`}
           >
             Preview

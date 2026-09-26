@@ -14,10 +14,14 @@ interface AttachmentListProps {
   className?: string;
 }
 
-const isImageName = (name: string) => /\.(png|jpe?g|gif|bmp|webp|svg)$/i.test(name);
+const isImageName = (name: string) =>
+  /\.(png|jpe?g|gif|bmp|webp|svg)$/i.test(name);
 
 /** 블로그 상세/작성 및 장부게시판 작성 페이지가 공유하는 첨부파일 목록 UI. */
-const AttachmentList: React.FC<AttachmentListProps> = ({ items, className = "" }) => {
+const AttachmentList: React.FC<AttachmentListProps> = ({
+  items,
+  className = "",
+}) => {
   if (items.length === 0) return null;
 
   return (
@@ -29,7 +33,9 @@ const AttachmentList: React.FC<AttachmentListProps> = ({ items, className = "" }
         const label = (
           <span className="flex min-w-0 items-center gap-2">
             <Icon className="h-4 w-4 shrink-0 text-[#007AEB]" strokeWidth={2} />
-            <span className="truncate">{item.loading ? "불러오는 중..." : item.name}</span>
+            <span className="truncate">
+              {item.loading ? "불러오는 중..." : item.name}
+            </span>
           </span>
         );
 

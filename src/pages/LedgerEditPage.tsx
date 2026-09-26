@@ -66,7 +66,7 @@ const LedgerEditPage: React.FC = () => {
       try {
         const res = await apiGetWithToken(
           `/api/v1/ledgers/${ledgerId}`,
-          navigate
+          navigate,
         );
         const body = res.data as LedgerEditResponse;
         setTitle(body.data.title);
@@ -166,7 +166,7 @@ const LedgerEditPage: React.FC = () => {
         const res = await apiPatchWithToken(
           `/api/v1/ledgers/${ledgerId}`,
           payload,
-          navigate
+          navigate,
         );
         const body = res.data as LedgerEditResponse;
         toastSuccess("게시물이 수정되었습니다.");
@@ -176,7 +176,7 @@ const LedgerEditPage: React.FC = () => {
         const res = await apiPostWithToken(
           "/api/v1/ledgers",
           payload,
-          navigate
+          navigate,
         );
         const body = res.data as LedgerEditResponse;
         toastSuccess("게시물이 등록되었습니다.");
@@ -234,7 +234,9 @@ const LedgerEditPage: React.FC = () => {
           {/* 파일 업로드 (블로그 작성/수정 페이지의 파일 업로드 리스트와 가로 길이를 맞춘다) */}
           <section className="w-full rounded-xl border border-gray-200 bg-white p-4 lg:max-w-[348px]">
             <label className="flex cursor-pointer items-center justify-between">
-              <span className="text-sm font-bold text-[#007AEB]">파일 업로드</span>
+              <span className="text-sm font-bold text-[#007AEB]">
+                파일 업로드
+              </span>
               <span className="inline-flex items-center gap-1.5 text-xs text-gray-400">
                 <Paperclip className="h-4 w-4" />
                 추가
@@ -243,7 +245,9 @@ const LedgerEditPage: React.FC = () => {
                 type="file"
                 multiple
                 className="hidden"
-                onChange={(e) => handleFilesChange(Array.from(e.target.files ?? []))}
+                onChange={(e) =>
+                  handleFilesChange(Array.from(e.target.files ?? []))
+                }
               />
             </label>
             <AttachmentList
@@ -251,7 +255,11 @@ const LedgerEditPage: React.FC = () => {
               items={[
                 ...existingFileUrls.map((url) => ({
                   id: `existing-${url}`,
-                  name: url.split("/").pop()?.replace(/^\d+_\d+_/, "") || "첨부파일",
+                  name:
+                    url
+                      .split("/")
+                      .pop()
+                      ?.replace(/^\d+_\d+_/, "") || "첨부파일",
                   onRemove: () => handleRemoveExistingFile(url),
                 })),
                 ...files.map((item) => ({
@@ -261,7 +269,11 @@ const LedgerEditPage: React.FC = () => {
                 })),
               ]}
             />
-            {uploading && <p className="mt-3 text-sm font-medium text-[#007AEB]">업로드 중...</p>}
+            {uploading && (
+              <p className="mt-3 text-sm font-medium text-[#007AEB]">
+                업로드 중...
+              </p>
+            )}
           </section>
           {/* 하단 목록 버튼 */}
           <LedgerBottomActions onCancel={handleListClick} />

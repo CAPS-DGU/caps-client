@@ -21,7 +21,7 @@ export const UserSearch: React.FC<UserSearchProps> = ({
 
   const handleValuesChange = (
     _: any,
-    allValues: UserManagementTypes.SearchParams
+    allValues: UserManagementTypes.SearchParams,
   ) => {
     onSearchParamsChange(allValues);
   };

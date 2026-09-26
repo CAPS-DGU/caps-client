@@ -33,9 +33,8 @@ const IntroducePage: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get<ApiResponse<WikiData>>(
-          `/api/wiki?title=caps`
-        );
+        const response =
+          await axios.get<ApiResponse<WikiData>>(`/api/wiki?title=caps`);
         if (response.status === 200) {
           setWikiData(response.data.data || null); // Set the fetched data
           setError(null);

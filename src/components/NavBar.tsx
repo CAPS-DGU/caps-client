@@ -8,11 +8,10 @@ import LoginModal from "./Login/LoginModal";
 import {
   BookOpen,
   Users,
-  HelpCircle,
-  History as HistoryIcon,
   LogIn,
   User as UserIcon,
   FileText,
+  Bold,
   AlertCircle,
 } from "lucide-react";
 
@@ -21,7 +20,10 @@ interface NavbarProps {
   transparentBackground?: boolean;
 }
 
-function Navbar({ isTransparent = false, transparentBackground = false }: NavbarProps) {
+function Navbar({
+  isTransparent = false,
+  transparentBackground = false,
+}: NavbarProps) {
   const [dropdownOpen, setDropdownOpen] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState(null);
@@ -111,35 +113,25 @@ function Navbar({ isTransparent = false, transparentBackground = false }: Navbar
               className="mr-2 w-12 md:w-16"
             />
           </Link>
-          <Link
-            to="/wiki"
-            className={`flex items-center text-base font-semibold transition ${menuColor}`}
-          >
-            <span className="hidden md:inline">캡스위키</span>
-            <BookOpen className="inline-block md:hidden" size={20} />
-          </Link>
-          <Link
-            to="/aboutus"
-            className={`flex items-center text-base font-semibold transition ${menuColor}`}
-          >
-            <span className="hidden md:inline">집행부 소개</span>
-            <Users className="inline-block md:hidden" size={20} />
-          </Link>
-          <Link
-            to="/faq"
-            className={`flex items-center text-base font-semibold transition ${menuColor}`}
-          >
-            <span className="hidden md:inline">FAQ</span>
-            <HelpCircle className="inline-block md:hidden" size={20} />
-          </Link>
-          <Link
-            to="/caps-history"
-            className={`flex items-center text-base font-semibold transition ${menuColor}`}
-          >
-            <span className="hidden md:inline">연혁</span>
-            <HistoryIcon className="inline-block md:hidden" size={20} />
-          </Link>
-          {/* 블로그 메뉴는 디자인 확정 전까지 숨김 (/blog 라우트는 그대로 동작) */}
+          {[
+            { to: "/aboutus", label: "소개", Icon: Users },
+            { to: "/wiki", label: "캡스위키", Icon: BookOpen },
+            { to: "/blog", label: "블로그", Icon: Bold },
+          ].map(({ to, label, Icon }) => (
+            <Link
+              key={to}
+              to={to}
+              aria-label={label}
+              className={`flex items-center text-base font-semibold transition ${menuColor}`}
+            >
+              <span className="hidden md:inline">{label}</span>
+              <Icon
+                className="inline-block md:hidden"
+                size={20}
+                aria-hidden="true"
+              />
+            </Link>
+          ))}
           {isLoggedIn && user?.role !== "NEW_MEMBER" && (
             <Link
               to="/ledger"
@@ -216,7 +208,6 @@ function Navbar({ isTransparent = false, transparentBackground = false }: Navbar
               />
             </>
           )}
-
         </div>
       </nav>
     </>

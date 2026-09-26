@@ -1,5 +1,12 @@
-import React, { createContext, useState, useContext, useEffect, useMemo, ReactNode } from 'react';
-import { apiGetWithToken } from '../utils/Api';
+import React, {
+  createContext,
+  useState,
+  useContext,
+  useEffect,
+  useMemo,
+  ReactNode,
+} from "react";
+import { apiGetWithToken } from "../utils/Api";
 
 // 1. 사용자 정보 타입 정의
 interface User {
@@ -42,19 +49,19 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     const fetchUserData = async () => {
       setIsLoading(true);
       try {
-        const response = await apiGetWithToken('/api/v1/members/me');
+        const response = await apiGetWithToken("/api/v1/members/me");
         if (response && response.data) {
           setUser(response.data.data);
         } else {
           setUser(null);
         }
       } catch (err) {
-        console.error('Error checking login status in useAuth:', err);
+        console.error("Error checking login status in useAuth:", err);
         setUser(null);
       } finally {
         setIsLoading(false);
       }
-    }
+    };
     fetchUserData();
   }, []);
 
@@ -62,16 +69,17 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
   // useMemo를 사용하여 contextValue 객체가 불필요하게 재생성되는 것을 방지합니다.
   // 이는 Provider 하위의 Consumer 컴포넌트들의 불필요한 리렌더링을 막아줍니다.
-  const contextValue = useMemo(() => ({
-    user,
-    isAuthenticated,
-    isLoading,
-  }), [user, isAuthenticated, isLoading]); // 의존성 배열에 상태와 함수를 포함합니다. (함수는 useCallback으로 감싸는 것이 더 좋지만, 이 예제에서는 단순화)
+  const contextValue = useMemo(
+    () => ({
+      user,
+      isAuthenticated,
+      isLoading,
+    }),
+    [user, isAuthenticated, isLoading],
+  ); // 의존성 배열에 상태와 함수를 포함합니다. (함수는 useCallback으로 감싸는 것이 더 좋지만, 이 예제에서는 단순화)
 
   return (
-    <UserContext.Provider value={contextValue}>
-      {children}
-    </UserContext.Provider>
+    <UserContext.Provider value={contextValue}>{children}</UserContext.Provider>
   );
 };
 
@@ -79,8 +87,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 export const useUser = (): UserContextType => {
   const context = useContext(UserContext);
   if (context === undefined) {
-    throw new Error('useUser must be used within a UserProvider');
+    throw new Error("useUser must be used within a UserProvider");
   }
   return context;
 };
-

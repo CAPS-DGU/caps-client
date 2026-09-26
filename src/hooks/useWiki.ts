@@ -103,7 +103,7 @@ export const useWiki = (title?: string) => {
       });
       return response.data;
     },
-    [searchParams.pageSize]
+    [searchParams.pageSize],
   );
 
   const handlePageChange = useCallback(
@@ -114,14 +114,14 @@ export const useWiki = (title?: string) => {
       });
       return response.data;
     },
-    [searchParams]
+    [searchParams],
   );
 
   const handleCreate = useCallback(
     (data: WikiFormData) => {
       createWiki.mutate(data);
     },
-    [createWiki]
+    [createWiki],
   );
 
   const handleUpdate = useCallback(
@@ -129,7 +129,7 @@ export const useWiki = (title?: string) => {
       if (!title) return;
       updateWiki.mutate({ title, data });
     },
-    [updateWiki, title]
+    [updateWiki, title],
   );
 
   const handleDelete = useCallback(() => {
@@ -141,7 +141,7 @@ export const useWiki = (title?: string) => {
     (history: WikiHistoryData) => {
       restoreHistory.mutate(history);
     },
-    [restoreHistory]
+    [restoreHistory],
   );
 
   return {

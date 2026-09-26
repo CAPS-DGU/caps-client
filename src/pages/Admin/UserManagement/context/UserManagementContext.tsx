@@ -34,7 +34,7 @@ export const useUserManagementContext = () => {
   const context = useContext(UserManagementContext);
   if (context === undefined) {
     throw new Error(
-      "useUserManagementContext must be used within a UserManagementProvider"
+      "useUserManagementContext must be used within a UserManagementProvider",
     );
   }
   return context;

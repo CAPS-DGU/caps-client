@@ -1,11 +1,10 @@
-import React from 'react';
+import React from "react";
 
-import firstPlaceImg from '/iStock-1st.jpg';
-import secondPlaceImg from '/iStock-2nd.jpg';
-import thirdPlaceImg from '/iStock-3rd.jpg';
+import firstPlaceImg from "/iStock-1st.jpg";
+import secondPlaceImg from "/iStock-2nd.jpg";
+import thirdPlaceImg from "/iStock-3rd.jpg";
 
 function RankingItem({ rank, name, comment, postCount, commentCount, point }) {
-
   const rankImages = {
     1: firstPlaceImg,
     2: secondPlaceImg,
@@ -13,10 +12,17 @@ function RankingItem({ rank, name, comment, postCount, commentCount, point }) {
   };
 
   return (
-    <li className="grid items-center grid-cols-6 py-4 text-sm border-b border-gray-200" style={{ gridTemplateColumns: "1fr 1fr 3fr 1fr 1fr 1fr" }}>
+    <li
+      className="grid items-center grid-cols-6 py-4 text-sm border-b border-gray-200"
+      style={{ gridTemplateColumns: "1fr 1fr 3fr 1fr 1fr 1fr" }}
+    >
       <div className="text-center">
         {rank <= 3 ? (
-          <img src={rankImages[rank]} alt={`${rank}위`} className="w-8 h-8 mx-auto" />
+          <img
+            src={rankImages[rank]}
+            alt={`${rank}위`}
+            className="w-8 h-8 mx-auto"
+          />
         ) : (
           rank
         )}
@@ -37,7 +43,10 @@ const RankingList = ({ data }) => {
   return (
     <div className="p-4 m-4 mx-auto bg-white rounded-lg shadow-md max-w-7xl">
       <ul className="divide-y divide-gray-200">
-        <li className="grid items-center grid-cols-6 py-4 text-sm font-bold text-gray-700" style={{ gridTemplateColumns: "1fr 1fr 3fr 1fr 1fr 1fr" }}>
+        <li
+          className="grid items-center grid-cols-6 py-4 text-sm font-bold text-gray-700"
+          style={{ gridTemplateColumns: "1fr 1fr 3fr 1fr 1fr 1fr" }}
+        >
           <div className="text-center">등수</div>
           <div className="text-center">이름</div>
           <div className="text-left">한 마디</div>

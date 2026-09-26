@@ -28,16 +28,24 @@ const MarkdownView: React.FC<MarkdownViewProps> = ({ content, className }) => {
         urlTransform={urlTransform}
         components={{
           h1: ({ children }) => (
-            <h1 className="mt-8 mb-4 text-2xl md:text-3xl font-extrabold leading-snug text-black">{children}</h1>
+            <h1 className="mt-8 mb-4 text-2xl md:text-3xl font-extrabold leading-snug text-black">
+              {children}
+            </h1>
           ),
           h2: ({ children }) => (
-            <h2 className="mt-7 mb-3 text-xl md:text-2xl font-bold leading-snug text-black">{children}</h2>
+            <h2 className="mt-7 mb-3 text-xl md:text-2xl font-bold leading-snug text-black">
+              {children}
+            </h2>
           ),
           h3: ({ children }) => (
-            <h3 className="mt-6 mb-2 text-lg font-bold text-black">{children}</h3>
+            <h3 className="mt-6 mb-2 text-lg font-bold text-black">
+              {children}
+            </h3>
           ),
           p: ({ children }) => (
-            <p className="my-3 text-[15px] leading-8 text-gray-800">{children}</p>
+            <p className="my-3 text-[15px] leading-8 text-gray-800">
+              {children}
+            </p>
           ),
           a: ({ href, children }) => (
             <a
@@ -66,7 +74,10 @@ const MarkdownView: React.FC<MarkdownViewProps> = ({ content, className }) => {
           ),
           code: ({ className: cls, children }) => {
             const isBlock = /language-/.test(cls ?? "");
-            if (isBlock) return <code className={`${cls ?? ""} font-mono`}>{children}</code>;
+            if (isBlock)
+              return (
+                <code className={`${cls ?? ""} font-mono`}>{children}</code>
+              );
             return (
               <code className="rounded bg-gray-100 px-1.5 py-0.5 font-mono text-[13px] text-[#d6336c]">
                 {children}
@@ -93,7 +104,9 @@ const MarkdownView: React.FC<MarkdownViewProps> = ({ content, className }) => {
           ),
           table: ({ children }) => (
             <div className="my-4 overflow-x-auto">
-              <table className="w-full border-collapse text-sm">{children}</table>
+              <table className="w-full border-collapse text-sm">
+                {children}
+              </table>
             </div>
           ),
           th: ({ children }) => (
@@ -102,7 +115,9 @@ const MarkdownView: React.FC<MarkdownViewProps> = ({ content, className }) => {
             </th>
           ),
           td: ({ children }) => (
-            <td className="border border-gray-200 px-3 py-2 text-gray-800">{children}</td>
+            <td className="border border-gray-200 px-3 py-2 text-gray-800">
+              {children}
+            </td>
           ),
         }}
       >

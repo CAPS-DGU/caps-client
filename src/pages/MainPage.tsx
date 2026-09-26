@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from "react";
 const homeImage = new URL("../assets/home.png", import.meta.url).href;
 const logo = new URL("../assets/logo.png", import.meta.url).href;
 const logoBright = new URL("../assets/logo-bright.png", import.meta.url).href;
@@ -14,10 +14,11 @@ const intro8 = new URL("../assets/intro8.png", import.meta.url).href;
 // import poster4 from '../assets/poster4.jpeg';
 // import poster5 from '../assets/poster5.png';
 // import { useNavigate } from 'react-router-dom';
-import Footer from '../components/MainPage/Footer';
+import Footer from "../components/MainPage/Footer";
 import { motion } from "framer-motion";
-const arrow = new URL("../assets/u_angle-double-down.png", import.meta.url).href;
-import Navbar from '../components/NavBar';
+const arrow = new URL("../assets/u_angle-double-down.png", import.meta.url)
+  .href;
+import Navbar from "../components/NavBar";
 
 function shuffleArray<T>(array: T[]): T[] {
   // Fisher–Yates (no type gymnastics, no logic change for callers)
@@ -28,7 +29,6 @@ function shuffleArray<T>(array: T[]): T[] {
   }
   return arr;
 }
-
 
 const MainPage = () => {
   // NavBar theme control:
@@ -51,14 +51,15 @@ const MainPage = () => {
       (entries) => {
         for (const entry of entries) {
           if (entry.target === heroEl) setIsHeroInView(entry.isIntersecting);
-          if (entry.target === footerEl) setIsFooterInView(entry.isIntersecting);
+          if (entry.target === footerEl)
+            setIsFooterInView(entry.isIntersecting);
         }
       },
       {
         // "In view" when a meaningful portion is visible
         root: rootEl ?? null,
         threshold: 0.25,
-      }
+      },
     );
 
     if (heroEl) observer.observe(heroEl);
@@ -68,18 +69,22 @@ const MainPage = () => {
   }, []);
 
   // Dynamically import all poster images matching poster*.{png,jpg,jpeg}
-  const posterModules = (import.meta as any).glob('../assets/poster*.{png,PNG,jpg,JPG,jpeg,JPEG}', { eager: true }) as Record<string, any>;
-  const posters = Object
-    .entries(posterModules ?? {})
+  const posterModules = (import.meta as any).glob(
+    "../assets/poster*.{png,PNG,jpg,JPG,jpeg,JPEG}",
+    { eager: true },
+  ) as Record<string, any>;
+  const posters = Object.entries(posterModules ?? {})
     .sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true }))
-    .map(([, mod]) => (mod && (mod as any).default) ? (mod as any).default : mod);
+    .map(([, mod]) =>
+      mod && (mod as any).default ? (mod as any).default : mod,
+    );
   // Fallback: if none matched, keep previous three if any existed
   // (No-op in current setup because at least poster1~ are present)
   // Preload poster images early to avoid blank gap at sequence boundary
   useEffect(() => {
     posters.forEach((src) => {
       const img = new Image();
-      img.src = typeof src === 'string' ? src : String(src);
+      img.src = typeof src === "string" ? src : String(src);
     });
   }, [posters]);
 
@@ -134,51 +139,59 @@ const MainPage = () => {
   const LEARN_CARDS = [
     {
       title: "스터디",
-      description: "커리큘럼형, 자유형 스터디가 있어 원하는 분야를 선택하여 참여할 수 있습니다.",
+      description:
+        "커리큘럼형, 자유형 스터디가 있어 원하는 분야를 선택하여 참여할 수 있습니다.",
       image: intro1,
     },
     {
       title: "CAPStone",
-      description: "팀을 이루어 직접 기획부터 구현까지 프로젝트를 완성해보는 실전형 프로그램입니다.",
+      description:
+        "팀을 이루어 직접 기획부터 구현까지 프로젝트를 완성해보는 실전형 프로그램입니다.",
       image: intro2,
     },
     {
       title: "알고리즘 대회",
-      description: "CAPS에서 출제한 알고리즘 문제를 해결하고, 풀이를 나누며 문제 해결력을 기를 수 있습니다.",
+      description:
+        "CAPS에서 출제한 알고리즘 문제를 해결하고, 풀이를 나누며 문제 해결력을 기를 수 있습니다.",
       image: intro3,
     },
     {
       title: "CS 연합 컨퍼런스",
-      description: "타대학 학생들과 함께 컴퓨터와 직·간접적으로 연관된 주제를 자유롭게 발표하는 자리입니다.",
+      description:
+        "타대학 학생들과 함께 컴퓨터와 직·간접적으로 연관된 주제를 자유롭게 발표하는 자리입니다.",
       image: intro4,
     },
-  ];  // 예시 데이터
-  const SOCIAL_CARDS = [{
-    title: "개강총회/종강총회",
-    description: "한 학기 활동 계획과 집행부를 소개해 드리고, 뒷풀이를 통해 신입 부원들을 환영합니다.",
-    image: intro5,
-  },
-  {
-    title: "신입부원 세미나",
-    description: "자유로운 주제로 발표를 준비해 이야기를 들려주며 서로를 알아가는 자리입니다.",
-    image: intro6,
-  },
-  {
-    title: "캡처",
-    description: "신입 부원과 기존 부원들의 친목 도모를 위해 조별로 대면 모임을 가집니다.",
-    image: intro7,
-  },
-  {
-    title: "MT",
-    description: "펜션에서 레크레이션 게임을 즐기고, 맛있는 음식을 먹으며 빠르게 친해질 수 있습니다.",
-    image: intro8,
-  },]; // 예시 데이터
+  ]; // 예시 데이터
+  const SOCIAL_CARDS = [
+    {
+      title: "개강총회/종강총회",
+      description:
+        "한 학기 활동 계획과 집행부를 소개해 드리고, 뒷풀이를 통해 신입 부원들을 환영합니다.",
+      image: intro5,
+    },
+    {
+      title: "신입부원 세미나",
+      description:
+        "자유로운 주제로 발표를 준비해 이야기를 들려주며 서로를 알아가는 자리입니다.",
+      image: intro6,
+    },
+    {
+      title: "캡처",
+      description:
+        "신입 부원과 기존 부원들의 친목 도모를 위해 조별로 대면 모임을 가집니다.",
+      image: intro7,
+    },
+    {
+      title: "MT",
+      description:
+        "펜션에서 레크레이션 게임을 즐기고, 맛있는 음식을 먹으며 빠르게 친해질 수 있습니다.",
+      image: intro8,
+    },
+  ]; // 예시 데이터
 
   // const borderStyle = {
   //   boxShadow: "0 0 0 2px #444, 0 0 0 5px #222, 0 0 1px 5px #000",
   // };
-
-
 
   const shuffled = shuffleArray(departments);
   const mid = Math.ceil(shuffled.length / 2);
@@ -190,11 +203,12 @@ const MainPage = () => {
   const doubleDepartments1 = [...departments1, ...departments1];
   const doubleDepartments2 = [...departments2, ...departments2];
 
-
-
   return (
     <>
-      <div ref={scrollRootRef} className="bg-[#FAFAFA] snap-y snap-mandatory overflow-y-auto h-screen">
+      <div
+        ref={scrollRootRef}
+        className="bg-[#FAFAFA] snap-y snap-mandatory overflow-y-auto h-screen"
+      >
         {/* <img src={homeImage} alt="설명적인 이미지 텍스트" /> */}
         {/* <Navbar /> */}
         <div
@@ -219,10 +233,14 @@ const MainPage = () => {
             <img
               src={logoBright}
               alt="CAPS Logo"
-              className="mb-4 w-36 md:w-48" />
-            <span className="mt-4 text-lg font-medium text-white md:text-2xl break-keep md:break-normal">Computer Aided Progressive Study</span>
+              className="mb-4 w-36 md:w-48"
+            />
+            <span className="mt-4 text-lg font-medium text-white md:text-2xl break-keep md:break-normal">
+              Computer Aided Progressive Study
+            </span>
             <span className="mt-2 text-sm text-white md:text-base break-keep md:break-normal">
-              1988년 창설된 CAPS는 프로그래밍에 관심이 있는 누구나 재밌게 배울 수 있는 동아리입니다
+              1988년 창설된 CAPS는 프로그래밍에 관심이 있는 누구나 재밌게 배울
+              수 있는 동아리입니다
             </span>
           </div>
           {/* 아래쪽 화살표 */}
@@ -251,17 +269,26 @@ const MainPage = () => {
               <img
                 src={logo}
                 alt="CAPS Logo"
-                className="mr-2 w-12 md:w-16" /> 는
+                className="mr-2 w-12 md:w-16"
+              />{" "}
+              는
             </div>
 
             <div className="flex flex-col items-center mt-2 max-w-2xl text-center">
-              <span className="text-5xl md:text-7xl font-[NotoSansKR] text-gray-300 leading-none">“</span>
+              <span className="text-5xl md:text-7xl font-[NotoSansKR] text-gray-300 leading-none">
+                “
+              </span>
               <p className="text-base md:text-2xl font-[Pretendard] font-regular text-black mb-6 leading-relaxed break-keep md:break-normal">
-                다양한 전공의 학생들이 함께 활동하며 <br />전공간의 경계를 허물고,<br />
-                창의적 시각으로 복잡한 문제에 접근할 수 있는<br />
+                다양한 전공의 학생들이 함께 활동하며 <br />
+                전공간의 경계를 허물고,
+                <br />
+                창의적 시각으로 복잡한 문제에 접근할 수 있는
+                <br />
                 프로그래밍 학술 활동을 추구합니다.
               </p>
-              <span className="text-5xl md:text-7xl font-[NotoSansKR] text-gray-300 leading-none mb-4">”</span>
+              <span className="text-5xl md:text-7xl font-[NotoSansKR] text-gray-300 leading-none mb-4">
+                ”
+              </span>
             </div>
           </div>
         </motion.div>
@@ -275,15 +302,18 @@ const MainPage = () => {
         >
           <div className="px-2 py-16 w-full">
             <div className="flex flex-col items-center mx-auto max-w-6xl">
-
               <div className=" text-sm md:text-xl font-[Pretendard] font-semibold text-gray-500 mb-4 text-center">
                 1988년부터 시작 되어 39년의 역사를 가진 캡스는 현재
               </div>
               <div className="text-2xl md:text-3xl font-[Pretendard] font-bold text-gray-800 mb-10 text-center">
-                <span className="text-blue-500">{departments.length}</span> 개의 학과, 총 <span className="text-blue-600">180</span> 명의 학우와 <br />함께하고 있습니다.
-                <div className="text-xs font-medium text-gray-400">2026년 2학기 기준</div>
+                <span className="text-blue-500">{departments.length}</span> 개의
+                학과, 총 <span className="text-blue-600">180</span> 명의 학우와{" "}
+                <br />
+                함께하고 있습니다.
+                <div className="text-xs font-medium text-gray-400">
+                  2026년 2학기 기준
+                </div>
               </div>
-
 
               {/* 윗줄 왼→오 (오른쪽으로 이동) */}
               <div className="mb-3 h-10 md:h-12 marquee">
@@ -329,7 +359,8 @@ const MainPage = () => {
               캡스는 어떤 활동을 하나요?
             </div>
             <div className="text-base font-bold leading-tight text-center text-gray-700 md:text-xl break-keep md:break-normal">
-              스터디 · 세미나 · 알고리즘 대회 · 컨퍼런스 · 게임대회까지<br />
+              스터디 · 세미나 · 알고리즘 대회 · 컨퍼런스 · 게임대회까지
+              <br />
               다양한 활동을 즐길 수 있습니다.
             </div>
           </div>
@@ -364,14 +395,22 @@ const MainPage = () => {
                 key={i}
                 className="relative bg-white rounded-xl w-[360px] h-[240px] md:h-[240px] overflow-hidden group cursor-pointer md:max-w-none"
               >
-                <img src={card.image} alt={card.title} className="object-cover w-full h-full" />
+                <img
+                  src={card.image}
+                  alt={card.title}
+                  className="object-cover w-full h-full"
+                />
                 {/* 호버 오버레이 */}
                 <div className="flex absolute inset-0 flex-col justify-between p-8 bg-black bg-opacity-0 transition-all duration-300 group-hover:bg-opacity-70">
                   <div className="text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                    <h3 className="mb-2 text-2xl font-bold md:text-3xl">{card.title}</h3>
+                    <h3 className="mb-2 text-2xl font-bold md:text-3xl">
+                      {card.title}
+                    </h3>
                   </div>
                   <div className="text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                    <p className="text-xs leading-relaxed md:text-sm break-keep md:break-normal">{card.description}</p>
+                    <p className="text-xs leading-relaxed md:text-sm break-keep md:break-normal">
+                      {card.description}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -389,11 +428,14 @@ const MainPage = () => {
           className="flex flex-col justify-center items-center px-4 pt-10 w-full min-h-screen snap-start"
         >
           <div className="text-base font-bold leading-tight text-center text-gray-700 md:text-xl break-keep md:break-normal">
-            교내 활동뿐만 아니라,<br /> 전교생을 대상으로 한 알고리즘대회 등<br />
+            교내 활동뿐만 아니라,
+            <br /> 전교생을 대상으로 한 알고리즘대회 등<br />
             다양한 행사에 기여하며 활동 범위를 넓혀가고 있습니다.
           </div>
           <div className="overflow-hidden py-16 w-full">
-            <div className={`flex gap-8 items-center w-max ${isCarouselReady ? 'animate-scroll' : ''}`}>
+            <div
+              className={`flex gap-8 items-center w-max ${isCarouselReady ? "animate-scroll" : ""}`}
+            >
               {[...posters, ...posters].map((src, i) => (
                 <img
                   key={`loop-${i}-${src}`}
@@ -429,7 +471,7 @@ const MainPage = () => {
             type="button"
             disabled
             className="flex items-center px-8 py-4 text-lg font-extrabold text-white bg-blue-600 rounded-full shadow-lg transition cursor-not-allowed opacity-60 md:px-12 md:py-5 md:text-xl disabled:hover:bg-blue-600"
-            >
+          >
             지금은 모집 기간이 아니에요!
           </button>
         </motion.section>

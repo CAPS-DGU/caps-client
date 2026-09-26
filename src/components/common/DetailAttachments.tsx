@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 
-const attachFileIcon = new URL("../../assets/attach_file.svg", import.meta.url).href;
+const attachFileIcon = new URL("../../assets/attach_file.svg", import.meta.url)
+  .href;
 
 export interface DetailAttachment {
   url: string;
@@ -49,7 +50,10 @@ const DetailAttachments: React.FC<DetailAttachmentsProps> = ({
       {files.map((file, index) => {
         const isLoading = loadingUrl === file.url;
         return (
-          <li key={`${file.url}-${index}`} className="flex items-center gap-2 text-sm text-gray-600">
+          <li
+            key={`${file.url}-${index}`}
+            className="flex items-center gap-2 text-sm text-gray-600"
+          >
             <img src={attachFileIcon} alt="" className="h-4 w-4 shrink-0" />
             <button
               type="button"

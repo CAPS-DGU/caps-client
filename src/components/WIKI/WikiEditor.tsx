@@ -31,13 +31,11 @@ const WikiEditor = ({ initialContent, onSave }) => {
   };
 
   return (
-    <div className="max-w-7xl p-4 md:p-6 mx-auto bg-white rounded-md shadow-md">
+    <div className="max-w-7xl p-4 md:p-6 mx-auto">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* 에디터 영역 */}
-        <div className="mb-6">
-          <h2 className="mb-4 text-2xl font-semibold text-gray-700">
-            위키 수정
-          </h2>
+        {/* 원문 편집 영역 (박스 없음) */}
+        <div>
+          <h2 className="mb-4 text-2xl font-semibold text-gray-700">원문</h2>
           <textarea
             aria-label="위키 내용"
             className="w-full h-96 p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -46,20 +44,20 @@ const WikiEditor = ({ initialContent, onSave }) => {
           />
         </div>
 
-        <section
-          aria-labelledby="wiki-preview-title"
-          className="min-w-0 break-words overflow-x-auto"
-        >
+        {/* 미리보기: '미리보기' 제목은 박스 밖 상단, 내용만 상세 페이지처럼 카드(박스) 안에 */}
+        <section aria-labelledby="wiki-preview-title" className="min-w-0">
           <h2
             id="wiki-preview-title"
             className="mb-4 text-2xl font-semibold text-gray-700"
           >
             미리보기
           </h2>
-          <WikiDocument content={content} idPrefix="preview-" />
+          <div className="break-words overflow-x-auto bg-white rounded-md shadow-md p-4 sm:p-6">
+            <WikiDocument content={content} idPrefix="preview-" />
+          </div>
         </section>
       </div>
-      <div className="flex justify-end space-x-4">
+      <div className="flex justify-end space-x-4 mt-6">
         {/* 도움말 링크 */}
         <a
           href="/wiki/도움말" // 도움말 링크

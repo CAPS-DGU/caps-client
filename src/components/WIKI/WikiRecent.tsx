@@ -20,13 +20,7 @@ const WikiRecent: React.FC = () => {
   });
 
   return (
-    <section className="wiki-recent" aria-labelledby="wiki-recent-title">
-      <h2
-        id="wiki-recent-title"
-        className="text-lg font-semibold text-center mb-4"
-      >
-        최근 수정 내역
-      </h2>
+    <section className="wiki-recent" aria-label="최근 수정 내역">
       <div className="flex flex-wrap justify-center gap-1.5 mt-0 max-w-lg mx-auto">
         {isLoading ? (
           <Spin />

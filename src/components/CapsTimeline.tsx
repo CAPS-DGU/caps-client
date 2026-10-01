@@ -196,7 +196,7 @@ const historyData = [
   },
   {
     year: "2021",
-    events: [, "9월 동국대학교 중앙동아리 학술분과로 승격"],
+    events: ["9월 동국대학교 중앙동아리 학술분과로 승격"],
   },
   {
     year: "2022",
@@ -241,9 +241,9 @@ const historyData = [
 ];
 
 export const Timeline = () => (
-  <div className="relative max-w-2xl mx-auto pt-24 pb-20 ml-2">
+  <div className="relative max-w-2xl mx-auto pt-8 pb-8 ml-2">
     {/* 세로 파란 줄 */}
-    <div className="absolute left-1 top-0 h-full w-3 bg-gradient-to-b from-blue-400 to-blue-600 rounded-full z-0" />
+    <div className="absolute left-[3px] md:left-[1px] top-0 h-full w-2 md:w-3 bg-gradient-to-b from-blue-400 to-blue-600 rounded-full z-0" />
     <ul className="space-y-16 relative z-10">
       {[...historyData]
         .sort((a, b) => Number(b.year) - Number(a.year))
@@ -252,8 +252,8 @@ export const Timeline = () => (
             {/* 연도와 점 */}
             <div className="flex flex-col items-center md:mr-8 mr-3">
               <div
-                className="w-5 h-5 rounded-full border-4 border-black bg-white z-10"
-                style={{ boxShadow: "0 0 0 4px #fff" }}
+                className="w-3.5 h-3.5 rounded-full border-[3px] border-black bg-white z-10"
+                style={{ boxShadow: "0 0 0 3px #fff" }}
               />
             </div>
             {/* 연도 및 내용 */}

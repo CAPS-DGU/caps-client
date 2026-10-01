@@ -32,7 +32,8 @@ const DetailAttachments: React.FC<DetailAttachmentsProps> = ({
       const link = document.createElement("a");
       link.href = downloadUrl;
       link.download = file.name;
-      link.target = "_blank";
+      // Cross-origin downloads require Content-Disposition from the signed URL.
+      link.rel = "noopener noreferrer";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);

@@ -26,3 +26,7 @@ dist-ssr
 pnpm-lock.yaml
 
 *.pem
+
+test-results/
+playwright-report/
+__pycache__/

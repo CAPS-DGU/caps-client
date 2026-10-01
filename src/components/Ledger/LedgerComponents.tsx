@@ -112,7 +112,7 @@ export const LedgerDetailFiles: React.FC<LedgerDetailFilesProps> = ({
     <div className="mt-4 border-b border-gray-200 pb-6">
       <DetailAttachments
         files={files}
-        onResolveUrl={async (file) => getPresignedDownloadURL(file.url)}
+        onResolveUrl={async (file) => getPresignedDownloadURL(file.url, true)}
       />
     </div>
   );

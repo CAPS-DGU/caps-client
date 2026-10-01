@@ -119,7 +119,7 @@ export async function deleteFileFromS3(fileKey: string): Promise<void> {
  * @param fileKey - S3에 저장된 파일의 키 (경로)
  * @returns Presigned URL
  */
-export async function getPresignedDownloadURL(fileKey: string): Promise<string> {
+export async function getPresignedDownloadURL(fileKey: string, download = false): Promise<string> {
   const apiHost = (import.meta as any).env.VITE_API_HOST as string;
   
   if (!apiHost) {
@@ -129,6 +129,7 @@ export async function getPresignedDownloadURL(fileKey: string): Promise<string> 
   // Spring Boot API에 요청 (인증 토큰 포함)
   const url = new URL(`${apiHost}/api/v1/files/presigned-url`);
   url.searchParams.append('key', fileKey);
+  if (download) url.searchParams.set('download', 'true');
 
   const response = await axios.get(url.toString(), {
     headers: {

@@ -1,204 +1,65 @@
-# CAPS v4 Frontend
+# 동국대학교 중앙동아리 C.A.P.S 공식 홈페이지 v5.3.1
 
-CAPS(Computer Algorithm Problem Solving) 클럽의 프론트엔드 웹 애플리케이션입니다.
+동아리의 역사와 활동을 대외적으로 공유하고, 부원 간의 지식 공유와 친목을 도모하는 통합 서비스 페이지입니다.
 
-## 📋 프로젝트 소개
+## 📌 기본 정보
 
-CAPS는 다양한 전공의 학생들이 함께 활동하며 전공간의 경계를 허물고, 창의적 시각으로 복잡한 문제에 접근할 수 있는 프로그래밍 학술 활동을 추구하는 동아리입니다.
+- 페이지 바로가기: https://dgucaps.kr/
 
-이 프로젝트는 CAPS 클럽의 공식 웹사이트로, 다음과 같은 기능을 제공합니다:
+- 개발 기간 : 2025.04 - 현재
 
-- **캡스위키**: 클럽 관련 정보를 공유하는 위키 시스템
-- **이벤트 관리**: 행사 및 이벤트 생성, 참여, 관리
-- **스터디**: 스터디 그룹 생성 및 관리
-- **장부게시판**: 재무 관련 게시판
-- **갤러리**: 사진 및 자료 공유
-- **랭킹**: 회원 활동 랭킹 시스템
-- **투표**: 다양한 투표 기능
-- **문의/신고**: 사용자 문의 및 신고 접수
+- 홈페이지 관리부 (39.5기, 26년 2학기 기준)
+  - 38기 김다인(부장): PM, BE
+  - 37기 장준혁: FE
+  - 37기 원종인: FE, BE
 
-## 🛠 기술 스택
+## 🖥️ 서비스 화면
 
-- **프레임워크**: React 18.3.1
-- **빌드 도구**: Vite 5.4.0
-- **언어**: TypeScript, JavaScript
-- **스타일링**: Tailwind CSS 3.4.13
-- **상태 관리**: React Query (@tanstack/react-query)
-- **라우팅**: React Router DOM 6.26.0
-- **HTTP 클라이언트**: Axios 1.8.4
-- **UI 컴포넌트**: Ant Design 5.24.7
-- **아이콘**: Lucide React, React Icons
-- **애니메이션**: Framer Motion
-- **API 클라이언트 생성**: Orval 8.0.3
+<img width="1893" height="992" alt="main page" src="https://github.com/user-attachments/assets/1d831c7f-36d5-489d-a7ba-a9bc340f1415" />
 
-## 🚀 시작하기
+## 🛠️ 기술 스택
 
-### 필수 요구사항
+- Frontend
+  - React(TypeScript, JavaScript)
+  - Vite
+  - Tailwind CSS
+  - React Query (@tanstack/react-query)
+  - React Router DOM
+- Backend
+  - Spring Boot
+  - Spring Security
+- DB
+  - MySQL
+  - S3
+- DevOps
+  - AWS EC2
+  - Docker
+  - GitHub Actions
+- Collaboration Tools
+  - GitHub
+  - Figma
+  - Notion
+  - Discord
+ 
+## 💡 주요 기능
 
-- Node.js 18.x 이상
-- npm 또는 yarn
+### 1. 메인 페이지
+- 동아리 기본 정보: 동아리의 설립 목표, 부원 지표, 주요 활동 이력을 데이터 중심의 요약 정보로 제공한다.
+- 외부 링크: 링크트리 연동을 통해 외부 소셜 미디어나 기타 플랫폼으로의 연결 통로를 제공한다.
 
-### 설치
+### 2. 인증 및 권한 관리
+- 계정 관리: 회원가입 및 로그인 프로세스를 통해 사용자 계정을 생성하고 관리한다.
+- 외부 인증 연동: OAuth 프로토콜을 사용하여 타 플랫폼 계정을 통한 소셜 로그인 연동 기능을 지원한다.
 
-```bash
-# 의존성 설치
-npm install
-```
+### 3. 위키 시스템
+- 문서 탐색 및 조회: 키워드 기반의 검색, 랜덤 문서 조회, 최신 수정 내역 리스트 기능을 제공한다.
+- 콘텐츠 형상 관리: 개별 위키 문서의 상세 조회와 더불어, 부원에 의한 신규 문서 생성 및 기존 문서의 내용 갱신 기능을 지원한다.
 
-### 환경 변수 설정
+### 4. 장부 게시판
+- 월별 결산 공시: 매월 발생하는 수입과 지출 내역을 데이터화하여 게시판 형태로 공시한다.
+- 회계 투명성 확보: 권한을 가진 부원이 상시로 월별 집행 내역을 확인하고 검증할 수 있는 환경을 제공한다.
 
-프로젝트 루트에 `.env` 파일을 생성하고 다음 환경 변수를 설정하세요:
-
-```env
-VITE_API_HOST=https://api.example.com
-VITE_LAMBDA_URL=https://lambda.example.com  # 선택사항 (S3 파일 업로드/삭제용)
-```
-
-### 개발 서버 실행
-
-```bash
-# 일반 개발 서버 (HTTP)
-npm run dev
-
-# HTTPS 개발 서버 (SSL 인증서 필요)
-npm run devs
-```
-
-개발 서버는 기본적으로 `http://localhost:5173`에서 실행됩니다.
-
-### 프로덕션 빌드
-
-```bash
-npm run build
-```
-
-빌드된 파일은 `dist` 디렉토리에 생성됩니다.
-
-```bash
-# 빌드 미리보기
-npm run preview
-```
-
-## 📡 API 클라이언트 생성 (Orval)
-
-이 프로젝트는 [Orval](https://orval.dev/)을 사용하여 OpenAPI 스펙으로부터 타입 안전한 API 클라이언트를 자동 생성합니다.
-
-### API 클라이언트 생성
-
-```bash
-# API 클라이언트 생성 (한 번만 실행)
-npm run orval:gen
-
-# API 클라이언트 생성 및 감시 모드 (OpenAPI 스펙 변경 시 자동 재생성)
-npm run orval
-```
-
-생성된 API 클라이언트는 `src/api/generated/capsApi.ts`에 위치합니다.
-
-### Orval 워크플로우
-
-1. `npm run openapi:fetch`: 서버에서 OpenAPI 스펙 다운로드
-2. `npm run openapi:patch`: OpenAPI 스펙 패치 (검증 오류 수정)
-3. `orval --config orval.config.cjs`: API 클라이언트 생성
-
-## 📁 프로젝트 구조
-
-```
-caps-client/
-├── src/
-│   ├── api/
-│   │   └── generated/          # Orval로 생성된 API 클라이언트
-│   ├── assets/                 # 정적 자산 (이미지, 아이콘 등)
-│   ├── components/             # 재사용 가능한 컴포넌트
-│   │   ├── BoardList/          # 게시판 목록
-│   │   ├── BoardView/          # 게시판 상세보기
-│   │   ├── Event/               # 이벤트 관련 컴포넌트
-│   │   ├── Login/               # 로그인 모달
-│   │   ├── MainPage/            # 메인 페이지 컴포넌트
-│   │   ├── WIKI/                # 위키 관련 컴포넌트
-│   │   └── ...
-│   ├── contexts/                # React Context
-│   ├── data/                    # 정적 데이터
-│   ├── hooks/                   # 커스텀 훅
-│   ├── pages/                   # 페이지 컴포넌트
-│   ├── types/                   # TypeScript 타입 정의
-│   ├── utils/                   # 유틸리티 함수
-│   └── App.tsx                  # 메인 앱 컴포넌트
-├── scripts/
-│   ├── fetch-openapi.mjs        # OpenAPI 스펙 다운로드 스크립트
-│   └── patch-openapi.mjs        # OpenAPI 스펙 패치 스크립트
-├── orval.config.cjs             # Orval 설정 파일
-└── package.json
-```
-
-## 🔐 인증
-
-이 프로젝트는 카카오 OAuth2를 통한 소셜 로그인을 지원합니다. 인증 토큰은 HttpOnly 쿠키로 관리됩니다.
-
-### 로그인 플로우
-
-1. 사용자가 카카오 로그인 버튼 클릭
-2. 카카오 OAuth2 인증 페이지로 리다이렉트
-3. 인증 완료 후 콜백 URL로 리다이렉트
-4. 서버에서 JWT 토큰을 HttpOnly 쿠키로 설정
-5. 클라이언트에서 `/api/v1/members/me` 엔드포인트로 사용자 정보 확인
-
-## 🛡 보호된 라우트
-
-일부 페이지는 로그인한 사용자만 접근할 수 있습니다. `ProtectedRoute` 컴포넌트를 사용하여 보호할 수 있습니다:
-
-```tsx
-<ProtectedRoute>
-  <ReportPage />
-</ProtectedRoute>
-```
-
-## 📝 주요 기능
-
-### 위키 시스템
-- 위키 문서 작성 및 편집
-- 위키 히스토리 조회 및 비교
-- 마크다운 지원
-
-### 이벤트 관리
-- 이벤트 생성 및 수정
-- 이벤트 참여 관리
-- 이벤트 상세 정보 조회
-
-### 스터디
-- 스터디 그룹 생성 및 관리
-- 스터디 참여자 관리
-- 스터디 일정 관리
-
-### 장부게시판
-- 재무 관련 게시글 작성 및 조회
-- 엑셀 파일 업로드 및 다운로드
-
-### 문의/신고
-- 카테고리별 문의 및 신고 접수
-- 파일 첨부 기능 (S3 presigned URL 사용)
-
-## 🧪 개발 가이드
-
-### 코드 스타일
-
-- ESLint를 사용하여 코드 스타일을 검사합니다.
-- TypeScript를 사용하는 것을 권장합니다.
-
-```bash
-npm run lint
-```
-
-### 컴포넌트 작성 가이드
-
-- 재사용 가능한 컴포넌트는 `src/components/`에 작성합니다.
-- 페이지 컴포넌트는 `src/pages/`에 작성합니다.
-- 커스텀 훅은 `src/hooks/`에 작성합니다.
-
-## 📄 라이선스
-
-이 프로젝트는 CAPS 클럽의 내부 프로젝트입니다.
-
-## 👥 기여자
-
-CAPS 클럽 회원들
+### 5. 정보 아카이브
+- 조직 체계 가시화: 집행부의 부서별 구조와 구성원 인적 사항을 체계적으로 분류하여 전시한다.
+- 연혁 기록: 설립일부터 현재까지의 주요 활동 내역을 시간 순서에 따라 관리한다.
+- 반복 질의 관리: 빈도가 높은 문의 사항을 범주화하여 표준화된 답변을 제공한다.

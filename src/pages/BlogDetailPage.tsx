@@ -165,7 +165,7 @@ const BlogDetailPage: React.FC = () => {
                     url,
                     name: blogFileName(url) || "첨부파일",
                   }))}
-                  onResolveUrl={(file) => resolveBlogFileUrl(file.url)}
+                  onResolveUrl={(file) => resolveBlogFileUrl(file.url, true)}
                 />
               </div>
             )}

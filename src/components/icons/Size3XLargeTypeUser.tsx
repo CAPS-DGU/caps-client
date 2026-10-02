@@ -5,7 +5,7 @@ Please share your feedback here: https://form.asana.com/?k=uvp-HPgd3_hyoXRBw1IcN
 
 import React from "react";
 
-export const Size3XLargeTypeImage = ({ className }) => {
+export const Size3XLargeTypeUser = ({ className }: { className?: string }) => {
   return (
     <svg
       className={`${className}`}
@@ -21,10 +21,8 @@ export const Size3XLargeTypeImage = ({ className }) => {
       />
 
       <path
-        clipRule="evenodd"
-        d="M28.2967 22.0914L32.2 15.4L42 32.2H33.5006C33.5661 31.7428 33.6 31.2753 33.6 30.8C33.6 27.011 31.4461 23.722 28.2967 22.0914ZM28.2967 22.0914C26.9497 21.394 25.4206 21 23.8 21C18.3904 21 14 25.3904 14 30.8C14 36.2096 18.3904 40.6 23.8 40.6C28.7343 40.6 32.8206 36.9472 33.5006 32.2H22.4L28.2967 22.0914Z"
+        d="M27.3 8.75C31.948 8.75 35.7 12.502 35.7 17.15C35.7 21.798 31.948 25.55 27.3 25.55C22.652 25.55 18.9 21.798 18.9 17.15C18.9 12.502 22.652 8.75 27.3 8.75ZM27.3 48.51C20.3 48.51 14.112 44.926 10.5 39.494C10.584 33.922 21.7 30.87 27.3 30.87C32.872 30.87 44.016 33.922 44.1 39.494C40.488 44.926 34.3 48.51 27.3 48.51Z"
         fill="white"
-        fillRule="evenodd"
       />
     </svg>
   );

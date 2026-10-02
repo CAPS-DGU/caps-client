@@ -27,12 +27,15 @@ function toStoredFileKey(value: string): string {
   }
 }
 
-// 저장된 key 를 실제로 열 수 있는 URL 로 바꾼다.
-export async function resolveBlogFileUrl(value: string): Promise<string> {
+// 저장된 key를 URL로 바꾼다. 첨부파일 클릭에서만 download=true를 전달한다.
+export async function resolveBlogFileUrl(value: string, download = false): Promise<string> {
   if (isAbsoluteUrl(value)) return value;
 
   const key = toStoredFileKey(value);
-  return pickDownloadUrl(await getBlogPresignedDownloadUrl({ key }), key);
+  return pickDownloadUrl(
+    await getBlogPresignedDownloadUrl({ key, ...(download ? { download: true } : {}) }),
+    key
+  );
 }
 
 /** key 에서 사람이 읽을 파일명만 뽑는다. 업로드 시 붙는 `{timestamp}_{index}_` 접두사는 제거. */

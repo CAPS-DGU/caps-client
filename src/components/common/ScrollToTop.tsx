@@ -32,9 +32,7 @@ function writeScrollY(y: number) {
 const ScrollToTop: React.FC = () => {
   const { pathname } = useLocation();
   const prevPathRef = useRef(pathname);
-  const listScrollRef = useRef<
-    Partial<Record<(typeof LIST_PATHS)[number], number>>
-  >({});
+  const listScrollRef = useRef<Partial<Record<(typeof LIST_PATHS)[number], number>>>({});
   const pendingRestoreYRef = useRef<number | null>(null);
 
   // 경로 변경 직후: 복원 목표를 먼저 확정 (다른 effect 가 메모리를 덮어쓰기 전에)
@@ -69,7 +67,7 @@ const ScrollToTop: React.FC = () => {
       attempts += 1;
       const maxScroll = Math.max(
         0,
-        document.documentElement.scrollHeight - window.innerHeight,
+        document.documentElement.scrollHeight - window.innerHeight
       );
       if (maxScroll >= y - 8 || attempts >= maxAttempts) {
         pendingRestoreYRef.current = null;

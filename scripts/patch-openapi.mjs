@@ -22,3 +22,5 @@ if (jwt && typeof jwt === "object") {
 
 await fs.writeFile(PATCHED, JSON.stringify(spec, null, 2) + "\n", "utf8");
 console.log(`Patched OpenAPI written to ${PATCHED}`);
+
+

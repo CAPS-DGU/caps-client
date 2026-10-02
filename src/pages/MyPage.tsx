@@ -3,10 +3,11 @@ import { useAuth } from "../hooks/useAuth";
 import { useUser } from "../contexts/UserContext";
 import NavBar from "../components/NavBar";
 
-interface MyPageProps {}
+interface MyPageProps { }
 
 const MyPage: React.FC<MyPageProps> = () => {
-  const { user, isLoading } = useUser();
+  const { user, isLoading} = useUser();
+
 
   if (isLoading) {
     return (
@@ -15,6 +16,7 @@ const MyPage: React.FC<MyPageProps> = () => {
       </div>
     );
   }
+
 
   if (!user) {
     return (

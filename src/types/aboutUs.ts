@@ -16,3 +16,4 @@ export type Executive = {
   position: string;
   img?: string;
 };
+

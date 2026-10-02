@@ -12,7 +12,11 @@ export function renderWikiHtml(html: string, idPrefix = ""): React.ReactNode[] {
     if (node.tagName === "SUP" && commentIndex && /^\d+$/.test(commentIndex)) {
       const note = node.querySelector(".comment-box");
       return (
-        <sup key={key} id={`${idPrefix}comment-ref-${commentIndex}`}>
+        <sup
+          key={key}
+          id={`${idPrefix}comment-ref-${commentIndex}`}
+          className="scroll-mt-24"
+        >
           <FootnoteTooltip
             href={`#${idPrefix}comment-${commentIndex}`}
             label={`[${commentIndex}]`}

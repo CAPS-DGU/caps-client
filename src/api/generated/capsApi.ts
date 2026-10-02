@@ -288,6 +288,10 @@ export type GetPresignedDownloadUrlParams = {
  * @minLength 1
  */
 key: string;
+/**
+ * 첨부파일 다운로드 시 true. 생략하면 이미지 등은 inline으로 표시합니다.
+ */
+download?: boolean;
 };
 
 export type GetBlogsParams = {
@@ -316,6 +320,10 @@ export type GetBlogPresignedDownloadUrlParams = {
  * @minLength 1
  */
 key: string;
+/**
+ * 첨부파일 다운로드 시 true. 생략하면 이미지 등은 inline으로 표시합니다.
+ */
+download?: boolean;
 };
 
 export type DeleteFileParams = {

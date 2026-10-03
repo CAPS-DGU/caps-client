@@ -46,9 +46,7 @@ const WikiEngine: React.FC<WikiEngineProps> = ({
       const match = /^#(\S+)/.exec(firstLine);
       if (match) {
         const targetPage = firstLine.slice(1).trim();
-        setTimeout(() => {
-          navigate(`/wiki/${targetPage}`);
-        }, 500);
+        navigate(`/wiki/${targetPage}`, { replace: true });
       }
     };
 

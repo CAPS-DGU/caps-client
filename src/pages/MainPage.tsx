@@ -75,13 +75,8 @@ const MainPage = () => {
     .map(([, mod]) => (mod && (mod as any).default) ? (mod as any).default : mod);
   // Fallback: if none matched, keep previous three if any existed
   // (No-op in current setup because at least poster1~ are present)
-  // Preload poster images early to avoid blank gap at sequence boundary
-  useEffect(() => {
-    posters.forEach((src) => {
-      const img = new Image();
-      img.src = typeof src === 'string' ? src : String(src);
-    });
-  }, [posters]);
+  // Start downloading posters only when their section approaches the viewport.
+  const [shouldLoadPosters, setShouldLoadPosters] = useState(false);
 
   // Delay animation start until key images are loaded to avoid visible gaps
   const [loadedCount, setLoadedCount] = useState(0);
@@ -385,7 +380,8 @@ const MainPage = () => {
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
-          viewport={{ once: true, amount: 0.3 }}
+          viewport={{ once: true, margin: "600px" }}
+          onViewportEnter={() => setShouldLoadPosters(true)}
           className="flex flex-col justify-center items-center px-4 pt-10 w-full min-h-screen snap-start"
         >
           <div className="text-base font-bold leading-tight text-center text-gray-700 md:text-xl break-keep md:break-normal">
@@ -397,11 +393,11 @@ const MainPage = () => {
               {[...posters, ...posters].map((src, i) => (
                 <img
                   key={`loop-${i}-${src}`}
-                  src={src}
+                  src={shouldLoadPosters ? src : undefined}
                   alt={`활동 이미지 ${(i % posters.length) + 1}`}
                   loading={i < eagerCount ? "eager" : "lazy"}
-                  fetchPriority={i < eagerCount ? "high" : undefined}
-                  decoding={i < eagerCount ? "sync" : "async"}
+                  fetchPriority="low"
+                  decoding="async"
                   sizes="(min-width: 768px) 16rem, 10rem"
                   className="object-contain w-40 bg-gray-100 rounded-lg md:w-64 shrink-0"
                   onLoad={() => {

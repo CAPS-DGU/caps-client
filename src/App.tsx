@@ -1,44 +1,43 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
+import LoadingSpinner from "./components/LoadingSpinner";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ConfigProvider } from "antd";
 import koKR from "antd/locale/ko_KR";
 
 // Pages
-import LoginPage from "./pages/LoginPage";
-import MainPage from "./pages/MainPage";
-import WikiPage from "./pages/WikiPage";
-import IntroPage from "./pages/IntroPage";
-import HistoryPage from "./pages/HistoryPage";
-import ExecutivePage from "./pages/ExecutivePage";
-import HomepagePage from "./pages/HomepagePage";
-import BoardPage from "./pages/BoardPage";
-import KakaoLogin from "./pages/KakaoLogin";
+const MainPage = lazy(() => import("./pages/MainPage"));
+const WikiPage = lazy(() => import("./pages/WikiPage"));
+const IntroPage = lazy(() => import("./pages/IntroPage"));
+const HistoryPage = lazy(() => import("./pages/HistoryPage"));
+const ExecutivePage = lazy(() => import("./pages/ExecutivePage"));
+const HomepagePage = lazy(() => import("./pages/HomepagePage"));
+const BoardPage = lazy(() => import("./pages/BoardPage"));
+const KakaoLogin = lazy(() => import("./pages/KakaoLogin"));
 
 // Components
-import NavBar from "./components/NavBar.tsx";
 import ScrollToTop from "./components/common/ScrollToTop.tsx";
 
 // Wiki Components
-import { WikiContent } from "./components/WIKI/WikiContent";
-import { WikiHistory } from "./components/WIKI/WikiHistory";
-import { WikiCompare } from "./components/WIKI/WikiCompare";
-import OnBoarding from "./pages/OnBoarding.tsx";
-import WikiHistoryPage from "./pages/WikiHistoryPage.tsx";
+const WikiContent = lazy(() =>
+  import("./components/WIKI/WikiContent").then((module) => ({ default: module.WikiContent }))
+);
+const OnBoarding = lazy(() => import("./pages/OnBoarding.tsx"));
+const WikiHistoryPage = lazy(() => import("./pages/WikiHistoryPage.tsx"));
 import { UserProvider } from "./contexts/UserContext.tsx";
-import MyPage from "./pages/MyPage.tsx";
-import WikiEditPage from "./pages/WikiEditPage.jsx";
-import AboutUs from "./pages/AboutUsPage.tsx";
-import CapsHistoryPage from "./pages/CapsHistoryPage.tsx";
-import FAQPage from "./pages/FAQPage.tsx";
-import BlogPage from "./pages/BlogPage.tsx";
-import BlogDetailPage from "./pages/BlogDetailPage.tsx";
-import BlogEditPage from "./pages/BlogEditPage.tsx";
-import LedgerBoardPage from "./pages/LedgerBoardPage.tsx";
-import LedgerDetailPage from "./pages/LedgerDetailPage.tsx";
-import LedgerEditPage from "./pages/LedgerEditPage.tsx";
-import RulePage from "./pages/RulePage.tsx";
-import ReportPage from "./pages/ReportPage.tsx";
+const MyPage = lazy(() => import("./pages/MyPage.tsx"));
+const WikiEditPage = lazy(() => import("./pages/WikiEditPage.jsx"));
+const AboutUs = lazy(() => import("./pages/AboutUsPage.tsx"));
+const CapsHistoryPage = lazy(() => import("./pages/CapsHistoryPage.tsx"));
+const FAQPage = lazy(() => import("./pages/FAQPage.tsx"));
+const BlogPage = lazy(() => import("./pages/BlogPage.tsx"));
+const BlogDetailPage = lazy(() => import("./pages/BlogDetailPage.tsx"));
+const BlogEditPage = lazy(() => import("./pages/BlogEditPage.tsx"));
+const LedgerBoardPage = lazy(() => import("./pages/LedgerBoardPage.tsx"));
+const LedgerDetailPage = lazy(() => import("./pages/LedgerDetailPage.tsx"));
+const LedgerEditPage = lazy(() => import("./pages/LedgerEditPage.tsx"));
+const RulePage = lazy(() => import("./pages/RulePage.tsx"));
+const ReportPage = lazy(() => import("./pages/ReportPage.tsx"));
 import ProtectedRoute from "./components/ProtectedRoute";
 
 // Types
@@ -213,7 +212,9 @@ const App: React.FC = () => {
             <div className="min-h-screen bg-gray-50">
               {/* <NavBar /> */}
               <main className="">
-                <Routes>{renderRoutes(routes)}</Routes>
+                <Suspense fallback={<LoadingSpinner />}>
+                  <Routes>{renderRoutes(routes)}</Routes>
+                </Suspense>
               </main>
             </div>
           </UserProvider>

@@ -23,7 +23,7 @@ const IntroducePage = () => {
   useEffect(() => {
     const fetchData = async (title) => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_HOST}/api/v1/wikis/${title}`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_HOST}/api/v1/wikis/${encodeURIComponent(title)}`, {
           withCredentials: true,
         });
         if (response.status === 200) {

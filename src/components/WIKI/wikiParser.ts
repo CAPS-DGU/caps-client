@@ -1,3 +1,4 @@
+import { wikiHref } from "../../utils/wikiUrl";
 import DOMPurify from "dompurify";
 const ALLOWED_TAGS = [
   "p",
@@ -212,8 +213,8 @@ function wikiLinkReplace(_: string, linkText: string): string {
     } else {
       label = a;
       const target = b;
-      const linkSlug = target.replace(/ /g, "+");
-      return `<a href="/wiki/${linkSlug}" class="text-blue-500 hover:underline">${escapeWikiLinkLabel(label)}</a>`;
+      const linkSlug = wikiHref(target);
+      return `<a href="${escapeHtmlAttr(linkSlug)}" class="text-blue-500 hover:underline">${escapeWikiLinkLabel(label)}</a>`;
     }
 
     const hrefNorm = rawHref.trim().startsWith("//")
@@ -234,8 +235,8 @@ function wikiLinkReplace(_: string, linkText: string): string {
     return externalLinkOrImg(only, hrefNorm);
   }
 
-  const linkSlug = only.replace(/ /g, "+");
-  return `<a href="/wiki/${linkSlug}" class="text-blue-500 hover:underline">${escapeWikiLinkLabel(only)}</a>`;
+  const linkSlug = wikiHref(only);
+  return `<a href="${escapeHtmlAttr(linkSlug)}" class="text-blue-500 hover:underline">${escapeWikiLinkLabel(only)}</a>`;
 }
 
 export function parseContent(text: string): {

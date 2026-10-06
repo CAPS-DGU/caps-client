@@ -35,8 +35,9 @@ const WikiEngine: React.FC<WikiEngineProps> = ({
   const navigate = useNavigate();
   const location = useLocation();
   const { wiki_title } = useParams();
-  const currentTitle = displayTitle(DocTitle);
-  const routeMatches = displayTitle(wiki_title ?? "대문") === currentTitle;
+  // Display aliases may look identical, but the server distinguishes + from spaces.
+  const currentTitle = DocTitle;
+  const routeMatches = (wiki_title ?? "대문") === currentTitle;
   const redirectState = location.state?.wikiRedirect;
   const redirectFrom = routeMatches && redirectState?.to === currentTitle &&
     typeof redirectState?.from === "string" ? redirectState.from : null;
@@ -46,7 +47,7 @@ const WikiEngine: React.FC<WikiEngineProps> = ({
     [redirectFrom, redirectState],
   );
   const firstLine = content.split(/\r?\n/).find((line) => line.trim())?.trim() ?? "";
-  const targetTitle = /^#\S/.test(firstLine) ? displayTitle(firstLine.slice(1).trim()) : null;
+  const targetTitle = /^#\S/.test(firstLine) ? firstLine.slice(1).trim() : null;
   const redirectDisabled = new URLSearchParams(location.search).get("redirect") === "no";
   const redirectLoop = !!targetTitle && (targetTitle === currentTitle ||
     redirectPath.includes(targetTitle) || redirectPath.length >= 20);
@@ -59,7 +60,7 @@ const WikiEngine: React.FC<WikiEngineProps> = ({
   useEffect(() => {
     // Only redirect the document matching the current route, not stale fetch data or history.
     if (history || notFoundFlag || !routeMatches || redirectDisabled || !targetTitle || redirectLoop) return;
-    navigate(`/wiki/${encodeURIComponent(targetTitle).replace(/%20/g, "+")}`, {
+    navigate(`/wiki/${encodeURIComponent(targetTitle)}`, {
       replace: true,
       state: { wikiRedirect: {
         from: currentTitle,
@@ -100,7 +101,7 @@ const WikiEngine: React.FC<WikiEngineProps> = ({
     <div className="min-w-0 max-w-3xl p-4 sm:p-6 mx-auto bg-white rounded-md shadow-md">
       <div className="flex flex-col items-start gap-4 mb-5 sm:flex-row sm:justify-between">
         <h1 className="min-w-0 w-full sm:flex-1 text-3xl sm:text-4xl font-semibold text-gray-700 [overflow-wrap:anywhere]">
-          {currentTitle}{" "}
+          {displayTitle(currentTitle)}{" "}
           {history ? (
             <span className="inline text-xl text-gray-400">
               {toRelativeTime(history) +
@@ -114,10 +115,10 @@ const WikiEngine: React.FC<WikiEngineProps> = ({
       {!history && redirectFrom && (
         <p className="mb-4 break-words text-sm text-gray-500">
           <Link
-            to={`/wiki/${encodeURIComponent(redirectFrom).replace(/%20/g, "+")}?redirect=no`}
+            to={`/wiki/${encodeURIComponent(redirectFrom)}?redirect=no`}
             className="text-blue-500 hover:underline"
           >
-            {redirectFrom}
+            {displayTitle(redirectFrom)}
           </Link>에서 넘어옴
         </p>
       )}

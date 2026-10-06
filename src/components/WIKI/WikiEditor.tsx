@@ -33,7 +33,7 @@ const WikiEditor = ({ initialContent, onSave }) => {
   return (
     <div className="max-w-7xl p-4 md:p-6 mx-auto">
       <div
-        className="sticky top-20 z-20 flex justify-end gap-3 mb-4 py-3 bg-gray-50 lg:static"
+        className="flex justify-end gap-3 mb-4 py-3"
         role="group"
         aria-label="위키 편집 작업"
       >

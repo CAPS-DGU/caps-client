@@ -8,6 +8,9 @@ import useWindowDimensions from "../../hooks/useWindowDimensions";
 import { toRelativeTime } from "../../utils/Time";
 import { User } from "../../types/common";
 
+// History state survives reloads; only trust redirects from this page session.
+const redirectSession = crypto.randomUUID();
+
 const displayTitle = (title: string) => title.replace(/\+/g, " ");
 
 interface WikiEngineProps {
@@ -39,7 +42,8 @@ const WikiEngine: React.FC<WikiEngineProps> = ({
   const currentTitle = DocTitle;
   const routeMatches = (wiki_title ?? "대문") === currentTitle;
   const redirectState = location.state?.wikiRedirect;
-  const redirectFrom = routeMatches && redirectState?.to === currentTitle &&
+  const redirectFrom = routeMatches && redirectState?.session === redirectSession &&
+    redirectState?.to === currentTitle &&
     typeof redirectState?.from === "string" ? redirectState.from : null;
   const redirectPath: string[] = useMemo(() =>
     redirectFrom && Array.isArray(redirectState?.path)
@@ -63,6 +67,7 @@ const WikiEngine: React.FC<WikiEngineProps> = ({
     navigate(`/wiki/${encodeURIComponent(targetTitle)}`, {
       replace: true,
       state: { wikiRedirect: {
+        session: redirectSession,
         from: currentTitle,
         to: targetTitle,
         path: [...redirectPath, currentTitle],

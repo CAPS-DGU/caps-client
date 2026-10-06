@@ -11,7 +11,6 @@ import { User } from "../../types/common";
 // History state survives reloads; only trust redirects from this page session.
 const redirectSession = crypto.randomUUID();
 
-const displayTitle = (title: string) => title.replace(/\+/g, " ");
 
 interface WikiEngineProps {
   author?: User;
@@ -106,7 +105,7 @@ const WikiEngine: React.FC<WikiEngineProps> = ({
     <div className="min-w-0 max-w-3xl p-4 sm:p-6 mx-auto bg-white rounded-md shadow-md">
       <div className="flex flex-col items-start gap-4 mb-5 sm:flex-row sm:justify-between">
         <h1 className="min-w-0 w-full sm:flex-1 text-3xl sm:text-4xl font-semibold text-gray-700 [overflow-wrap:anywhere]">
-          {displayTitle(currentTitle)}{" "}
+          {currentTitle}{" "}
           {history ? (
             <span className="inline text-xl text-gray-400">
               {toRelativeTime(history) +
@@ -123,7 +122,7 @@ const WikiEngine: React.FC<WikiEngineProps> = ({
             to={`/wiki/${encodeURIComponent(redirectFrom)}?redirect=no`}
             className="text-blue-500 hover:underline"
           >
-            {displayTitle(redirectFrom)}
+            {redirectFrom}
           </Link>에서 넘어옴
         </p>
       )}

@@ -6,7 +6,7 @@ import { ConfigProvider } from "antd";
 import koKR from "antd/locale/ko_KR";
 
 // Pages
-const MainPage = lazy(() => import("./pages/MainPage"));
+import MainPage from "./pages/MainPage";
 const WikiPage = lazy(() => import("./pages/WikiPage"));
 const IntroPage = lazy(() => import("./pages/IntroPage"));
 const HistoryPage = lazy(() => import("./pages/HistoryPage"));

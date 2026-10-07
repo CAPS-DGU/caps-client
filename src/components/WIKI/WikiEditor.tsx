@@ -32,6 +32,29 @@ const WikiEditor = ({ initialContent, onSave }) => {
 
   return (
     <div className="max-w-7xl p-4 md:p-6 mx-auto">
+      <div
+        className="flex justify-end gap-3 mb-4 py-3"
+        role="group"
+        aria-label="위키 편집 작업"
+      >
+        {/* 도움말 링크 */}
+        <a
+          href="/wiki/도움말" // 도움말 링크
+          className="px-4 py-2 text-white bg-gray-600 rounded-md shadow-md hover:underline hover:bg-gray-700"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          도움말
+        </a>
+        {/* 저장 버튼 */}
+        <button
+          type="button"
+          className="px-4 py-2 text-white bg-gray-600 rounded-md shadow-md hover:underline hover:bg-gray-700"
+          onClick={handleSave}
+        >
+          수정
+        </button>
+      </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* 원문 편집 영역 (박스 없음) */}
         <div>
@@ -56,24 +79,6 @@ const WikiEditor = ({ initialContent, onSave }) => {
             <WikiDocument content={content} idPrefix="preview-" />
           </div>
         </section>
-      </div>
-      <div className="flex justify-end space-x-4 mt-6">
-        {/* 도움말 링크 */}
-        <a
-          href="/wiki/도움말" // 도움말 링크
-          className="px-4 py-2 text-white bg-gray-600 rounded-md shadow-md hover:underline hover:bg-gray-700"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          도움말
-        </a>
-        {/* 저장 버튼 */}
-        <button
-          className="px-4 py-2 text-white bg-gray-600 rounded-md shadow-md hover:underline hover:bg-gray-700"
-          onClick={handleSave}
-        >
-          수정
-        </button>
       </div>
     </div>
   );
